@@ -190,12 +190,13 @@ table code {
 /* specific */
 
 #content {
-	height: 100%;
+	/*height: 100%;*/
 	margin: 40px 0 0 300px;
 	padding: 20px;
 	background: white;
 	position: absolute;
 	z-index: 1;
+        background-color: #FEFEFE;
 }
 
 #content:after {
@@ -236,7 +237,7 @@ table code {
 	overflow: auto;
 	padding: 10px 15px;
 	position: fixed;
-	top: 60px;
+	top: 70px;
 	width: 240px;
 }
 
@@ -258,19 +259,20 @@ table code {
 }
 
 #breadcrumb {
-	background: #333;
-	color: #FFF;
-	left: 320px;
+	background: #FEFEFE;
+	color: #121212;
+	left: 20px;
+        top: 35px;
 	line-height: 40px;
 	margin: 0;
 	padding: 0;
 	position: fixed;
-	top: 0;
 	width: 100%;
+        height: 30px;
 }
 
 #breadcrumb a {
-	color: #FF9;
+	color: #111111;
 }
 
 #breadcrumb a:hover {
