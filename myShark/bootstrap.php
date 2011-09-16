@@ -34,11 +34,8 @@ $application->errorPresenter = 'Error';
 
 // Setup router
 $application->onStartup[] = function() use ($application) {
-	$router = $application->getRouter();
-
-	$router[] = new Route('index.php', 'Homepage:default', Route::ONE_WAY);
-
-	$router[] = new Route('<presenter>/<action>[/<id>]', 'Homepage:default');
+    $main = MainModel::getMainModel($application);
+    $main->initApplication();
 };
 
 

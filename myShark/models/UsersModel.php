@@ -13,8 +13,8 @@ use Nette\Security as NS;
 /**
  * Users authenticator.
  *
- * @author     John Doe
- * @package    MyApplication
+ * @author     Michael Žabka
+ * @package    myShark
  */
 class UsersModel extends Nette\Object implements NS\IAuthenticator
 {
