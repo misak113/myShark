@@ -1,7 +1,16 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Presenter pro administraci (pouze přihlášení)
+ * @author Michael Žabka
  */
+
+class AdminPresenter extends BasePresenter {
+    
+    
+    public function renderDefault() {
+        $this->initPresenter();
+        $path = $this->params['path'];
+    }
+}
 ?>

@@ -23,8 +23,6 @@ $configurator->loadConfig(__DIR__ . '/config.neon');
 
 // Configure application
 $application = $configurator->container->application;
-//$application->errorPresenter = 'Error';
-
 
 
 // Setup router

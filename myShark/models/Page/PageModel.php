@@ -13,5 +13,9 @@ class PageModel extends Model {
         $q = $db->query('SELECT * FROM page;');
         $q->dump();
     }
+    
+    public function getTitle() {
+        return '';
+    }
 }
 ?>

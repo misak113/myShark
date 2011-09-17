@@ -22,9 +22,9 @@ class RouterModel extends \Kate\Main\Model
         $router[] = new Route('robots.txt', 'Help:robots');
         $router[] = new Route('sitemap.xml', 'Help:sitemap');
         //Administrace
-        $router[] = new Route('<path .*>/admin', 'Admin:Admin:default');
+        $router[] = new Route('[<path .*>/]admin', 'Admin:default');
         //Frontend
-	$router[] = new Route('<path .*>', 'Homepage:Homepage:default');
+	$router[] = new Route('<path .*>', 'Homepage:default');
     }
 }
 ?>
