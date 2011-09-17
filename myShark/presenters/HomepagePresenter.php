@@ -20,7 +20,9 @@ class HomepagePresenter extends BasePresenter
 
 	public function renderDefault()
 	{
-            Debugger::fireLog("test");
+            $page = new PageModel();
+            $page->getPages();
+            //Debugger::fireLog("test");
 		$this->template->anyVariable = 'any value';
 	}
 

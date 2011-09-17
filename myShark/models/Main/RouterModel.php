@@ -9,13 +9,22 @@ use Nette\Application\Routers\SimpleRouter,
  * @autor Michael Žabka
  */
 
-class RouterModel extends Nette\Object
+class RouterModel extends \Kate\Main\Model
 {
     
+    /**
+     * Přidá do routeru správné routy
+     * @param Router[] $router object routů od Nette
+     */
     public static function loadRouters(&$router) {
-        $router[] = new Route('index.php', 'Homepage:default', Route::ONE_WAY);
-
-	$router[] = new Route('<presenter>/<action>[/<id>]', 'Homepage:default');
+        
+        //robots.txt a sitemap.txt
+        $router[] = new Route('robots.txt', 'Help:robots');
+        $router[] = new Route('sitemap.xml', 'Help:sitemap');
+        //Administrace
+        $router[] = new Route('<path .*>/admin', 'Admin:Admin:default');
+        //Frontend
+	$router[] = new Route('<path .*>', 'Homepage:Homepage:default');
     }
 }
 ?>

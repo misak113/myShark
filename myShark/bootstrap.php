@@ -5,20 +5,15 @@
  */
 
 
-use Nette\Diagnostics\Debugger,
-	Nette\Application\Routers\SimpleRouter,
-	Nette\Application\Routers\Route;
+use Nette\Application\Routers\SimpleRouter,
+	Nette\Application\Routers\Route,
+        Kate\Main\Loader;
 
 
 // Load Nette Framework
 // this allows load Nette Framework classes automatically so that
 // you don't have to litter your code with 'require' statements
 require LIBS_DIR . '/Nette/loader.php';
-
-
-// Enable Nette\Debug for error visualisation & logging
-Debugger::$strictMode = TRUE;
-Debugger::enable();
 
 
 // Load configuration from config.neon file
@@ -28,14 +23,15 @@ $configurator->loadConfig(__DIR__ . '/config.neon');
 
 // Configure application
 $application = $configurator->container->application;
-$application->errorPresenter = 'Error';
-//$application->catchExceptions = TRUE;
+//$application->errorPresenter = 'Error';
+
 
 
 // Setup router
-$application->onStartup[] = function() use ($application) {
-    $main = MainModel::getMainModel($application);
-    $main->initApplication();
+$application->onStartup[] = function() use ($application, $configurator) {
+    $loader = Loader::getLoader($application);
+    $loader->setConfigurator($configurator);
+    $loader->initApplication();
 };
 
 

@@ -1,18 +1,18 @@
 <?php
 
 /**
- * My Application
+ * myShark
  *
- * @copyright  Copyright (c) 2010 John Doe
- * @package    MyApplication
+ * @copyright  Copyright (c) 2011 Michael Žabka
+ * @package    myShark
  */
 
 
 /**
  * Base class for all application presenters.
  *
- * @author     John Doe
- * @package    MyApplication
+ * @author     Michael Žabka
+ * @package    myShark
  */
 abstract class BasePresenter extends Nette\Application\UI\Presenter
 {

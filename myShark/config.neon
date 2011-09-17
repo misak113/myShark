@@ -21,5 +21,14 @@ common:
 production < common:
 
 development < common:
+	database:
+		driver:	mysql
+		host:	localhost
+		database:	myshark
+		username:	root
+		password:	misak
+		profiler:	true
+
+	debugMode:  true
 
 console < common:
