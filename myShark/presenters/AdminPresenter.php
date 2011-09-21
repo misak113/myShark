@@ -5,7 +5,7 @@
  * @author Michael Žabka
  */
 
-class AdminPresenter extends BasePresenter {
+class AdminPresenter extends Kate\Main\Presenter {
     
     
     public function renderDefault() {

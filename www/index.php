@@ -18,5 +18,8 @@ define('LIBS_DIR', WWW_DIR . '/../libs');
 // absolute filesystem path to the temporary files
 define('TEMP_DIR', WWW_DIR . '/../temp');
 
+//Konstanty pro zkrácení zápisu
+define('S', DIRECTORY_SEPARATOR);
+
 // load bootstrap file
 require APP_DIR . '/bootstrap.php';

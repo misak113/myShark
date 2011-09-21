@@ -21,10 +21,11 @@ class RouterModel extends \Kate\Main\Model
         //robots.txt a sitemap.txt
         $router[] = new Route('robots.txt', 'Help:robots');
         $router[] = new Route('sitemap.xml', 'Help:sitemap');
+        $router[] = new Route('favicon.ico', 'Help:favicon');
         //Administrace
         $router[] = new Route('[<path .*>/]admin', 'Admin:default');
         //Frontend
-	$router[] = new Route('<path .*>', 'Homepage:default');
+	$router[] = new Route('[<path .*>]', 'Homepage:default');
     }
 }
 ?>

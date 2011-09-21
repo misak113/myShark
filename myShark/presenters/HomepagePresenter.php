@@ -15,15 +15,16 @@ use Nette\Diagnostics\Debugger;
  * @author     John Doe
  * @package    MyApplication
  */
-class HomepagePresenter extends BasePresenter
+class HomepagePresenter extends Kate\Main\Presenter
 {
 
 	public function renderDefault()
 	{
-            $page = new PageModel();
-            $page->getPages();
+            $this->initPresenter();
+            //$page = new PageModel();
+            //$page->getPages();
             //Debugger::fireLog("test");
-		$this->template->anyVariable = 'any value';
+            $this->template->anyVariable = 'any value';
 	}
 
 }

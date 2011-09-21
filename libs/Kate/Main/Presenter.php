@@ -7,6 +7,8 @@
  * @package    myShark
  */
 
+namespace Kate\Main;
+use Kate;
 
 /**
  * Base class for all application presenters.
@@ -14,7 +16,7 @@
  * @author     Michael Žabka
  * @package    myShark
  */
-abstract class BasePresenter extends Nette\Application\UI\Presenter
+abstract class Presenter extends \Nette\Application\UI\Presenter
 {
     // Atributy
     // Vždy načítané styly
@@ -28,16 +30,16 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
         '/js/netteForms.js',
     );
     
-    private $pageModel, $basePath;
-
+    protected $baseUrl;
+    
 
     public function __construct() {
-        $this->pageModel = new PageModel();
+        parent::__construct();
         //$this->initPresenter();
     }
     
     protected function initPresenter() {
-        $this->basePath = $this->template->basePath;
+        $this->baseUrl = Loader::getBaseUrl();
         $this->initStyles();
         $this->initScripts();
         $this->initTitle();
@@ -46,7 +48,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
     private function initStyles() {
         foreach ($this->styles as &$style) {
             if (strpos('http://', $style[0]) === false) {
-                $style[0] = $this->basePath.$style[0];
+                $style[0] = $this->baseUrl.$style[0];
             }
         }
         $this->template->styles = $this->styles;
@@ -56,7 +58,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
         $scripts = array();
         foreach ($this->scripts as $script) {
             if (strpos('http://', $script) === false) {
-                $scripts[] = $this->basePath.$script;
+                $scripts[] = $this->baseUrl.$script;
             } else {
                 $scripts[] = $script;
             }
@@ -65,6 +67,8 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
     }
     
     private function initTitle() {
-        $this->template->title = $this->pageModel->getTitle();
+        $this->template->title = Loader::getPageModel()->getTitle();
     }
+    
+    
 }
