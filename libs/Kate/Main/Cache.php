@@ -17,7 +17,7 @@ class Cache extends \Nette\Object {
     
 
 
-    public function __construct($class) {
+    public function __construct(\Nette\Object $class) {
         $this->class = $class;
         $className = '_'.str_replace('\\', '.', get_class($class));
         $storagePath = Loader::getCacheStoragePath().DIRECTORY_SEPARATOR.$className;
@@ -56,8 +56,8 @@ class Cache extends \Nette\Object {
     
     /**
      * Vrací true pokud je treba funkci zavolat i kdyz je zakeshovaná... 
-     * @param type $name
-     * @return type 
+     * @param string $name
+     * @return boolean 
      * @todo
      */
     private function hasForceCall($name) {

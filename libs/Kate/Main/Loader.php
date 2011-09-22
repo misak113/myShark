@@ -32,7 +32,7 @@ class Loader extends \Nette\Object {
             $BASE_URL;
 
 
-    private function __construct($configurator) {
+    private function __construct(\Nette\Configurator $configurator) {
         $this->setConfigurator($configurator);
         $this->application = $configurator->container->application;
         
@@ -43,7 +43,7 @@ class Loader extends \Nette\Object {
      * @param Application $application Nette aplikace
      * @return Loader jedinečný Loader
      */
-    public static function getLoader($configurator = false) {
+    public static function getLoader(\Nette\Configurator $configurator = null) {
         if (self::$loader == null) {
             if (!($configurator instanceof \Nette\Configurator)) {
                 throw new \Nette\InvalidArgumentException('Argument musí být Configurator!');
@@ -121,7 +121,7 @@ class Loader extends \Nette\Object {
         return $this->database;
     }
     
-    private function setConfigurator($configurator) {
+    private function setConfigurator(\Nette\Configurator $configurator) {
         $this->configurator = $configurator;
     }
     

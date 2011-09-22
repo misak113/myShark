@@ -35,16 +35,29 @@ abstract class Presenter extends \Nette\Application\UI\Presenter
 
     public function __construct() {
         parent::__construct();
-        //$this->initPresenter();
     }
     
-    protected function initPresenter() {
+    /**
+     * přepisuje kuli inicializaci presenteru
+     * @param string $method metoda
+     * @param array $params parametry 
+     */
+    protected function tryCall($method, array $params) {
+        $this->initPresenter();
+        $func = __FUNCTION__;
+        parent::$func($method, $params);
+    }
+    
+    private function initPresenter() {
         $this->baseUrl = Loader::getBaseUrl();
         $this->initStyles();
         $this->initScripts();
         $this->initTitle();
     }
     
+    /**
+     * @todo spatne funguje http include
+     */
     private function initStyles() {
         foreach ($this->styles as &$style) {
             if (strpos('http://', $style[0]) === false) {

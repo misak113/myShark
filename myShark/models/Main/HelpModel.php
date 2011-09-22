@@ -12,6 +12,10 @@ class HelpModel extends Model {
         parent::__construct();
     }
     
+    /**
+     * Vrací cestu k aktuální favicon
+     * @return string cesta k favicon
+     */
     public function getFaviconPath() {
         $pageModel = Loader::getLoader()->getPageModel();
         $pageNameLink = $pageModel->getPageNameLink();

@@ -20,7 +20,7 @@ class HomepagePresenter extends Kate\Main\Presenter
 
 	public function renderDefault()
 	{
-            $this->initPresenter();
+            //$this->initPresenter();
             //$page = new PageModel();
             //$page->getPages();
             //Debugger::fireLog("test");

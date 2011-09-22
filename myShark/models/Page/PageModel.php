@@ -56,6 +56,10 @@ class PageModel extends Model {
         return $this->pageNameLink;
     }
     
+    /**
+     * Vrací aktuální název stránky
+     * @return string název
+     */
     public function getPageName() {
         return $this->pageName;
     }
@@ -65,11 +69,11 @@ class PageModel extends Model {
      * @param string $key klíč
      * @return string hodnota
      */
-    public function getSetting($key = false) {
+    public function getSetting($key = null) {
         if ($this->setting == null) {
             /** @todo load setting from database */
         }
-        if ($key === false) {
+        if ($key === null) {
             return $this->setting;
         } else {
             if (key_exists($key, $this->setting)) {

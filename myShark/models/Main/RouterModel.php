@@ -2,7 +2,8 @@
 
 
 use Nette\Application\Routers\SimpleRouter,
-	Nette\Application\Routers\Route;
+	Nette\Application\Routers\Route,
+        Nette\Application\Routers\RouteList;
 /**
  * Routuje adresu
  * 
@@ -14,9 +15,9 @@ class RouterModel extends \Kate\Main\Model
     
     /**
      * Přidá do routeru správné routy
-     * @param Router[] $router object routů od Nette
+     * @param RouterList $router object routů od Nette
      */
-    public static function loadRouters(&$router) {
+    public static function loadRouters(RouteList &$router) {
         
         //robots.txt a sitemap.txt
         $router[] = new Route('robots.txt', 'Help:robots');
