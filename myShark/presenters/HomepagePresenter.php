@@ -24,7 +24,9 @@ class HomepagePresenter extends Kate\Main\Presenter
             //$page = new PageModel();
             //$page->getPages();
             //Debugger::fireLog("test");
-            $this->template->anyVariable = 'any value';
+            //$this->validateControl('good');
+            echo $this->isControlInvalid();
+            $this->template->anyVariable = mt_rand(1, 2);
 	}
 
 }

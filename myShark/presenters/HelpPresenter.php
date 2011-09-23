@@ -1,7 +1,8 @@
 <?php
 
 use Kate\Main\Cache,
-        Kate\External\HeaderControl;
+        Kate\External\HeaderControl,
+        Kate\Main\Model;
 
 /**
  * Pomocní presenter např. pro seo sitemap.xml a robots.txt
@@ -19,12 +20,12 @@ class HelpPresenter extends Kate\Main\Presenter {
     }
     
     public function renderFavicon() {
-        $helpModel = new HelpModel();
-        $cacheHelpModel = new Cache($helpModel);
+        $cacheHelpModel = new Cache(HelpModel::get());
         $httpResponse = Nette\Environment::getHttpResponse();
         $httpResponse->setContentType('image/x-icon');
-        echo file_get_contents($cacheHelpModel->getFaviconPath());
-        die();
+        $favicon = file_get_contents($cacheHelpModel->getFaviconPath());
+        $response = new Nette\Application\Responses\TextResponse($favicon);
+        $this->sendResponse($response);
     }
 }
 ?>

@@ -80,7 +80,7 @@ abstract class Presenter extends \Nette\Application\UI\Presenter
     }
     
     private function initTitle() {
-        $this->template->title = Loader::getPageModel()->getTitle();
+        $this->template->title = \PageModel::get()->getTitle();
     }
     
     

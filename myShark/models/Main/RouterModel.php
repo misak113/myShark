@@ -13,6 +13,8 @@ use Nette\Application\Routers\SimpleRouter,
 class RouterModel extends \Kate\Main\Model
 {
     
+    
+    
     /**
      * Přidá do routeru správné routy
      * @param RouterList $router object routů od Nette

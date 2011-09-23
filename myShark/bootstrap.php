@@ -28,7 +28,7 @@ $application = $configurator->container->application;
 // Setup router
 $application->onStartup[] = function() use ($configurator) {
     // Naloadování loaderu
-    Loader::getLoader($configurator);
+    Loader::get($configurator);
 };
 
 

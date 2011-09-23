@@ -11,7 +11,7 @@ namespace Kate\Main;
 use Nette\Diagnostics\Debugger,
 	Kate;
 
-class Loader extends \Nette\Object {
+class Loader extends \Nette\Object implements IEnclosed {
     
     const MAIN_DIR = 'main';
     const CACHE_DIR = 'cache';
@@ -43,7 +43,7 @@ class Loader extends \Nette\Object {
      * @param Application $application Nette aplikace
      * @return Loader jedinečný Loader
      */
-    public static function getLoader(\Nette\Configurator $configurator = null) {
+    public static function get(\Nette\Configurator $configurator = null) {
         if (self::$loader == null) {
             if (!($configurator instanceof \Nette\Configurator)) {
                 throw new \Nette\InvalidArgumentException('Argument musí být Configurator!');
@@ -62,7 +62,7 @@ class Loader extends \Nette\Object {
         $this->loadDatabase();
         
         if (class_exists('PageModel')) {
-            self::$pageModel = new \PageModel();
+            self::$pageModel = \PageModel::get();
         } else {
             throw new Kate\ClassNotFoundException('Vytvořte třídu PageModel Která bude obstarávat základní data pro zobrazení.');
         }

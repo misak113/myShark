@@ -8,16 +8,18 @@ use \Kate\Main\Model,
  */
 class HelpModel extends Model {
     
-    public function __construct() {
+    
+    protected function __construct() {
         parent::__construct();
     }
+    
     
     /**
      * Vrací cestu k aktuální favicon
      * @return string cesta k favicon
      */
     public function getFaviconPath() {
-        $pageModel = Loader::getLoader()->getPageModel();
+        $pageModel = Loader::get()->getPageModel();
         $pageNameLink = $pageModel->getPageNameLink();
         $faviconPath = Loader::getUserfilesPath().S.Loader::IMAGES_DIR.S.$pageNameLink.S.Loader::MAIN_DIR.S.'favicon.ico';
         if (!file_exists($faviconPath)) {

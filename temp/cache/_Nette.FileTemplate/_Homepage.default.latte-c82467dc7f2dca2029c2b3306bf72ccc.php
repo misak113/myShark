@@ -1,12 +1,12 @@
-<?php //netteCache[01]000429a:2:{s:4:"time";s:21:"0.52902100 1315852158";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:106:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\Homepage\default.latte";i:2;i:1315852066;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"648b258 released on 2011-06-13";}}}?><?php
+<?php //netteCache[01]000429a:2:{s:4:"time";s:21:"0.92001600 1316729466";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:106:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\Homepage\default.latte";i:2;i:1316729463;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"648b258 released on 2011-06-13";}}}?><?php
 
 // source file: C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\Homepage\default.latte
 
-?><?php list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, 'hzepqpdthw')
+?><?php list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, 'bxmknip4e2')
 ;//
 // block content
 //
-if (!function_exists($_l->blocks['content'][] = '_lb3b1d3d1b7f_content')) { function _lb3b1d3d1b7f_content($_l, $_args) { extract($_args)
+if (!function_exists($_l->blocks['content'][] = '_lb7704989d16_content')) { function _lb7704989d16_content($_l, $_args) { extract($_args)
 ?>
 <div id="wrapper">
 	<div id="logo"></div>
@@ -18,7 +18,27 @@ if (!function_exists($_l->blocks['content'][] = '_lb3b1d3d1b7f_content')) { func
 	<hr />
 
 	<h2>What to do next?</h2>
+<div id="<?php echo $control->getSnippetId('good') ?>"><?php call_user_func(reset($_l->blocks['_good']), $_l, $template->getParams()) ?>
+</div>
+	<h2>We hope you enjoy this framework! <img src="<?php echo htmlSpecialChars($basePath) ?>/images/nette-powered2.gif" width="80" height="15" alt="Nette Framework powered" /></h2>
 
+	<ul id="environment">
+		<li>PHP <?php echo Nette\Templating\DefaultHelpers::escapeHtml(PHP_VERSION, ENT_NOQUOTES) ?></li>
+<?php if (isset($_SERVER['SERVER_SOFTWARE'])): ?>
+		<li>Server <?php echo Nette\Templating\DefaultHelpers::escapeHtml($_SERVER['SERVER_SOFTWARE'], ENT_NOQUOTES) ?></li>
+<?php endif ?>
+		<li>Nette Framework <?php echo Nette\Templating\DefaultHelpers::escapeHtml(Nette\Framework::VERSION, ENT_NOQUOTES) ?></li>
+	</ul>
+</div>
+<?php
+}}
+
+//
+// block _good
+//
+if (!function_exists($_l->blocks['_good'][] = '_lb3d93b8aa3d__good')) { function _lb3d93b8aa3d__good($_l, $_args) { extract($_args); $control->validateControl('good')
+?>
+        <p><?php echo Nette\Templating\DefaultHelpers::escapeHtml($anyVariable, ENT_NOQUOTES) ?></p>
 	<ol>
 		<li><h3>Edit this page</h3>
 		<p>To change the content of this page, modify file <code>/app/templates/Homepage/default.latte</code> and layout
@@ -35,24 +55,13 @@ if (!function_exists($_l->blocks['content'][] = '_lb3b1d3d1b7f_content')) { func
 		<p>If you are exploring Nette Framework for the very first time, you should start by reading the
 		<a href="http://doc.nette.org">documentation</a>, <a href="http://pla.nette.org">tutorials</a> and <a href="http://forum.nette.org">forum</a>.</p>
 	</ol>
-
-	<h2>We hope you enjoy this framework! <img src="<?php echo htmlSpecialChars($basePath) ?>/images/nette-powered2.gif" width="80" height="15" alt="Nette Framework powered" /></h2>
-
-	<ul id="environment">
-		<li>PHP <?php echo Nette\Templating\DefaultHelpers::escapeHtml(PHP_VERSION, ENT_NOQUOTES) ?></li>
-<?php if (isset($_SERVER['SERVER_SOFTWARE'])): ?>
-		<li>Server <?php echo Nette\Templating\DefaultHelpers::escapeHtml($_SERVER['SERVER_SOFTWARE'], ENT_NOQUOTES) ?></li>
-<?php endif ?>
-		<li>Nette Framework <?php echo Nette\Templating\DefaultHelpers::escapeHtml(Nette\Framework::VERSION, ENT_NOQUOTES) ?></li>
-	</ul>
-</div>
 <?php
 }}
 
 //
 // block head
 //
-if (!function_exists($_l->blocks['head'][] = '_lbe1c4652852_head')) { function _lbe1c4652852_head($_l, $_args) { extract($_args)
+if (!function_exists($_l->blocks['head'][] = '_lb869fb5468e_head')) { function _lb869fb5468e_head($_l, $_args) { extract($_args)
 ?>
 <style>
 	html {

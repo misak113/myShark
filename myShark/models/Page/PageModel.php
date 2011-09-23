@@ -15,7 +15,7 @@ class PageModel extends Model {
     
     private $setting, $pageName, $pageNameLink;
     
-    public function __construct() {
+    protected function __construct() {
         parent::__construct();
         $this->loadPage();
         $this->loadSetting();
