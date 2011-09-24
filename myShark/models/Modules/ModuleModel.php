@@ -1,7 +1,7 @@
 <?php
+use Kate\Main\Model;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+abstract class ModuleModel extends Model {
+    
+}
 ?>

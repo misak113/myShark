@@ -1,12 +1,12 @@
-<?php //netteCache[01]000419a:2:{s:4:"time";s:21:"0.94849800 1316285454";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:97:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\@layout.latte";i:2;i:1316284202;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"648b258 released on 2011-06-13";}}}?><?php
+<?php //netteCache[01]000419a:2:{s:4:"time";s:21:"0.55385900 1316897145";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:97:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\@layout.latte";i:2;i:1316284202;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"f38d86f released on 2011-08-24";}}}?><?php
 
 // source file: C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\@layout.latte
 
-?><?php list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, '2z7k3yz7p8')
+?><?php list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, 'gkddvlrn2u')
 ;//
 // block head
 //
-if (!function_exists($_l->blocks['head'][] = '_lb759b94e22b_head')) { function _lb759b94e22b_head($_l, $_args) { extract($_args)
+if (!function_exists($_l->blocks['head'][] = '_lb1b9b6df38e_head')) { function _lb1b9b6df38e_head($_l, $_args) { extract($_args)
 ;
 }}
 

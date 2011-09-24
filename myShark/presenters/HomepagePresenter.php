@@ -24,9 +24,18 @@ class HomepagePresenter extends Kate\Main\Presenter
             //$page = new PageModel();
             //$page->getPages();
             //Debugger::fireLog("test");
-            //$this->validateControl('good');
-            echo $this->isControlInvalid();
-            $this->template->anyVariable = mt_rand(1, 2);
+            $this->invalidateControl('good');
+            $this->invalidateControl('bad');
+            //$this->validateControl();
+            //var_dump($this->isControlInvalid('good'));
+            //var_dump($this->isControlInvalid('bad'));
+            //var_dump($this->isControlInvalid());
+            $this->template->anyVariable = var_export(PageModel::get()->getPageParameters(), true);
+            $x = $this->payload;
+            $x = 1;
+            if ($this->isAjax()) {
+                //$this->terminate();
+            }
 	}
 
 }

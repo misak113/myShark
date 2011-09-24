@@ -100,17 +100,19 @@ class Loader extends \Nette\Object implements IEnclosed {
         /**
          * @todo dynamicky url zjistit
          */
-        self::$BASE_PATH = '/';
+        self::$BASE_URL = '/avantcore/myShark/www';
     }
     
     /**
      * Nalouduje databázi do proměné
      */
     private function loadDatabase() {
+        $reflection = new \Nette\Database\Reflection\DatabaseReflection('%s', '%s', '%s');//@todo dodelat... nyni funguje jen pro phrase
+        
         $db = $this->configurator->container->params['database'];
         $dsn = "{$db->driver}:host={$db->host};dbname={$db->database}".
                 ((isset($db->port)) ?";port={$db->port}" :"");
-        $this->database = new \Nette\Database\Connection($dsn, $db->username, $db->password);
+        $this->database = new \Nette\Database\Connection($dsn, $db->username, $db->password, null, $reflection);
     }
     
     /**

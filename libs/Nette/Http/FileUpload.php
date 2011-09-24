@@ -76,6 +76,17 @@ class FileUpload extends Nette\Object
 
 
 	/**
+	 * Returns the sanitized file name.
+	 * @return string
+	 */
+	public function getSanitizedName()
+	{
+		return trim(Nette\Utils\Strings::webalize($this->name, '.', FALSE), '.-');
+	}
+
+
+
+	/**
 	 * Returns the MIME content type of an uploaded file.
 	 * @return string
 	 */
@@ -151,15 +162,11 @@ class FileUpload extends Nette\Object
 	 */
 	public function move($dest)
 	{
-		$dir = dirname($dest);
-		if (@mkdir($dir, 0755, TRUE)) { // @ - $dir may already exist
-			chmod($dir, 0755);
-		}
-		$func = is_uploaded_file($this->tmpName) ? 'move_uploaded_file' : 'rename';
-		if (!$func($this->tmpName, $dest)) {
+		@mkdir(dirname($dest), 0777, TRUE); // @ - dir may already exist
+		if (!call_user_func(is_uploaded_file($this->tmpName) ? 'move_uploaded_file' : 'rename', $this->tmpName, $dest)) {
 			throw new Nette\InvalidStateException("Unable to move uploaded file '$this->tmpName' to '$dest'.");
 		}
-		chmod($dest, 0644);
+		chmod($dest, 0666);
 		$this->tmpName = $dest;
 		return $this;
 	}

@@ -27,7 +27,7 @@ abstract class Presenter extends \Nette\Application\UI\Presenter
     // Vždy načítané javascripty
     private $scripts = array(
         'http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js',
-        '/js/netteForms.js',
+        '/js/libs/netteForms.js',
     );
     
     protected $baseUrl;
@@ -59,18 +59,19 @@ abstract class Presenter extends \Nette\Application\UI\Presenter
      * @todo spatne funguje http include
      */
     private function initStyles() {
-        foreach ($this->styles as &$style) {
+        $styles = $this->styles;
+        foreach ($styles as &$style) {
             if (strpos('http://', $style[0]) === false) {
                 $style[0] = $this->baseUrl.$style[0];
             }
         }
-        $this->template->styles = $this->styles;
+        $this->template->styles = $styles;
     }
     
     private function initScripts() {
         $scripts = array();
         foreach ($this->scripts as $script) {
-            if (strpos('http://', $script) === false) {
+            if (strpos($script, 'http://') === false) {
                 $scripts[] = $this->baseUrl.$script;
             } else {
                 $scripts[] = $script;
@@ -80,7 +81,7 @@ abstract class Presenter extends \Nette\Application\UI\Presenter
     }
     
     private function initTitle() {
-        $this->template->title = \PageModel::get()->getTitle();
+        $this->template->title = Loader::getPageModel()->getTitle();
     }
     
     
