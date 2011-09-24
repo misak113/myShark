@@ -20,22 +20,11 @@ class HomepagePresenter extends Kate\Main\Presenter
 
 	public function renderDefault()
 	{
-            //$this->initPresenter();
-            //$page = new PageModel();
-            //$page->getPages();
-            //Debugger::fireLog("test");
-            $this->invalidateControl('good');
-            $this->invalidateControl('bad');
-            //$this->validateControl();
-            //var_dump($this->isControlInvalid('good'));
-            //var_dump($this->isControlInvalid('bad'));
-            //var_dump($this->isControlInvalid());
-            $this->template->anyVariable = var_export(PageModel::get()->getPageParameters(), true);
-            $x = $this->payload;
-            $x = 1;
-            if ($this->isAjax()) {
-                //$this->terminate();
-            }
+            $pageModel = PageModel::get();
+            
+            $parameters = $pageModel->getPageParameters();
+            $layout = $pageModel->cache()->loadPageLayout($parameters[PageModel::ID]);
+            
 	}
 
 }

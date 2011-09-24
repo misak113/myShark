@@ -58,15 +58,6 @@ class Loader extends \Nette\Object implements IEnclosed {
      * Zajistí základní prvky pro běh aplikace
      */
     private function initApplication() {
-        //načte databázi
-        $this->loadDatabase();
-        
-        if (class_exists('PageModel')) {
-            self::$pageModel = \PageModel::get();
-        } else {
-            throw new Kate\ClassNotFoundException('Vytvořte třídu PageModel Která bude obstarávat základní data pro zobrazení.');
-        }
-        $this->initPathAndUrl();
         
         //zjistí zda je v debugovacím módu
         self::$DEBUG_MODE = isset($this->configurator->container->params['debugMode'])?$this->configurator->container->params['debugMode']:false;
@@ -78,10 +69,25 @@ class Loader extends \Nette\Object implements IEnclosed {
         }
         $this->application->catchExceptions = !self::$DEBUG_MODE;
         
+        
+        
+        //načte databázi
+        $this->loadDatabase();
+        
+        
+        if (class_exists('PageModel')) {
+            self::$pageModel = \PageModel::get();
+        } else {
+            throw new Kate\ClassNotFoundException('Vytvořte třídu PageModel Která bude obstarávat základní data pro zobrazení.');
+        }
+        $this->initPathAndUrl();
+        
+        
+        
         //naloduje routery
         $router = $this->application->getRouter();
         if (class_exists('RouterModel')) {
-            \RouterModel::loadRouters($router);
+            \RouterModel::setRouters($router);
         } else {
             throw new Kate\ClassNotFoundException('Vytvořte třídu RouterModel pro správné routování aplikace.');
         }
@@ -97,17 +103,14 @@ class Loader extends \Nette\Object implements IEnclosed {
         self::$CACHE_STORAGE_PATH = self::$TEMP_PATH.S.self::CACHE_DIR;
         self::$IMAGES_PATH = self::$WWW_PATH.S.self::IMAGES_DIR;
         self::$USERFILES_PATH = self::$WWW_PATH.S.self::USERFILES_DIR;
-        /**
-         * @todo dynamicky url zjistit
-         */
-        self::$BASE_URL = '/avantcore/myShark/www';
+        self::$BASE_URL = rtrim(\Nette\Environment::getHttpRequest()->getUrl()->getBaseUrl(), '/');
     }
     
     /**
      * Nalouduje databázi do proměné
      */
     private function loadDatabase() {
-        $reflection = new \Nette\Database\Reflection\DatabaseReflection('%s', '%s', '%s');//@todo dodelat... nyni funguje jen pro phrase
+        $reflection = new \Nette\Database\Reflection\DatabaseReflection('id_%s', 'id_%s', '%s');//@todo dodelat... nyni funguje jen pro phrase
         
         $db = $this->configurator->container->params['database'];
         $dsn = "{$db->driver}:host={$db->host};dbname={$db->database}".

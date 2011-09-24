@@ -35,7 +35,19 @@ class Cache extends \Nette\Object {
         $value = $this->cache->load($key);
         if ($value === NULL || $forceCall === true) {
             $expiration = $this->getExpiration($name);
+            
+            // Zviditelnění privatní fce
+            /* @todo dodelat pristup k privatnim fci pres nejaky tricek... tohle funguje, ale je treba aby byla fce deklarovana ve tride :/
+            $publicName = 'public_'.$name;
+            $stringArgs = (count($args) > 0?'$':'').implode(', $', array_keys($args));
+            //$this->class->__set($publicName, create_function($stringArgs, 'return $this->'.$name.'('.$stringArgs.');'));
+            $this->class->{$publicName} = create_function($stringArgs, 'return $this->'.$name.'('.$stringArgs.');');
+            $name = $publicName;
+            */
+            
             $value = call_user_func_array(array($this->class, $name), $args);
+            
+            
             $this->cache->save($key, $value, array(
                 \Nette\Caching\Cache::EXPIRE => $expiration,
                 )
@@ -62,6 +74,15 @@ class Cache extends \Nette\Object {
      */
     private function hasForceCall($name) {
         return Loader::isDebugMode();
+    }
+    
+    
+    /**
+     * Vrátí ne Cachovanou instanci
+     * @return class Nezacachovaná instance třídy
+     */
+    public function getInstance() {
+        return $this->class;
     }
     
     

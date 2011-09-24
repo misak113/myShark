@@ -16,7 +16,7 @@ class PageModel extends Model {
     
     
     
-    private $setting, $pageName, $pageNameLink, $modules, $pageParameters, 
+    private $setting, $web, $modules, $pageParameters, 
             // Deafaultní jazyk
             $language = array(
                 'shortcut' => 'cs',
@@ -25,42 +25,45 @@ class PageModel extends Model {
     
     protected function __construct() {
         parent::__construct();
-        $this->loadPage();
-        $this->loadSetting();
-        $this->loadModules();
+        $this->web = $this->cache->loadWeb();
+        $this->setting =$this->cache->loadSetting();
+        $this->modules = $this->cache->loadModules();
     }
     
-    private function loadPage() {
+    public function loadWeb() {
+        $web = array();
         $row = $this->db->table('page')
                 ->select('phrase.text, phrase.link')
                 ->order('`order` ASC')
                 ->limit(1)
                 ->fetch();
         if ($row) {
-            $this->pageName = $row['text'];
-            $this->pageNameLink = $row['link'];
+            $web['name'] = $row['text'];
+            $web['nameLink'] = $row['link'];
         } else {
-            $this->pageName = self::DEFAULT_PAGE_NAME.' '.self::VERSION;
-            $this->pageNameLink = self::DEFAULT_PAGE_NAME_LINK;
+            $web['name'] = self::DEFAULT_PAGE_NAME.' '.self::VERSION;
+            $web['nameLink'] = self::DEFAULT_PAGE_NAME_LINK;
         }
+        return $web;
     }
     
-    private function loadSetting() {
-        $this->setting = array();
+    public function loadSetting() {
+        return array();
     }
     
-    private function loadModules() {
-        $this->modules = array();
+    public function loadModules() {
+        $modules = array();
         $q = $this->db->table('module')
                 ->select('module.*, phrase.text, phrase.link');
         while ($row = $q->fetch()) {
-            $this->modules[$row['id_module']] = array(
+            $modules[$row['id_module']] = array(
                 'id_module_parent' => $row['id_module_parent'],
                 'label' => $row['label'],
                 'text' => $row['text'],
-                'link' => $row['link'], // @todo 
+                'link' => $row['link'],
             );
         }
+        return $modules;
     }
     
     /**
@@ -68,7 +71,7 @@ class PageModel extends Model {
      * @return string titulek
      */
     public function getTitle() {
-        return $this->getPageName();
+        return $this->getWebName();
     }
     
     /**
@@ -77,17 +80,49 @@ class PageModel extends Model {
      * @todo napojit na databázi
      * @return link
      */
-    public function getPageNameLink() {
-        return $this->pageNameLink;
+    public function getWebNameLink() {
+        return $this->web['nameLink'];
     }
     
     /**
      * Vrací aktuální název stránky
      * @return string název
      */
-    public function getPageName() {
-        return $this->pageName;
+    public function getWebName() {
+        return $this->web['name'];
     }
+    
+    
+    public function loadPageLayout($pageLink = null) {
+        $sql = 'SELECT *
+            FROM cell
+            LEFT JOIN layout ON (cell.id_layout = layout.id_layout)
+            LEFT JOIN phrase AS layout_phrase ON (layout.id_phrase = layout_phrase.id_phrase)
+            LEFT JOIN page ON (layout.id_layout = page.id_layout)
+            LEFT JOIN phrase AS page_phrase ON (page.id_phrase = page_phrase.id_phrase)
+            LEFT JOIN geometry ON (geometry.id_geometry = cell.id_geometry) ';
+        /*$q = $this->db->table('layout')
+                ->select('cell.id_layout, layout.id_layout, page.id_layout');
+        if ($pageLink == null) {
+            $q = $q->where('page.order', '1');
+        } else {
+            $q = $q->where('phrase.link', $pageLink);
+        }*/
+        if ($pageLink == null) {
+            $sql .= 'WHERE page.order = 1 ';
+        } else {
+            $sql .= 'WHERE page_phrase.link = \''.$pageLink.'\' ';
+        }
+        $sql .= 'ORDER BY cell.row, cell.col ';
+        $q = $this->db->query($sql);
+        $cells = array();
+        while ($row = $q->fetch()) {
+            $cells[$row['row']][] = $row;
+        }
+        return $cells;
+    }
+    
+    
     
     /**
      * Vrací nastavení podle klíče z tabulky setting
@@ -122,7 +157,10 @@ class PageModel extends Model {
         return $this->pageParameters;
     }
     
-    
+    /**
+     * Vrací linky všech modulů v poli pod klíči id_module
+     * @return array links of modules
+     */
     public function getModuleLinks() {
         $moduleLinks = array();
         foreach ($this->modules as $id => $module) {

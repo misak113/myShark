@@ -20,7 +20,7 @@ class RouterModel extends \Kate\Main\Model
      * Přidá do routeru správné routy
      * @param RouterList $router object routů od Nette
      */
-    public static function loadRouters(RouteList &$router) {
+    public static function setRouters(RouteList &$router) {
         
         //robots.txt a sitemap.txt
         $router[] = new Route('robots.txt', 'Help:robots');
@@ -61,6 +61,7 @@ class RouterModel extends \Kate\Main\Model
         }
         $shortcut = $l[0];
         $return = $shortcut.($location !== null?'_'.strtoupper($location):'');
+        
         // Nastaví jazyk v pageModelu
         Loader::get()->getPageModel()->setLanguage($shortcut, $location);
         return $return;
@@ -104,6 +105,7 @@ class RouterModel extends \Kate\Main\Model
         $parameters = array(
             PageModel::ID => $page
         );
+        
         foreach ($params as $param) {
             if (in_array($param, $moduleLinks)) {
                 $moduleId = array_search($param, $moduleLinks);
@@ -112,6 +114,7 @@ class RouterModel extends \Kate\Main\Model
             }
             $parameters[$moduleId][] = $param;
         }
+        
         Loader::getPageModel()->setPageParameters($parameters);
         return $path;
     }

@@ -21,7 +21,7 @@ class HelpPresenter extends Kate\Main\Presenter {
     }
     
     public function renderFavicon() {
-        $cacheHelpModel = new Cache(HelpModel::get());
+        $cacheHelpModel = HelpModel::get()->cache();
         $httpResponse = Nette\Environment::getHttpResponse();
         $httpResponse->setContentType('image/x-icon');
         $favicon = file_get_contents($cacheHelpModel->getFaviconPath());
