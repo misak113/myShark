@@ -8,7 +8,7 @@ use \Kate\Main\Model;
 class PageModel extends Model {
     const ID = 0;
     
-    const VERSION = '1.0.8';
+    const VERSION = '1.0.12';
     
     const DEFAULT_PAGE_NAME_LINK = 'myShark';
     const DEFAULT_PAGE_NAME = 'Redakční systém myShark';
@@ -16,7 +16,9 @@ class PageModel extends Model {
     
     
     
-    private $setting, $web, $modules, $pageParameters, 
+    private $setting, $web, $modules,  $pageId,
+            // Defaultní stránka null
+            $pageParameters = array(self::ID => null),
             // Deafaultní jazyk
             $language = array(
                 'shortcut' => 'cs',
@@ -30,6 +32,10 @@ class PageModel extends Model {
         $this->modules = $this->cache->loadModules();
     }
     
+    /**
+     * Načte základní info o stránkách
+     * @return array names
+     */
     public function loadWeb() {
         $web = array();
         $row = $this->db->table('page')
@@ -51,6 +57,10 @@ class PageModel extends Model {
         return array();
     }
     
+    /**
+     * Načte moduly z databáze
+     * @return array moduly
+     */
     public function loadModules() {
         $modules = array();
         $q = $this->db->table('module')
@@ -77,8 +87,7 @@ class PageModel extends Model {
     /**
      * Vrací link z názvu aktuální stránky, která je aktivní pro myShark... např.: 'janarandakova.cz'
      * Toto získává z databáze z tabulky setting
-     * @todo napojit na databázi
-     * @return link
+     * @return string link
      */
     public function getWebNameLink() {
         return $this->web['nameLink'];
@@ -93,36 +102,93 @@ class PageModel extends Model {
     }
     
     
-    public function loadPageLayout($pageLink = null) {
-        $sql = 'SELECT *
-            FROM cell
-            LEFT JOIN layout ON (cell.id_layout = layout.id_layout)
-            LEFT JOIN phrase AS layout_phrase ON (layout.id_phrase = layout_phrase.id_phrase)
-            LEFT JOIN page ON (layout.id_layout = page.id_layout)
+    public function loadPageId($pageLink) {
+        $args = array();
+        $sql = 'SELECT page.id_page
+            FROM page
             LEFT JOIN phrase AS page_phrase ON (page.id_phrase = page_phrase.id_phrase)
-            LEFT JOIN geometry ON (geometry.id_geometry = cell.id_geometry) ';
-        /*$q = $this->db->table('layout')
-                ->select('cell.id_layout, layout.id_layout, page.id_layout');
+            ';
         if ($pageLink == null) {
-            $q = $q->where('page.order', '1');
+            $sql .= 'WHERE page.order = (SELECT MIN(page.order) FROM page) ';
         } else {
-            $q = $q->where('phrase.link', $pageLink);
-        }*/
-        if ($pageLink == null) {
-            $sql .= 'WHERE page.order = 1 ';
-        } else {
-            $sql .= 'WHERE page_phrase.link = \''.$pageLink.'\' ';
+            $sql .= 'WHERE page_phrase.link = ? ';
+            $args[] = $pageLink;
         }
-        $sql .= 'ORDER BY cell.row, cell.col ';
-        $q = $this->db->query($sql);
-        $cells = array();
-        while ($row = $q->fetch()) {
-            $cells[$row['row']][] = $row;
+        $sql .= 'LIMIT 1 ';
+        $pageId = null;
+        $q = $this->db->queryArgs($sql, $args);
+        $res = $q->fetch();
+        if (isset($res['id_page'])) {
+            $pageId = $res['id_page'];
         }
-        return $cells;
+        return $pageId;
     }
     
+    /**
+     * Načte layout do mrizky v poli pro dannou stranku
+     * @param string $pageLink
+     * @return array
+     */
+    public function loadPageLayout($idPage) {
+        $sql = 'SELECT *
+            FROM cell
+            JOIN layout ON (cell.id_layout = layout.id_layout)
+            JOIN phrase AS layout_phrase ON (layout.id_phrase = layout_phrase.id_phrase)
+            JOIN page ON (layout.id_layout = page.id_layout)
+            JOIN phrase AS page_phrase ON (page.id_phrase = page_phrase.id_phrase)
+            JOIN geometry ON (geometry.id_geometry = cell.id_geometry) 
+            WHERE page.id_page = ? 
+            ORDER BY cell.row, cell.col ';
+        $args = array($idPage);
+        $q = $this->db->queryArgs($sql, $args);
+        return $q->fetchAll();
+    }
     
+    /**
+     * Vrací zda request žádá o změnu danného cell podle pageParameters
+     * @param int $idCell id cellu
+     * @return boolean žádá či ne
+     */
+    public function loadCellChanged($idPage, $idCell, $parameters) {
+        unset($parameters[self::ID]);
+        foreach ($parameters as $idModule => $param) {
+            // zjisti z modelu danneho modulu zda neovlivnil tento cell... pokud ano vraci true a je treba nacist cell podle modulu
+            $moduleModelName = $this->modules[$idModule]['label'].'ModuleModel'; // @todo loaduje z cache takze muze byt stara verze modules
+            if (!class_exists($moduleModelName)) {
+                throw new Kate\ClassNotFoundException('Modul "'.$moduleModelName.'" dosun nebyl implementován.');
+            }
+            if ($moduleModelName::get()->loadCellChanged($idPage, $idCell, $param)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Vrací informace o slotu v daném cellu a stránce del pageParameters
+     * @param int $idCell id cellu
+     * @return array pole s informaci o slotu
+     */
+    public function loadSlot($idPage, $idCell, $parameters) {
+        if ($this->loadCellChanged($idPage, $idCell, $parameters)) {
+            $args = array();
+            $sql = '';
+            
+        } else {
+            $sql = 'SELECT *
+                FROM slotonpageincell
+                JOIN slot ON (slot.id_slot = slotonpageincell.id_slot)
+                JOIN phrase AS slot_phrase ON (slot_phrase.id_phrase = slot.id_phrase)
+                JOIN contentinslot ON (contentinslot.id_slot = slot.id_slot)
+                JOIN content ON (content.id_content = contentinslot.id_content)
+                JOIN phrase AS content_phrase ON (content_phrase.id_phrase = content.id_phrase)
+                WHERE slotonpageincell.id_page = ? 
+                    AND slotonpageincell.id_cell = ? ';
+            $args = array($idPage, $idCell);
+        }
+        $q = $this->db->queryArgs($sql, $args);
+        return $q->fetchAll();
+    }
     
     /**
      * Vrací nastavení podle klíče z tabulky setting

@@ -23,7 +23,16 @@ class HomepagePresenter extends Kate\Main\Presenter
             $pageModel = PageModel::get();
             
             $parameters = $pageModel->getPageParameters();
-            $layout = $pageModel->cache()->loadPageLayout($parameters[PageModel::ID]);
+            $idPage = $pageModel->cache()->loadPageId($parameters[PageModel::ID]);
+            $layout = $pageModel->cache()->loadPageLayout($idPage);
+            
+            foreach ($layout as &$cell) {
+                $idCell = $cell['id_cell'];
+                if ($pageModel->cache()->loadCellChanged($idPage, $idCell, $parameters)) {
+                    $this->invalidateControl('page_cell_'.$idPage.'_'.$idCell);
+                }
+                $cell['slot'] = $pageModel->cache()->loadSlot($idPage, $idCell, $parameters);
+            }
             
 	}
 
