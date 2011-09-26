@@ -171,23 +171,33 @@ class PageModel extends Model {
      */
     public function loadSlot($idPage, $idCell, $parameters) {
         if ($this->loadCellChanged($idPage, $idCell, $parameters)) {
-            $args = array();
-            $sql = '';
-            
+            unset($parameters[self::ID]);
+            foreach ($parameters as $idModule => $param) {
+                // zjisti z modelu danneho modulu zda neovlivnil tento cell... pokud ano vraci true a je treba nacist cell podle modulu
+                $moduleModelName = $this->modules[$idModule]['label'].'ModuleModel'; // @todo loaduje z cache takze muze byt stara verze modules
+                if (!class_exists($moduleModelName)) {
+                    throw new Kate\ClassNotFoundException('Modul "'.$moduleModelName.'" dosun nebyl implementován.');
+                }
+                $slot = $moduleModelName::get()->loadSlot($idPage, $idCell, $param);
+                if ($slot) {
+                    return $slot;
+                }
+            }
         } else {
-            $sql = 'SELECT *
+            $sql = 'SELECT slot.*, slot_phrase.*, contentinslot.*, content.*, content_phrase.*
                 FROM slotonpageincell
-                JOIN slot ON (slot.id_slot = slotonpageincell.id_slot)
-                JOIN phrase AS slot_phrase ON (slot_phrase.id_phrase = slot.id_phrase)
-                JOIN contentinslot ON (contentinslot.id_slot = slot.id_slot)
-                JOIN content ON (content.id_content = contentinslot.id_content)
-                JOIN phrase AS content_phrase ON (content_phrase.id_phrase = content.id_phrase)
+                LEFT JOIN slot ON (slot.id_slot = slotonpageincell.id_slot)
+                LEFT JOIN phrase AS slot_phrase ON (slot_phrase.id_phrase = slot.id_phrase)
+                LEFT JOIN contentinslot ON (contentinslot.id_slot = slot.id_slot)
+                LEFT JOIN content ON (content.id_content = contentinslot.id_content)
+                LEFT JOIN phrase AS content_phrase ON (content_phrase.id_phrase = content.id_phrase)
                 WHERE slotonpageincell.id_page = ? 
                     AND slotonpageincell.id_cell = ? ';
             $args = array($idPage, $idCell);
+            $q = $this->db->queryArgs($sql, $args);
+            $res = $q->fetchAll();
+            return $res;
         }
-        $q = $this->db->queryArgs($sql, $args);
-        return $q->fetchAll();
     }
     
     /**

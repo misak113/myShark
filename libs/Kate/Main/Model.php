@@ -15,11 +15,9 @@ abstract class Model extends \Nette\Object implements IEnclosed {
     
     
     protected $db, $cache;
-    protected static $sdb;
     
     protected function __construct() {
         $this->db = Loader::get()->getDatabase();
-        self::$sdb = $this->db;
         $this->cache = new Cache($this);
     }
     

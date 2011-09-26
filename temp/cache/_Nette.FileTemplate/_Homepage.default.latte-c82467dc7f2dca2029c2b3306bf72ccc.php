@@ -1,17 +1,17 @@
-<?php //netteCache[01]000429a:2:{s:4:"time";s:21:"0.64854400 1316907020";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:106:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\Homepage\default.latte";i:2;i:1316907019;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"f38d86f released on 2011-08-24";}}}?><?php
+<?php //netteCache[01]000429a:2:{s:4:"time";s:21:"0.27812700 1316974551";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:106:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\Homepage\default.latte";i:2;i:1316974530;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"f38d86f released on 2011-08-24";}}}?><?php
 
 // source file: C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\Homepage\default.latte
 
-?><?php list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, 'iym6ifblwb')
+?><?php list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, 'p42id8cj82')
 ;//
 // block content
 //
-if (!function_exists($_l->blocks['content'][] = '_lb05310167dc_content')) { function _lb05310167dc_content($_l, $_args) { extract($_args)
+if (!function_exists($_l->blocks['content'][] = '_lb782da8b061_content')) { function _lb782da8b061_content($_l, $_args) { extract($_args)
 ?>
 <div id="wrapper">
         
 <div id="<?php echo $control->getSnippetId('good') ?>"><?php call_user_func(reset($_l->blocks['_good']), $_l, $template->getParams()) ?>
-</div>
+</div>{}
 <div id="<?php echo $control->getSnippetId('bad') ?>"><?php call_user_func(reset($_l->blocks['_bad']), $_l, $template->getParams()) ?>
 </div>        
 </div>
@@ -21,7 +21,7 @@ if (!function_exists($_l->blocks['content'][] = '_lb05310167dc_content')) { func
 //
 // block _good
 //
-if (!function_exists($_l->blocks['_good'][] = '_lbb9d65b45b7__good')) { function _lbb9d65b45b7__good($_l, $_args) { extract($_args); $control->validateControl('good')
+if (!function_exists($_l->blocks['_good'][] = '_lb33873b05c9__good')) { function _lb33873b05c9__good($_l, $_args) { extract($_args); $control->validateControl('good')
 ?>
         <p>good - {}</p>
 <?php
@@ -30,7 +30,7 @@ if (!function_exists($_l->blocks['_good'][] = '_lbb9d65b45b7__good')) { function
 //
 // block _bad
 //
-if (!function_exists($_l->blocks['_bad'][] = '_lb212a77c5f9__bad')) { function _lb212a77c5f9__bad($_l, $_args) { extract($_args); $control->validateControl('bad')
+if (!function_exists($_l->blocks['_bad'][] = '_lb175d8c6c12__bad')) { function _lb175d8c6c12__bad($_l, $_args) { extract($_args); $control->validateControl('bad')
 ?>
         <p>bad - {}</p>
 <?php
@@ -39,7 +39,7 @@ if (!function_exists($_l->blocks['_bad'][] = '_lb212a77c5f9__bad')) { function _
 //
 // block head
 //
-if (!function_exists($_l->blocks['head'][] = '_lbe6e88be6a1_head')) { function _lbe6e88be6a1_head($_l, $_args) { extract($_args)
+if (!function_exists($_l->blocks['head'][] = '_lb21d4323537_head')) { function _lb21d4323537_head($_l, $_args) { extract($_args)
 ?>
 <script>
     $(document).ready(function () {

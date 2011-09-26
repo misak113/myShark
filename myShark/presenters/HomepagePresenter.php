@@ -34,6 +34,8 @@ class HomepagePresenter extends Kate\Main\Presenter
                 $cell['slot'] = $pageModel->cache()->loadSlot($idPage, $idCell, $parameters);
             }
             
+            $this->template->page = $layout;
+            \Nette\Diagnostics\Debugger::dump($layout[2]);
 	}
 
 }
