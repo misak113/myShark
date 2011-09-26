@@ -26,7 +26,7 @@ class Loader extends \Nette\Object implements IEnclosed {
     private $configurator = null;
     
     
-    public static $DEBUG_MODE, $pageModel;
+    public static $DEBUG_MODE, $CACHE_MODE, $pageModel;
     
     public static $BASE_PATH, $CACHE_STORAGE_PATH, $TEMP_PATH, $WWW_PATH, $IMAGES_PATH, $USERFILES_PATH,
             $BASE_URL;
@@ -61,6 +61,7 @@ class Loader extends \Nette\Object implements IEnclosed {
         
         //zjistí zda je v debugovacím módu
         self::$DEBUG_MODE = isset($this->configurator->container->params['debugMode'])?$this->configurator->container->params['debugMode']:false;
+        self::$CACHE_MODE = isset($this->configurator->container->params['cacheMode'])?$this->configurator->container->params['cacheMode']:false;
         
         // Enable Nette\Debug for error visualisation & logging
         if (self::$DEBUG_MODE) {
@@ -113,9 +114,9 @@ class Loader extends \Nette\Object implements IEnclosed {
         $reflection = new \Nette\Database\Reflection\DatabaseReflection('id_%s', 'id_%s', '%s');//@todo dodelat... nyni funguje jen pro phrase
         
         $db = $this->configurator->container->params['database'];
-        $dsn = "{$db->driver}:host={$db->host};dbname={$db->database}".
-                ((isset($db->port)) ?";port={$db->port}" :"");
-        $this->database = new \Nette\Database\Connection($dsn, $db->username, $db->password, null, $reflection);
+        $dsn = "{$db['driver']}:host={$db['host']};dbname={$db['database']}".
+                ((isset($db['port'])) ?";port={$db['port']}" :"");
+        $this->database = new \Nette\Database\Connection($dsn, $db['username'], $db['password'], null, $reflection);
     }
     
     /**
@@ -136,6 +137,9 @@ class Loader extends \Nette\Object implements IEnclosed {
     
     public static function isDebugMode() {
         return self::$DEBUG_MODE;
+    }
+    public static function isCacheMode() {
+        return self::$CACHE_MODE;
     }
     
     public static function getBasePath() {

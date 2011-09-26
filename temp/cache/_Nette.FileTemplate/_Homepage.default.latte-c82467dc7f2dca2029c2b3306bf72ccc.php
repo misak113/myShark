@@ -1,12 +1,12 @@
-<?php //netteCache[01]000429a:2:{s:4:"time";s:21:"0.27812700 1316974551";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:106:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\Homepage\default.latte";i:2;i:1316974530;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"f38d86f released on 2011-08-24";}}}?><?php
+<?php //netteCache[01]000429a:2:{s:4:"time";s:21:"0.58050000 1317053377";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:106:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\Homepage\default.latte";i:2;i:1316974530;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"f38d86f released on 2011-08-24";}}}?><?php
 
 // source file: C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\Homepage\default.latte
 
-?><?php list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, 'p42id8cj82')
+?><?php list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, '91prktoy9c')
 ;//
 // block content
 //
-if (!function_exists($_l->blocks['content'][] = '_lb782da8b061_content')) { function _lb782da8b061_content($_l, $_args) { extract($_args)
+if (!function_exists($_l->blocks['content'][] = '_lb978ec0d77e_content')) { function _lb978ec0d77e_content($_l, $_args) { extract($_args)
 ?>
 <div id="wrapper">
         
@@ -21,7 +21,7 @@ if (!function_exists($_l->blocks['content'][] = '_lb782da8b061_content')) { func
 //
 // block _good
 //
-if (!function_exists($_l->blocks['_good'][] = '_lb33873b05c9__good')) { function _lb33873b05c9__good($_l, $_args) { extract($_args); $control->validateControl('good')
+if (!function_exists($_l->blocks['_good'][] = '_lbbe0d6ff573__good')) { function _lbbe0d6ff573__good($_l, $_args) { extract($_args); $control->validateControl('good')
 ?>
         <p>good - {}</p>
 <?php
@@ -30,7 +30,7 @@ if (!function_exists($_l->blocks['_good'][] = '_lb33873b05c9__good')) { function
 //
 // block _bad
 //
-if (!function_exists($_l->blocks['_bad'][] = '_lb175d8c6c12__bad')) { function _lb175d8c6c12__bad($_l, $_args) { extract($_args); $control->validateControl('bad')
+if (!function_exists($_l->blocks['_bad'][] = '_lbc2096dee25__bad')) { function _lbc2096dee25__bad($_l, $_args) { extract($_args); $control->validateControl('bad')
 ?>
         <p>bad - {}</p>
 <?php
@@ -39,7 +39,7 @@ if (!function_exists($_l->blocks['_bad'][] = '_lb175d8c6c12__bad')) { function _
 //
 // block head
 //
-if (!function_exists($_l->blocks['head'][] = '_lb21d4323537_head')) { function _lb21d4323537_head($_l, $_args) { extract($_args)
+if (!function_exists($_l->blocks['head'][] = '_lba95c82d69c_head')) { function _lba95c82d69c_head($_l, $_args) { extract($_args)
 ?>
 <script>
     $(document).ready(function () {

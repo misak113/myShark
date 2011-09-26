@@ -9,12 +9,12 @@ class HtmlModuleModel extends ModuleModel {
     const LABEL = 'Html';
     const PARENT_ID = 2;
     
-    public function loadCellChanged($idPage, $idCell, $params) {
-        
+    public function loadSlot($idPage, $idCell, $params) {
+        return false;
     }
     
-    public function loadSlot($idPage, $idCell, $params) {
-        
+    public function loadContent($content) {
+        return false;
     }
 }
 ?>

@@ -16,7 +16,7 @@ class PageModel extends Model {
     
     
     
-    private $setting, $web, $modules,  $pageId,
+    private $setting, $web, $modules, $languages,
             // Defaultní stránka null
             $pageParameters = array(self::ID => null),
             // Deafaultní jazyk
@@ -30,6 +30,7 @@ class PageModel extends Model {
         $this->web = $this->cache->loadWeb();
         $this->setting =$this->cache->loadSetting();
         $this->modules = $this->cache->loadModules();
+        $this->languages = $this->cache->loadLanguages();
     }
     
     /**
@@ -57,6 +58,16 @@ class PageModel extends Model {
         return array();
     }
     
+    public function loadLanguages() {
+        return array(
+            1 => array(
+                'shortcut' => 'cs',
+                'location' => 'cz',
+            ),
+        );
+    }
+
+
     /**
      * Načte moduly z databáze
      * @return array moduly
@@ -130,7 +141,9 @@ class PageModel extends Model {
      * @return array
      */
     public function loadPageLayout($idPage) {
-        $sql = 'SELECT *
+        $sql = 'SELECT page.id_page, page_phrase.text AS page_text, page_phrase.link AS page_link, page.order AS page_order,
+                layout.id_layout, layout_phrase.text AS layout_text, layout_phrase.link AS layout_link, 
+                cell.*, geometry.*
             FROM cell
             JOIN layout ON (cell.id_layout = layout.id_layout)
             JOIN phrase AS layout_phrase ON (layout.id_phrase = layout_phrase.id_phrase)
@@ -141,27 +154,8 @@ class PageModel extends Model {
             ORDER BY cell.row, cell.col ';
         $args = array($idPage);
         $q = $this->db->queryArgs($sql, $args);
-        return $q->fetchAll();
-    }
-    
-    /**
-     * Vrací zda request žádá o změnu danného cell podle pageParameters
-     * @param int $idCell id cellu
-     * @return boolean žádá či ne
-     */
-    public function loadCellChanged($idPage, $idCell, $parameters) {
-        unset($parameters[self::ID]);
-        foreach ($parameters as $idModule => $param) {
-            // zjisti z modelu danneho modulu zda neovlivnil tento cell... pokud ano vraci true a je treba nacist cell podle modulu
-            $moduleModelName = $this->modules[$idModule]['label'].'ModuleModel'; // @todo loaduje z cache takze muze byt stara verze modules
-            if (!class_exists($moduleModelName)) {
-                throw new Kate\ClassNotFoundException('Modul "'.$moduleModelName.'" dosun nebyl implementován.');
-            }
-            if ($moduleModelName::get()->loadCellChanged($idPage, $idCell, $param)) {
-                return true;
-            }
-        }
-        return false;
+        $res = $q->fetchAll();
+        return self::createPageLayoutFromDBFetch($res);
     }
     
     /**
@@ -170,21 +164,27 @@ class PageModel extends Model {
      * @return array pole s informaci o slotu
      */
     public function loadSlot($idPage, $idCell, $parameters) {
-        if ($this->loadCellChanged($idPage, $idCell, $parameters)) {
-            unset($parameters[self::ID]);
-            foreach ($parameters as $idModule => $param) {
-                // zjisti z modelu danneho modulu zda neovlivnil tento cell... pokud ano vraci true a je treba nacist cell podle modulu
-                $moduleModelName = $this->modules[$idModule]['label'].'ModuleModel'; // @todo loaduje z cache takze muze byt stara verze modules
-                if (!class_exists($moduleModelName)) {
-                    throw new Kate\ClassNotFoundException('Modul "'.$moduleModelName.'" dosun nebyl implementován.');
-                }
-                $slot = $moduleModelName::get()->loadSlot($idPage, $idCell, $param);
-                if ($slot) {
-                    return $slot;
-                }
+        unset($parameters[self::ID]);
+        $res = false;
+        foreach ($parameters as $idModule => $param) {
+            // zjisti z modelu danneho modulu zda neovlivnil tento cell... pokud ano vraci true a je treba nacist cell podle modulu
+            $moduleModelName = $this->modules[$idModule]['label'] . 'ModuleModel'; // @todo loaduje z cache takze muze byt stara verze modules
+            if (!class_exists($moduleModelName)) {
+                throw new Kate\ClassNotFoundException('Modul "' . $moduleModelName . '" dosun nebyl implementován.');
             }
+            $res = $moduleModelName::get()->loadSlot($idPage, $idCell, $param);
+            if ($res !== false) {
+                // Pokud se nějak změní podle parametru slot... Priorita modulu je podle ID
+                break;
+            }
+        }
+        if ($res !== false) {
+            $slot = self::createSlotFromDBFetch($res);
+            $slot['invalidate'] = true;
+            return $slot;
         } else {
-            $sql = 'SELECT slot.*, slot_phrase.*, contentinslot.*, content.*, content_phrase.*
+            $sql = 'SELECT slot.id_slot, slot_phrase.text AS slot_text, slot_phrase.link AS slot_link, 
+                    contentinslot.order AS content_order, content.id_content, content.id_module, content_phrase.text AS content_text, content_phrase.link AS content_link
                 FROM slotonpageincell
                 LEFT JOIN slot ON (slot.id_slot = slotonpageincell.id_slot)
                 LEFT JOIN phrase AS slot_phrase ON (slot_phrase.id_phrase = slot.id_phrase)
@@ -192,13 +192,103 @@ class PageModel extends Model {
                 LEFT JOIN content ON (content.id_content = contentinslot.id_content)
                 LEFT JOIN phrase AS content_phrase ON (content_phrase.id_phrase = content.id_phrase)
                 WHERE slotonpageincell.id_page = ? 
-                    AND slotonpageincell.id_cell = ? ';
+                    AND slotonpageincell.id_cell = ? 
+                ORDER BY content_order';
             $args = array($idPage, $idCell);
             $q = $this->db->queryArgs($sql, $args);
             $res = $q->fetchAll();
-            return $res;
+            $slot = self::createSlotFromDBFetch($res);
+            $slot['invalidate'] = false;
+            return $slot;
         }
     }
+    
+    /**
+     * Vrací odpověď daného modulu, který je vnořen do content
+     * @param array $content content array
+     * @return module informations
+     */
+    public function loadContent($content) {
+        $idModule = $content['id_module'];
+        $moduleModelName = $this->modules[$idModule]['label'] . 'ModuleModel'; // @todo loaduje z cache takze muze byt stara verze modules
+        if (!class_exists($moduleModelName)) {
+            throw new Kate\ClassNotFoundException('Modul "' . $moduleModelName . '" dosun nebyl implementován.');
+        }
+        $res = $moduleModelName::get()->loadContent($content['id_content']);
+    }
+
+    /**
+     * Předělá z databázové řádky klasické array s contents
+     * @param Nette\Database\Row $res řádek databáze
+     * @return array výsledný slot nebo false
+     */
+    private static function createSlotFromDBFetch($res) {
+        if (!$res || count($res) == 0 || !is_array($res)) {
+            return false;
+        }
+        $first = reset($res);
+        $slot = array(
+            'id_slot' => $first->offsetGet('id_slot'),
+            'text' => $first->offsetGet('slot_text'),
+            'link' => $first->offsetGet('slot_link'),
+        );
+        $contents = array();
+        foreach ($res as $row) {
+            $contents[] = array(
+                'id_content' => $row->offsetGet('id_slot'),
+                'order' => $row->offsetGet('content_order'),
+                'text' => $row->offsetGet('content_text'),
+                'link' => $row->offsetGet('content_link'),
+                'id_module' => $row->offsetGet('id_module'),
+            );
+        }
+        $slot['contents'] = $contents;
+        return $slot;
+    }
+    
+    /**
+     * Přemění z řádku databáze na pole
+     * @param Nette\Database\Row $res řádek databáze
+     * @return pole
+     */
+    public static function createPageLayoutFromDBFetch($res) {
+        if (!$res || count($res) == 0 || !is_array($res)) {
+            return false;
+        }
+        $first = reset($res);
+        $pageLayout = array(
+            'page' => array(
+                'id_page' => $first->offsetGet('id_page'),
+                'text' => $first->offsetGet('page_text'),
+                'link' => $first->offsetGet('page_link'),
+                'order' => $first->offsetGet('page_order'),
+            ),
+            'layout' => array(
+                'id_layout' => $first->offsetGet('id_layout'),
+                'text' => $first->offsetGet('layout_text'),
+                'link' => $first->offsetGet('layout_link'),
+            ),
+        );
+        $cells = array();
+        foreach ($res as $row) {
+            $cells[] = array(
+                'id_cell' => $row->offsetGet('id_cell'),
+                'id_geometry' => $row->offsetGet('id_geometry'),
+                'row' => $row->offsetGet('row'),
+                'col' => $row->offsetGet('col'),
+                'static' => $row->offsetGet('static'),
+                'rowspan' => $row->offsetGet('rowspan'),
+                'colspan' => $row->offsetGet('colspan'),
+                'width' => $row->offsetGet('width'),
+                'width_unit' => $row->offsetGet('width_unit'),
+                'height' => $row->offsetGet('height'),
+                'height_unit' => $row->offsetGet('height_unit'),
+            );
+        }
+        $pageLayout['cells'] = $cells;
+        return $pageLayout;
+    }
+    
     
     /**
      * Vrací nastavení podle klíče z tabulky setting
@@ -223,6 +313,19 @@ class PageModel extends Model {
     public function setLanguage($shortcut, $location) {
         $this->language['shortcut'] = $shortcut;
         $this->language['location'] = $location;
+    }
+    
+    public function getLanguage() {
+        $activeIdLanguage = null;
+        foreach ($this->languages as $idLanguage => $language) {
+            if ($language['shortcut'] == $this->language['shortcut']) {
+                $activeIdLanguage = $idLanguage;
+                if ($language['location'] == $this->language['location']) {
+                    $activeIdLanguage = $idLanguage;
+                }
+            }
+        }
+        return $activeIdLanguage;
     }
     
     public function setPageParameters($parameters) {

@@ -24,18 +24,23 @@ class HomepagePresenter extends Kate\Main\Presenter
             
             $parameters = $pageModel->getPageParameters();
             $idPage = $pageModel->cache()->loadPageId($parameters[PageModel::ID]);
-            $layout = $pageModel->cache()->loadPageLayout($idPage);
+            $pageLayout = $pageModel->cache()->loadPageLayout($idPage);
             
-            foreach ($layout as &$cell) {
+            foreach ($pageLayout['cells'] as &$cell) {
                 $idCell = $cell['id_cell'];
-                if ($pageModel->cache()->loadCellChanged($idPage, $idCell, $parameters)) {
+                $slot = $pageModel->cache()->loadSlot($idPage, $idCell, $parameters);
+                if ($slot['invalidate'] === true) {
                     $this->invalidateControl('page_cell_'.$idPage.'_'.$idCell);
                 }
-                $cell['slot'] = $pageModel->cache()->loadSlot($idPage, $idCell, $parameters);
+                foreach ($slot['contents'] as &$content) {
+                    $content['module'] = $pageModel->cache()->loadContent($content);
+                }
+                $cell['slot'] = $slot;
             }
             
-            $this->template->page = $layout;
-            \Nette\Diagnostics\Debugger::dump($layout[2]);
+            $this->template->page = $pageLayout;
+            var_export($pageLayout);
+            //\Nette\Diagnostics\Debugger::dump($pageLayout);
 	}
 
 }

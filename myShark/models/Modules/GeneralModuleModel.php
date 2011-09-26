@@ -6,7 +6,10 @@ class GeneralModuleModel extends ModuleModel {
     const LABEL = 'General';
     const PARENT_ID = null;
     
-    public function loadCellChanged($idPage, $idCell, $params) {
+    public function loadSlot($idPage, $idCell, $params) {
+        return false;
+    }
+    public function loadContent($content) {
         return false;
     }
 }

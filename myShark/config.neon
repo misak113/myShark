@@ -19,6 +19,16 @@ common:
 			run: true
 
 production < common:
+	database:
+		driver:	mysql
+		host:	localhost
+		database:	myshark
+		username:	root
+		password:	misak
+		profiler:	true
+
+	debugMode:	false
+	cacheMode:	true
 
 development < common:
 	database:
@@ -29,6 +39,7 @@ development < common:
 		password:	misak
 		profiler:	true
 
-	debugMode:  true
+	debugMode:	true
+	cacheMode:	false
 
 console < common:

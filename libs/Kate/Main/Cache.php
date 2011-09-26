@@ -73,7 +73,7 @@ class Cache extends \Nette\Object {
      * @todo
      */
     private function hasForceCall($name) {
-        return Loader::isDebugMode();
+        return !Loader::isCacheMode();
     }
     
     
