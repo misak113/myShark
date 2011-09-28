@@ -13,6 +13,8 @@ class PageModel extends Model {
     const DEFAULT_PAGE_NAME_LINK = 'myShark';
     const DEFAULT_PAGE_NAME = 'Redakční systém myShark';
     
+    const LINK_ERROR_404 = 'error-404';
+    
     
     
     
@@ -27,10 +29,19 @@ class PageModel extends Model {
     
     protected function __construct() {
         parent::__construct();
+        $this->cache->alterDatabase();
         $this->web = $this->cache->loadWeb();
         $this->setting =$this->cache->loadSetting();
         $this->modules = $this->cache->loadModules();
         $this->languages = $this->cache->loadLanguages();
+    }
+    
+    /**
+     * Pokusí se updatovat databázi podle schéma a vložit základní prvky do databáze...
+     * @todo
+     */
+    public function alterDatabase() {
+        
     }
     
     /**
@@ -208,13 +219,15 @@ class PageModel extends Model {
      * @param array $content content array
      * @return module informations
      */
-    public function loadContent($content) {
+    public function loadContent($content, $parameters) {
         $idModule = $content['id_module'];
         $moduleModelName = $this->modules[$idModule]['label'] . 'ModuleModel'; // @todo loaduje z cache takze muze byt stara verze modules
         if (!class_exists($moduleModelName)) {
             throw new Kate\ClassNotFoundException('Modul "' . $moduleModelName . '" dosun nebyl implementován.');
         }
-        $res = $moduleModelName::get()->loadContent($content['id_content']);
+        $params = isset($parameters[$idModule]) ?$parameters[$idModule] :false;
+        $moduleContent = $moduleModelName::get()->loadContent($content['id_content'], $params);
+        return $moduleContent;
     }
 
     /**
@@ -251,7 +264,7 @@ class PageModel extends Model {
      * @param Nette\Database\Row $res řádek databáze
      * @return pole
      */
-    public static function createPageLayoutFromDBFetch($res) {
+    private static function createPageLayoutFromDBFetch($res) {
         if (!$res || count($res) == 0 || !is_array($res)) {
             return false;
         }

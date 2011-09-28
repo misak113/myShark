@@ -73,8 +73,13 @@ class MenuModuleModel extends ModuleModel {
         return false;
     }
     
-    public function loadContent($content) {
-        return false;
+    /**
+     * Tato funkce nacita obsah contentu pro daný model, tedy Menu.
+     * @param array $content content
+     * @return array obsah modelu
+     */
+    public function loadContent($content, $params) {
+        return 'MENU';
     }
 }
 ?>

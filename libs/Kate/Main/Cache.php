@@ -35,7 +35,8 @@ class Cache extends \Nette\Object {
         $value = $this->cache->load($key);
         if ($value === NULL || $forceCall === true) {
             $expiration = $this->getExpiration($name);
-            
+            // @todo udelat aby se do klice cache zapisovali i stavy instance tedy jeji atributy a nejlepe i jeji stavy atributu po provedeni fce
+            // 
             // Zviditelnění privatní fce
             /* @todo dodelat pristup k privatnim fci pres nejaky tricek... tohle funguje, ale je treba aby byla fce deklarovana ve tride :/
             $publicName = 'public_'.$name;

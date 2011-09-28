@@ -1,19 +1,18 @@
-<?php //netteCache[01]000429a:2:{s:4:"time";s:21:"0.58050000 1317053377";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:106:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\Homepage\default.latte";i:2;i:1316974530;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"f38d86f released on 2011-08-24";}}}?><?php
+<?php //netteCache[01]000429a:2:{s:4:"time";s:21:"0.63051200 1317236977";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:106:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\Homepage\default.latte";i:2;i:1317236975;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"f38d86f released on 2011-08-24";}}}?><?php
 
 // source file: C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\Homepage\default.latte
 
-?><?php list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, '91prktoy9c')
+?><?php list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, '1m8nurp0zg')
 ;//
 // block content
 //
-if (!function_exists($_l->blocks['content'][] = '_lb978ec0d77e_content')) { function _lb978ec0d77e_content($_l, $_args) { extract($_args)
+if (!function_exists($_l->blocks['content'][] = '_lbad39000dbc_content')) { function _lbad39000dbc_content($_l, $_args) { extract($_args)
 ?>
 <div id="wrapper">
         
 <div id="<?php echo $control->getSnippetId('good') ?>"><?php call_user_func(reset($_l->blocks['_good']), $_l, $template->getParams()) ?>
-</div>{}
-<div id="<?php echo $control->getSnippetId('bad') ?>"><?php call_user_func(reset($_l->blocks['_bad']), $_l, $template->getParams()) ?>
 </div>        
+        
 </div>
 <?php
 }}
@@ -21,25 +20,22 @@ if (!function_exists($_l->blocks['content'][] = '_lb978ec0d77e_content')) { func
 //
 // block _good
 //
-if (!function_exists($_l->blocks['_good'][] = '_lbbe0d6ff573__good')) { function _lbbe0d6ff573__good($_l, $_args) { extract($_args); $control->validateControl('good')
-?>
-        <p>good - {}</p>
-<?php
-}}
+if (!function_exists($_l->blocks['_good'][] = '_lbd5a57e01ed__good')) { function _lbd5a57e01ed__good($_l, $_args) { extract($_args); $control->validateControl('good')
+;$iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($page['cells']) as $cell): ?>
+<div id="<?php echo $_dynSnippetId = $control->getSnippetId('page_cell_'.$page['page']['id_page'].'_'.$cell['id_cell']) ?>
+"><?php ob_start() ?>
+                    <?php echo Nette\Templating\DefaultHelpers::escapeHtml(var_export($cell), ENT_NOQUOTES) ?>
 
-//
-// block _bad
-//
-if (!function_exists($_l->blocks['_bad'][] = '_lbc2096dee25__bad')) { function _lbc2096dee25__bad($_l, $_args) { extract($_args); $control->validateControl('bad')
-?>
-        <p>bad - {}</p>
-<?php
+<?php $_dynSnippets[$_dynSnippetId] = ob_get_flush() ?>
+</div><?php $iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ?>
+        <p>good - {}</p>
+<?php if (isset($_dynSnippets)) return $_dynSnippets; 
 }}
 
 //
 // block head
 //
-if (!function_exists($_l->blocks['head'][] = '_lba95c82d69c_head')) { function _lba95c82d69c_head($_l, $_args) { extract($_args)
+if (!function_exists($_l->blocks['head'][] = '_lbe615c7eb9f_head')) { function _lbe615c7eb9f_head($_l, $_args) { extract($_args)
 ?>
 <script>
     $(document).ready(function () {

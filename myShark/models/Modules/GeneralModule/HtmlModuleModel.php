@@ -13,7 +13,7 @@ class HtmlModuleModel extends ModuleModel {
         return false;
     }
     
-    public function loadContent($content) {
+    public function loadContent($content, $params) {
         return false;
     }
 }

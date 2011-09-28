@@ -4,12 +4,14 @@
 <div id="wrapper">
         
         {snippet good}
+            {foreach $page['cells'] as $cell}
+                {snippet 'page_cell_'.$page['page']['id_page'].'_'.$cell['id_cell']}
+                    {var_export($cell)}
+                {/snippet}
+            {/foreach}
         <p>good - {}</p>
         {/snippet}
-{}
-        {snippet bad}
-        <p>bad - {}</p>
-        {/snippet}
+        
         
 </div>
 {/block}

@@ -9,7 +9,7 @@ class GeneralModuleModel extends ModuleModel {
     public function loadSlot($idPage, $idCell, $params) {
         return false;
     }
-    public function loadContent($content) {
+    public function loadContent($content, $params) {
         return false;
     }
 }
