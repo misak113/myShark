@@ -1,0 +1,13 @@
+{* Šablona pro Menu modul *}
+
+{if $moduleContent['items']}
+<ul class="items">
+    {foreach $moduleContent['items'] as $item}
+    <li id="Menu-item-{$item['id_item']}" class="item link--{$item['link']}">
+        <a href="{$item['reference']}">
+        {$item['text']}
+        </a>
+    </li>
+    {/foreach}
+</ul>
+{/if}

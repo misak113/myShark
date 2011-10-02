@@ -48,18 +48,20 @@ class HomepagePresenter extends Kate\Main\Presenter {
         $idPage = $page['page']['id_page'];
         
         // Načte správné obsahy do jednotlivých buněk
-        foreach ($page['cells'] as &$cell) {
-            $idCell = $cell['id_cell'];
-            // Načte sloty
-            $slot = $pageModel->cache()->loadSlot($idPage, $idCell, $parameters);
-            if ($slot['invalidate'] === true) {
-                $this->invalidateControl('page_cell_' . $idPage . '_' . $idCell);
+        foreach ($page['cells'] as &$row) {
+            foreach ($row as &$cell) {
+                $idCell = $cell['id_cell'];
+                // Načte sloty
+                $slot = $pageModel->cache()->loadSlot($idPage, $idCell, $parameters);
+                if ($slot['invalidate'] === true) {
+                    $this->invalidateControl('cell-' . $idCell);
+                }
+                // Načte obsahy modulů
+                foreach ($slot['contents'] as &$content) {
+                    $content['moduleContent'] = $pageModel->cache()->loadContent($content, $parameters);
+                }
+                $cell['slot'] = $slot;
             }
-            // Načte obsahy modulů
-            foreach ($slot['contents'] as &$content) {
-                $content['moduleContent'] = $pageModel->cache()->loadContent($content, $parameters);
-            }
-            $cell['slot'] = $slot;
         }
         return $page;
     }

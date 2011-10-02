@@ -1,33 +1,63 @@
-{* This is temporary page, you can delete it *}
+{* Toto je základní template pro zobrazení myShark *}
 
 {block content}
-<div id="wrapper">
+<div class="wrapper-page link--{$page['page']['link']}">
         
-        {snippet good}
-            {foreach $page['cells'] as $cell}
-                {snippet 'page_cell_'.$page['page']['id_page'].'_'.$cell['id_cell']}
-                    {var_export($cell)}
-                {/snippet}
+        {snippet page}
+    <div id="page-{$page['page']['id_page']}" class="page">
+        <div class="brace-page">
+            {if $page['cells']}
+            {foreach $page['cells'] as $row}
+                {foreach $row as $cell}
+        <div class="wrapper-cell">
+                    {snippet 'cell-'.$cell['id_cell']}
+            <div id="cell-{$cell['id_cell']}" class="cell">
+                <div class="brace-cell">
+                    <div class="wrapper-slot link--{$cell['slot']['link']}">
+                        <div id="slot-{$cell['slot']['id_slot']}" class="slot">
+                            <div class="brace-slot">
+                        {if $cell['slot']['contents']}
+                        {foreach $cell['slot']['contents'] as $content}
+                                <div class="wrapper-content link--{$content['link']}">
+                                    <div id="content-{$content['id_content']}" class="content">
+                                        <div class="brace-content {$content['moduleLabel']}">
+                                            {include $modulesPath.$content['moduleLabel'].S.'default.latte', moduleContent => $content['moduleContent']}
+                                        </div>
+                                    </div>
+                                </div>
+                        {/foreach}
+                        {/if}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    {/snippet}
+        </div>
+                {/foreach}
+        <div class="clear"></div>
             {/foreach}
-        <p>good - {}</p>
+            {/if}
+        </div>
+    </div>
         {/snippet}
-        
-        
+    
 </div>
 {/block}
 
 
 {block head}
-<script>
-    $(document).ready(function () {
-        return;
-        $.ajax({
-            url: './',
-            dataType: 'text',
-            success: function (data) {
-                alert(data);
-            }
-        });
-    });
-</script>
+<style type="text/css">
+    #body {
+        width: {$page['layout']['width']}px;
+    }
+    {foreach $page['cells'] as $row}
+        {foreach $row as $cell}
+    #cell-{$cell['id_cell']} {
+        width: {$cell['width']?$cell['width'].$cell['width_unit']:'auto'};
+        height: {$cell['height']?$cell['height'].$cell['height_unit']:'auto'};
+    }
+        {/foreach}
+    {/foreach}
+</style>
 {/block}

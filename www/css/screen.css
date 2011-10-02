@@ -1,0 +1,28 @@
+/* Style pro základní koponenty */
+
+body {
+    text-align: center;
+    margin: 0;
+}
+
+#body {
+    position: relative;
+    margin: 0 auto 0 auto;
+    text-align: left;
+}
+
+
+.cell {
+    background-color: #F7F0CB;
+    position: relative;
+    float: left;
+    min-height: 30px;
+}
+
+
+
+
+
+.clear {
+    clear: both;
+}

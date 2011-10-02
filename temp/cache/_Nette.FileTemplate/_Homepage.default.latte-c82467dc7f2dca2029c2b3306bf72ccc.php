@@ -1,54 +1,77 @@
-<?php //netteCache[01]000429a:2:{s:4:"time";s:21:"0.63051200 1317236977";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:106:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\Homepage\default.latte";i:2;i:1317236975;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"f38d86f released on 2011-08-24";}}}?><?php
+<?php //netteCache[01]000429a:2:{s:4:"time";s:21:"0.68695500 1317507874";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:106:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\Homepage\default.latte";i:2;i:1317507872;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"f38d86f released on 2011-08-24";}}}?><?php
 
 // source file: C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\Homepage\default.latte
 
-?><?php list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, '1m8nurp0zg')
+?><?php list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, 'hv6kss032g')
 ;//
 // block content
 //
-if (!function_exists($_l->blocks['content'][] = '_lbad39000dbc_content')) { function _lbad39000dbc_content($_l, $_args) { extract($_args)
+if (!function_exists($_l->blocks['content'][] = '_lbedfbe25378_content')) { function _lbedfbe25378_content($_l, $_args) { extract($_args)
 ?>
-<div id="wrapper">
+<div class="wrapper-page link--<?php echo htmlSpecialChars($page['page']['link']) ?>">
         
-<div id="<?php echo $control->getSnippetId('good') ?>"><?php call_user_func(reset($_l->blocks['_good']), $_l, $template->getParams()) ?>
-</div>        
-        
+<div id="<?php echo $control->getSnippetId('page') ?>"><?php call_user_func(reset($_l->blocks['_page']), $_l, $template->getParams()) ?>
+</div>    
 </div>
 <?php
 }}
 
 //
-// block _good
+// block _page
 //
-if (!function_exists($_l->blocks['_good'][] = '_lbd5a57e01ed__good')) { function _lbd5a57e01ed__good($_l, $_args) { extract($_args); $control->validateControl('good')
-;$iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($page['cells']) as $cell): ?>
-<div id="<?php echo $_dynSnippetId = $control->getSnippetId('page_cell_'.$page['page']['id_page'].'_'.$cell['id_cell']) ?>
+if (!function_exists($_l->blocks['_page'][] = '_lb376659fa92__page')) { function _lb376659fa92__page($_l, $_args) { extract($_args); $control->validateControl('page')
+?>
+    <div id="page-<?php echo htmlSpecialChars($page['page']['id_page']) ?>" class="page">
+        <div class="brace-page">
+<?php if ($page['cells']): $iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($page['cells']) as $row): $iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($row) as $cell): ?>
+        <div class="wrapper-cell">
+<div id="<?php echo $_dynSnippetId = $control->getSnippetId('cell-'.$cell['id_cell']) ?>
 "><?php ob_start() ?>
-                    <?php echo Nette\Templating\DefaultHelpers::escapeHtml(var_export($cell), ENT_NOQUOTES) ?>
-
+            <div id="cell-<?php echo htmlSpecialChars($cell['id_cell']) ?>" class="cell">
+                <div class="brace-cell">
+                    <div class="wrapper-slot link--<?php echo htmlSpecialChars($cell['slot']['link']) ?>">
+                        <div id="slot-<?php echo htmlSpecialChars($cell['slot']['id_slot']) ?>" class="slot">
+                            <div class="brace-slot">
+<?php if ($cell['slot']['contents']): $iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($cell['slot']['contents']) as $content): ?>
+                                <div class="wrapper-content link--<?php echo htmlSpecialChars($content['link']) ?>">
+                                    <div id="content-<?php echo htmlSpecialChars($content['id_content']) ?>" class="content">
+                                        <div class="brace-content <?php echo htmlSpecialChars($content['moduleLabel']) ?>">
+<?php Nette\Latte\Macros\CoreMacros::includeTemplate($modulesPath.$content['moduleLabel'].S.'default.latte', array('moduleContent' => $content['moduleContent']) + $template->getParams(), $_l->templates['hv6kss032g'])->render() ?>
+                                        </div>
+                                    </div>
+                                </div>
+<?php $iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ;endif ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 <?php $_dynSnippets[$_dynSnippetId] = ob_get_flush() ?>
-</div><?php $iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ?>
-        <p>good - {}</p>
+</div>        </div>
+<?php $iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ?>
+        <div class="clear"></div>
+<?php $iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ;endif ?>
+        </div>
+    </div>
 <?php if (isset($_dynSnippets)) return $_dynSnippets; 
 }}
 
 //
 // block head
 //
-if (!function_exists($_l->blocks['head'][] = '_lbe615c7eb9f_head')) { function _lbe615c7eb9f_head($_l, $_args) { extract($_args)
+if (!function_exists($_l->blocks['head'][] = '_lba70439441a_head')) { function _lba70439441a_head($_l, $_args) { extract($_args)
 ?>
-<script>
-    $(document).ready(function () {
-        return;
-        $.ajax({
-            url: './',
-            dataType: 'text',
-            success: function (data) {
-                alert(data);
-            }
-        });
-    });
-</script>
+<style type="text/css">
+    #body {
+        width: <?php echo Nette\Templating\DefaultHelpers::escapeCss($page['layout']['width']) ?>px;
+    }
+<?php $iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($page['cells']) as $row): $iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($row) as $cell): ?>
+    #cell-<?php echo Nette\Templating\DefaultHelpers::escapeCss($cell['id_cell']) ?> {
+        width: <?php echo Nette\Templating\DefaultHelpers::escapeCss($cell['width']?$cell['width'].$cell['width_unit']:'auto') ?>;
+        height: <?php echo Nette\Templating\DefaultHelpers::escapeCss($cell['height']?$cell['height'].$cell['height_unit']:'auto') ?>;
+    }
+<?php $iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ;$iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ?>
+</style>
 <?php
 }}
 

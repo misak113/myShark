@@ -154,7 +154,7 @@ class PageModel extends Model {
     public function loadPageLayout($idPage) {
         $sql = 'SELECT page.id_page, page_phrase.text AS page_text, page_phrase.link AS page_link, page.order AS page_order,
                 layout.id_layout, layout_phrase.text AS layout_text, layout_phrase.link AS layout_link, 
-                cell.*, geometry.*
+                cell.*, geometry.width, geometry.width_unit, geometry.height, geometry.height_unit
             FROM cell
             JOIN layout ON (cell.id_layout = layout.id_layout)
             JOIN phrase AS layout_phrase ON (layout.id_phrase = layout_phrase.id_phrase)
@@ -166,7 +166,7 @@ class PageModel extends Model {
         $args = array($idPage);
         $q = $this->db->queryArgs($sql, $args);
         $res = $q->fetchAll();
-        return self::createPageLayoutFromDBFetch($res);
+        return $this->createPageLayoutFromDBFetch($res);
     }
     
     /**
@@ -190,7 +190,7 @@ class PageModel extends Model {
             }
         }
         if ($res !== false) {
-            $slot = self::createSlotFromDBFetch($res);
+            $slot = $this->createSlotFromDBFetch($res);
             $slot['invalidate'] = true;
             return $slot;
         } else {
@@ -208,7 +208,7 @@ class PageModel extends Model {
             $args = array($idPage, $idCell);
             $q = $this->db->queryArgs($sql, $args);
             $res = $q->fetchAll();
-            $slot = self::createSlotFromDBFetch($res);
+            $slot = $this->createSlotFromDBFetch($res);
             $slot['invalidate'] = false;
             return $slot;
         }
@@ -235,7 +235,7 @@ class PageModel extends Model {
      * @param Nette\Database\Row $res řádek databáze
      * @return array výsledný slot nebo false
      */
-    private static function createSlotFromDBFetch($res) {
+    private function createSlotFromDBFetch($res) {
         if (!$res || count($res) == 0 || !is_array($res)) {
             return false;
         }
@@ -247,12 +247,14 @@ class PageModel extends Model {
         );
         $contents = array();
         foreach ($res as $row) {
+            $idModule = $row->offsetGet('id_module');
             $contents[] = array(
                 'id_content' => $row->offsetGet('id_slot'),
                 'order' => $row->offsetGet('content_order'),
                 'text' => $row->offsetGet('content_text'),
                 'link' => $row->offsetGet('content_link'),
-                'id_module' => $row->offsetGet('id_module'),
+                'id_module' => $idModule,
+                'moduleLabel' => $this->modules[$idModule]['label'], // @todo spatne nacita z cache
             );
         }
         $slot['contents'] = $contents;
@@ -264,7 +266,7 @@ class PageModel extends Model {
      * @param Nette\Database\Row $res řádek databáze
      * @return pole
      */
-    private static function createPageLayoutFromDBFetch($res) {
+    private function createPageLayoutFromDBFetch($res) {
         if (!$res || count($res) == 0 || !is_array($res)) {
             return false;
         }
@@ -276,15 +278,17 @@ class PageModel extends Model {
                 'link' => $first->offsetGet('page_link'),
                 'order' => $first->offsetGet('page_order'),
             ),
-            'layout' => array(
-                'id_layout' => $first->offsetGet('id_layout'),
-                'text' => $first->offsetGet('layout_text'),
-                'link' => $first->offsetGet('layout_link'),
-            ),
+            
         );
         $cells = array();
+        $layoutWidths = array();
         foreach ($res as $row) {
-            $cells[] = array(
+            $r = $row->offsetGet('row');
+            $c = $row->offsetGet('col');
+            if (!isset($cells[$r])) {
+                $cells[$r] = array();
+            }
+            $cells[$r][$c] = array(
                 'id_cell' => $row->offsetGet('id_cell'),
                 'id_geometry' => $row->offsetGet('id_geometry'),
                 'row' => $row->offsetGet('row'),
@@ -297,8 +301,20 @@ class PageModel extends Model {
                 'height' => $row->offsetGet('height'),
                 'height_unit' => $row->offsetGet('height_unit'),
             );
+            if (!isset($layoutWidths[$r])) {
+                $layoutWidths[$r] = 0;
+            }
+            if ($row->offsetGet('width_unit') == 'px') {
+                $layoutWidths[$r] += $row->offsetGet('width');
+            }
         }
         $pageLayout['cells'] = $cells;
+        $pageLayout['layout'] = array(
+            'id_layout' => $first->offsetGet('id_layout'),
+            'text' => $first->offsetGet('layout_text'),
+            'link' => $first->offsetGet('layout_link'),
+            'width' => max($layoutWidths),
+        );
         return $pageLayout;
     }
     

@@ -22,6 +22,8 @@ abstract class Presenter extends \Nette\Application\UI\Presenter
     // Vždy načítané styly
     private $styles = array(
         array('/css/screen.css', 'screen,projection,tv', 'text/css'),
+        array('/css/modules/Html.css', 'screen,projection,tv', 'text/css'),
+        array('/css/modules/Menu.css', 'screen,projection,tv', 'text/css'), // @todo predat do HomapagePresenter dynamicky
         array('/css/print.css', 'print', 'text/css'),
     );
     // Vždy načítané javascripty
@@ -50,6 +52,7 @@ abstract class Presenter extends \Nette\Application\UI\Presenter
     
     private function initPresenter() {
         $this->baseUrl = Loader::getBaseUrl();
+        $this->template->modulesPath = Loader::MODULES_DIR.S;
         $this->initStyles();
         $this->initScripts();
         $this->initTitle();

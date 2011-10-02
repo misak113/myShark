@@ -75,11 +75,93 @@ class MenuModuleModel extends ModuleModel {
     
     /**
      * Tato funkce nacita obsah contentu pro daný model, tedy Menu.
-     * @param array $content content
+     * @param array $idContent content
      * @return array obsah modelu
      */
-    public function loadContent($content, $params) {
-        return 'MENU';
+    public function loadContent($idContent, $params) {
+        $moduleContent = array();
+        $moduleContent['items'] = $this->loadItems($idContent);
+        return $moduleContent;
+    }
+    
+    private function loadItems($idContent, $idItemParent = false) {
+        $args = array();
+        $sql = 'SELECT modulemenu_item.id_item, modulemenu_item.id_page_reference, modulemenu_item.id_slot_reference, 
+                modulemenu_item.id_cell_reference, modulemenu_item.referenceType, modulemenu_item.referenceUrl, 
+                item_phrase.link AS item_link, item_phrase.text AS item_text, 
+                page_phrase.link AS page_link, slot_phrase.link AS slot_link,
+                COUNT(item_child.id_item) AS num_childs
+            FROM modulemenu_item
+            LEFT JOIN phrase AS item_phrase ON (item_phrase.id_phrase = modulemenu_item.id_phrase)
+            LEFT JOIN modulemenu_item AS item_child ON (item_child.id_item_parent = modulemenu_item.id_item)
+            
+            LEFT JOIN page ON (page.id_page = modulemenu_item.id_page_reference)
+            LEFT JOIN phrase AS page_phrase ON (page_phrase.id_phrase = page.id_phrase)
+            LEFT JOIN slot ON (slot.id_slot = modulemenu_item.id_slot_reference)
+            LEFT JOIN phrase AS slot_phrase ON (slot_phrase.id_phrase = slot.id_phrase)
+            
+            WHERE modulemenu_item.id_content = ? AND ';
+        $args[] = $idContent;
+        if ($idItemParent) {
+            $sql .= 'modulemenu_item.id_item_parent = ? ';
+            $args[] = $idItemParent;
+        } else {
+            $sql .= 'modulemenu_item.id_item_parent IS NULL ';
+        }
+        $sql .= 'GROUP BY modulemenu_item.id_item
+            ORDER BY modulemenu_item.order ';
+        $q = $this->db->queryArgs($sql, $args);
+        $res = $q->fetchAll();
+        if (empty($res)) {
+            return false;
+        }
+        $items = array();
+        foreach ($res as $row) {
+            $itemsChild = false;
+            if ($row->offsetGet('num_childs') > 0) {
+                $itemsChild = $this->loadItems($idContent, $row->offsetGet('id_item'));
+            }
+            $item = array(
+                'id_item' => $row->offsetGet('id_item'),
+                'items' => $itemsChild,
+                'references' => array(
+                    'page' => array(
+                        'id_page' => $row->offsetGet('id_page_reference'),
+                        'link' => $row->offsetGet('page_link'),
+                    ),
+                    'slot' => array(
+                        'id_cell' => $row->offsetGet('id_cell_reference'),
+                        'id_slot' => $row->offsetGet('id_slot_reference'),
+                        'link' => $row->offsetGet('slot_link'),
+                    ),
+                    'url' => array(
+                        'uri' => $row->offsetGet('referenceUrl'),
+                    ),
+                    'type' => $row->offsetGet('referenceType'),
+                ),
+                'link' => $row->offsetGet('item_link'),
+                'text' => $row->offsetGet('item_text'),
+            );
+            
+            switch ($row->offsetGet('referenceType')) {
+                case 'page':
+                    $reference = Kate\Main\Loader::$BASE_URL.'/'.$item['references']['page']['link'];
+                    break;
+                case 'slot':
+                    $reference = Kate\Main\Loader::$BASE_URL.'/'.$item['references']['page']['link'].'/'.$item['references']['slot']['link'];
+                    break;
+                case 'url':
+                    $reference = $item['references']['url']['uri'];
+                    break;
+                default:
+                    $reference = '';
+            }
+            $item['reference'] = $reference;
+            
+            // vytvorit spravne pole podle referenceType
+            $items[] = $item;
+        }
+        return $items;
     }
 }
 ?>
