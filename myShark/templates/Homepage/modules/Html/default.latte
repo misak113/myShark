@@ -1,13 +1,18 @@
 {* Šablona pro html modul *}
 
-{if $moduleContent['sections']}
-{foreach $moduleContent['sections'] as $section}
-<div class="wrapper-section link--{$section['link']}">
-    <div id="Html-section-{$section['id_section']}" class="section">
-        <div class="brace-section">
-            {!$section['text']}
+{block contentModuleHtml}
+    {if $moduleContent['sections']}
+        {foreach $moduleContent['sections'] as $section}
+        <div class="wrapper-section link--{$section['link']}">
+            <div id="Html-section-{$section['id_section']}" class="section">
+                <div class="brace-section">
+                    {!$section['text']}
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-{/foreach}
-{/if}
+        {/foreach}
+    {/if}
+{/block}
+
+{block headModuleHtml}
+{/block}

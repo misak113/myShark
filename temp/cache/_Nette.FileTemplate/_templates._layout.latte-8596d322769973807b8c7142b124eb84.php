@@ -1,27 +1,11 @@
-<?php //netteCache[01]000419a:2:{s:4:"time";s:21:"0.97410300 1317498140";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:97:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\@layout.latte";i:2;i:1317496574;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"f38d86f released on 2011-08-24";}}}?><?php
+<?php //netteCache[01]000419a:2:{s:4:"time";s:21:"0.19043100 1317589591";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:97:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\@layout.latte";i:2;i:1317589589;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"f38d86f released on 2011-08-24";}}}?><?php
 
 // source file: C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\@layout.latte
 
-?><?php list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, 'u4l1n0mnas')
-;//
-// block head
-//
-if (!function_exists($_l->blocks['head'][] = '_lb16492375ee_head')) { function _lb16492375ee_head($_l, $_args) { extract($_args)
+?><?php list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, '4w1hh3q1m9')
 ;
-}}
-
-//
-// end of blocks
-//
-
-// template extending and snippets support
-
-$_l->extends = empty($template->_extends) ? FALSE : $template->_extends; unset($_extends, $template->_extends);
-
-
-if ($_l->extends) {
-	ob_start();
-} elseif (!empty($control->snippetMode)) {
+// snippets support
+if (!empty($control->snippetMode)) {
 	return Nette\Latte\Macros\UIMacros::renderSnippets($control, $_l, get_defined_vars());
 }
 
@@ -53,8 +37,7 @@ if ($_l->extends) {
         <script type="text/javascript" src="<?php echo htmlSpecialChars($script) ?>"></script>
 <?php $iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ?>
         
-        <?php if (!$_l->extends) { call_user_func(reset($_l->blocks['head']), $_l, get_defined_vars()); } ?>
-
+<?php Nette\Latte\Macros\UIMacros::callBlock($_l, 'head', $template->getParams()) ?>
     </head>
 
     <body>
@@ -66,9 +49,3 @@ if ($_l->extends) {
         </div>    
     </body>
 </html>
-<?php 
-// template extending support
-if ($_l->extends) {
-	ob_end_clean();
-	Nette\Latte\Macros\CoreMacros::includeTemplate($_l->extends, get_defined_vars(), $template)->render();
-}

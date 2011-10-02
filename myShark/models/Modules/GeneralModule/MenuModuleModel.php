@@ -84,7 +84,7 @@ class MenuModuleModel extends ModuleModel {
         return $moduleContent;
     }
     
-    private function loadItems($idContent, $idItemParent = false) {
+    private function loadItems($idContent, $idItemParent = false, $linksParent = '') {
         $args = array();
         $sql = 'SELECT modulemenu_item.id_item, modulemenu_item.id_page_reference, modulemenu_item.id_slot_reference, 
                 modulemenu_item.id_cell_reference, modulemenu_item.referenceType, modulemenu_item.referenceUrl, 
@@ -119,7 +119,7 @@ class MenuModuleModel extends ModuleModel {
         foreach ($res as $row) {
             $itemsChild = false;
             if ($row->offsetGet('num_childs') > 0) {
-                $itemsChild = $this->loadItems($idContent, $row->offsetGet('id_item'));
+                $itemsChild = $this->loadItems($idContent, $row->offsetGet('id_item'), $linksParent.$row->offsetGet('slot_link').'/');
             }
             $item = array(
                 'id_item' => $row->offsetGet('id_item'),
@@ -148,13 +148,13 @@ class MenuModuleModel extends ModuleModel {
                     $reference = Kate\Main\Loader::$BASE_URL.'/'.$item['references']['page']['link'];
                     break;
                 case 'slot':
-                    $reference = Kate\Main\Loader::$BASE_URL.'/'.$item['references']['page']['link'].'/'.$item['references']['slot']['link'];
+                    $reference = Kate\Main\Loader::$BASE_URL.'/'.$item['references']['page']['link'].'/'.$linksParent.$item['references']['slot']['link'];
                     break;
                 case 'url':
                     $reference = $item['references']['url']['uri'];
                     break;
                 default:
-                    $reference = '';
+                    $reference = false;
             }
             $item['reference'] = $reference;
             

@@ -1,13 +1,27 @@
 {* Šablona pro Menu modul *}
 
-{if $moduleContent['items']}
-<ul class="items">
-    {foreach $moduleContent['items'] as $item}
-    <li id="Menu-item-{$item['id_item']}" class="item link--{$item['link']}">
-        <a href="{$item['reference']}">
-        {$item['text']}
-        </a>
-    </li>
-    {/foreach}
-</ul>
-{/if}
+{block contentModuleMenu}
+    {var $items = $moduleContent['items']}
+
+    {block MenuItems}
+        {if $items}
+        <ul n:if="$items" class="items">
+            {foreach $items as $item}
+            <li id="Menu-item-{$item['id_item']}" class="item link--{$item['link']}">
+                <a n:if="$item['reference']" href="{$item['reference']}" class="label">
+                {$item['text']}
+                </a>
+                <span n:if="!$item['reference']" class="label">
+                {$item['text']}
+                </span>
+                {include #MenuItems, items => $item['items']}
+            </li>
+            {/foreach}
+        </ul>
+        {/if}
+    {/block}
+{/block}
+
+
+{block headModuleMenu}
+{/block}

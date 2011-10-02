@@ -249,7 +249,7 @@ class PageModel extends Model {
         foreach ($res as $row) {
             $idModule = $row->offsetGet('id_module');
             $contents[] = array(
-                'id_content' => $row->offsetGet('id_slot'),
+                'id_content' => $row->offsetGet('id_content'),
                 'order' => $row->offsetGet('content_order'),
                 'text' => $row->offsetGet('content_text'),
                 'link' => $row->offsetGet('content_link'),

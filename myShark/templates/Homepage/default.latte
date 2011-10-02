@@ -1,52 +1,55 @@
 {* Toto je základní template pro zobrazení myShark *}
 
-{block content}
+{define content}
 <div class="wrapper-page link--{$page['page']['link']}">
         
         {snippet page}
     <div id="page-{$page['page']['id_page']}" class="page">
         <div class="brace-page">
             {if $page['cells']}
-            {foreach $page['cells'] as $row}
-                {foreach $row as $cell}
-        <div class="wrapper-cell">
-                    {snippet 'cell-'.$cell['id_cell']}
-            <div id="cell-{$cell['id_cell']}" class="cell">
-                <div class="brace-cell">
-                    <div class="wrapper-slot link--{$cell['slot']['link']}">
-                        <div id="slot-{$cell['slot']['id_slot']}" class="slot">
-                            <div class="brace-slot">
-                        {if $cell['slot']['contents']}
-                        {foreach $cell['slot']['contents'] as $content}
-                                <div class="wrapper-content link--{$content['link']}">
-                                    <div id="content-{$content['id_content']}" class="content">
-                                        <div class="brace-content {$content['moduleLabel']}">
-                                            {include $modulesPath.$content['moduleLabel'].S.'default.latte', moduleContent => $content['moduleContent']}
+                {foreach $page['cells'] as $row}
+                    {foreach $row as $cell}
+            <div class="wrapper-cell">
+                        {snippet 'cell-'.$cell['id_cell']}
+                <div id="cell-{$cell['id_cell']}" class="cell">
+                    <div class="brace-cell">
+                        <div class="wrapper-slot link--{$cell['slot']['link']}">
+                            <div id="slot-{$cell['slot']['id_slot']}" class="slot">
+                                <div class="brace-slot">
+                            {if $cell['slot']['contents']}
+                                {foreach $cell['slot']['contents'] as $content}
+                                        <div class="wrapper-content link--{$content['link']}">
+                                            <div id="content-{$content['id_content']}" class="content">
+                                                <div class="brace-content {$content['moduleLabel']}">
+                                                    {var $moduleTemplate = $modulesPath.$content['moduleLabel'].S.'default.latte'}
+                                                    {include $moduleTemplate, moduleContent => $content['moduleContent']}
+                                                    {*var $block = 'contentModule'.$content['moduleLabel']*}
+                                                    {*include #$block, moduleContent => $content['moduleContent']*}
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
+                                {/foreach}
+                            {/if}
                                 </div>
-                        {/foreach}
-                        {/if}
                             </div>
                         </div>
                     </div>
                 </div>
+                        {/snippet}
             </div>
-                    {/snippet}
-        </div>
+                    {/foreach}
+            <div class="clear"></div>
                 {/foreach}
-        <div class="clear"></div>
-            {/foreach}
             {/if}
         </div>
     </div>
         {/snippet}
     
 </div>
-{/block}
+{/define}
 
 
-{block head}
+{define head}
 <style type="text/css">
     #body {
         width: {$page['layout']['width']}px;
@@ -60,4 +63,4 @@
         {/foreach}
     {/foreach}
 </style>
-{/block}
+{/define}
