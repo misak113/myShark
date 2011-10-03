@@ -1,6 +1,6 @@
 {* Šablona pro Menu modul *}
 
-{block contentModuleMenu}
+{define contentModuleMenu}
     {var $items = $moduleContent['items']}
 
     {block MenuItems}
@@ -20,8 +20,8 @@
         </ul>
         {/if}
     {/block}
-{/block}
+{/define}
 
 
-{block headModuleMenu}
-{/block}
+{define headModuleMenu}
+{/define}

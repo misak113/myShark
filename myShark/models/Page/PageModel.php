@@ -191,7 +191,9 @@ class PageModel extends Model {
         }
         if ($res !== false) {
             $slot = $this->createSlotFromDBFetch($res);
-            $slot['invalidate'] = true;
+            if ($slot) {
+                $slot['invalidate'] = true;
+            }
             return $slot;
         } else {
             $sql = 'SELECT slot.id_slot, slot_phrase.text AS slot_text, slot_phrase.link AS slot_link, 
@@ -209,7 +211,9 @@ class PageModel extends Model {
             $q = $this->db->queryArgs($sql, $args);
             $res = $q->fetchAll();
             $slot = $this->createSlotFromDBFetch($res);
-            $slot['invalidate'] = false;
+            if ($slot) {
+                $slot['invalidate'] = false;
+            }
             return $slot;
         }
     }
@@ -221,7 +225,7 @@ class PageModel extends Model {
      */
     public function loadContent($content, $parameters) {
         $idModule = $content['id_module'];
-        $moduleModelName = $this->modules[$idModule]['label'] . 'ModuleModel'; // @todo loaduje z cache takze muze byt stara verze modules
+        $moduleModelName = $content['moduleLabel'] . 'ModuleModel'; // @todo loaduje z cache takze muze byt stara verze modules
         if (!class_exists($moduleModelName)) {
             throw new Kate\ClassNotFoundException('Modul "' . $moduleModelName . '" dosun nebyl implementován.');
         }

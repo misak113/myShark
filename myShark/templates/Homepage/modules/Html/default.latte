@@ -1,6 +1,6 @@
 {* Šablona pro html modul *}
 
-{block contentModuleHtml}
+{define contentModuleHtml}
     {if $moduleContent['sections']}
         {foreach $moduleContent['sections'] as $section}
         <div class="wrapper-section link--{$section['link']}">
@@ -12,7 +12,7 @@
         </div>
         {/foreach}
     {/if}
-{/block}
+{/define}
 
-{block headModuleHtml}
-{/block}
+{define headModuleHtml}
+{/define}

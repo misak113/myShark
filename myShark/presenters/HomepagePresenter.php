@@ -1,21 +1,25 @@
 <?php
 
 /**
- * My Application
+ * myShark RS
  *
- * @copyright  Copyright (c) 2010 John Doe
- * @package    MyApplication
+ * @copyright  Copyright (c) 2011 Michael Žabka
+ * @package    myShark
  */
-use Nette\Diagnostics\Debugger;
+use Nette\Diagnostics\Debugger,
+        Kate\Main\Loader;
 
 /**
  * Homepage presenter.
  *
- * @author     John Doe
- * @package    MyApplication
+ * @author     Michael Žabka
+ * @package    myShark
  */
 class HomepagePresenter extends Kate\Main\Presenter {
 
+    /**
+     * Hlavní render pro defaultní stránku
+     */
     public function renderDefault() {
         $pageModel = PageModel::get();
 
@@ -32,12 +36,16 @@ class HomepagePresenter extends Kate\Main\Presenter {
         }
 
         $page = $this->loadPageCells($page);
-
         
         // Nastavý proměnné pro tamplate
         $this->initDefault($page);
     }
     
+    /**
+     * Vrací stránku s načtenými buňky do page
+     * @param array $page vstupní stránka
+     * @return array stránka se sloty
+     */
     private function loadPageCells($page) {
         if (!isset($page['cells']) || !isset($page['page']) || !isset($page['layout'])) {
             return false;
@@ -53,12 +61,20 @@ class HomepagePresenter extends Kate\Main\Presenter {
                 $idCell = $cell['id_cell'];
                 // Načte sloty
                 $slot = $pageModel->cache()->loadSlot($idPage, $idCell, $parameters);
-                if ($slot['invalidate'] === true) {
-                    $this->invalidateControl('cell-' . $idCell);
-                }
-                // Načte obsahy modulů
-                foreach ($slot['contents'] as &$content) {
-                    $content['moduleContent'] = $pageModel->cache()->loadContent($content, $parameters);
+                if ($slot) {
+                    if ($slot['invalidate'] === true) {
+                        $this->invalidateControl('cell-' . $idCell);
+                    }
+                    // Načte obsahy modulů
+                    foreach ($slot['contents'] as &$content) {
+                        $content['moduleContent'] = $pageModel->cache()->loadContent($content, $parameters);
+                        // Načte styly pro moduly
+                        $this->styles[$content['moduleLabel']] = array(
+                            '/' . Loader::CSS_DIR . '/' . Loader::MODULES_DIR . '/' . $content['moduleLabel'] . '.css', 
+                            'screen,projection,tv', 
+                            'text/css'
+                        );
+                    }
                 }
                 $cell['slot'] = $slot;
             }
@@ -66,12 +82,21 @@ class HomepagePresenter extends Kate\Main\Presenter {
         return $page;
     }
     
+    /**
+     * Načte základní náležitosti pro tamplate
+     * @param array $page stránka
+     */
     private function initDefault($page) {
         if (!isset($this->template->page)) {
             $this->template->page = $page;
         }
+        $this->initScripts();
+        $this->initStyles();
     }
 
+    /**
+     * Při zavolání nastaví na vykreslení error 404 či 500 pokud nenajde 404
+     */
     public function error404() {
         $pageModel = PageModel::get();
         $idPage = $pageModel->cache()->loadPageId(PageModel::LINK_ERROR_404);
@@ -90,12 +115,15 @@ class HomepagePresenter extends Kate\Main\Presenter {
         $this->initDefault($page);
     }
     
+    /**
+     * Nastaví vykreslování na error 500 stránku... nefunkční server
+     */
     public function error500() {
         $this->getHttpResponse()->setCode(Nette\Http\Response::S500_INTERNAL_SERVER_ERROR);
         
         $this->setView('error');
         $this->template->errorNumber = 500;
-        $this->template->errorMessage = 'Na serveru nastala chyba. Omlouváme se, zkuste znovu načíst později nebo přejít na jinou stránku.';
+        $this->template->errorMessage = 'Na serveru nastala chyba. Omlouváme se, zkuste znovu načíst později nebo přejít na jinou stránku.'; // @todo prelozit ze statických překladačů
     }
 
 }

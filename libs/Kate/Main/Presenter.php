@@ -20,14 +20,12 @@ abstract class Presenter extends \Nette\Application\UI\Presenter
 {
     // Atributy
     // Vždy načítané styly
-    private $styles = array(
+    protected $styles = array(
         array('/css/screen.css', 'screen,projection,tv', 'text/css'),
-        array('/css/modules/Html.css', 'screen,projection,tv', 'text/css'),
-        array('/css/modules/Menu.css', 'screen,projection,tv', 'text/css'), // @todo predat do HomapagePresenter dynamicky
         array('/css/print.css', 'print', 'text/css'),
     );
     // Vždy načítané javascripty
-    private $scripts = array(
+    protected $scripts = array(
         'http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js',
         '/js/libs/netteForms.js',
     );
@@ -52,29 +50,26 @@ abstract class Presenter extends \Nette\Application\UI\Presenter
     
     private function initPresenter() {
         $this->baseUrl = Loader::getBaseUrl();
-        $this->template->modulesPath = Loader::MODULES_DIR.S;
-        $this->initStyles();
-        $this->initScripts();
         $this->initTitle();
     }
     
     /**
      * @todo spatne funguje http include
      */
-    private function initStyles() {
+    protected function initStyles() {
         $styles = $this->styles;
         foreach ($styles as &$style) {
-            if (strpos('http://', $style[0]) === false) {
+            if (substr($style[0], 0, 7) !== 'http://') {
                 $style[0] = $this->baseUrl.$style[0];
             }
         }
         $this->template->styles = $styles;
     }
     
-    private function initScripts() {
+    protected function initScripts() {
         $scripts = array();
         foreach ($this->scripts as $script) {
-            if (strpos($script, 'http://') === false) {
+            if (substr($script, 0, 7) !== 'http://') {
                 $scripts[] = $this->baseUrl.$script;
             } else {
                 $scripts[] = $script;

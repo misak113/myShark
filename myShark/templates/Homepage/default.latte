@@ -21,10 +21,9 @@
                                         <div class="wrapper-content link--{$content['link']}">
                                             <div id="content-{$content['id_content']}" class="content">
                                                 <div class="brace-content {$content['moduleLabel']}">
-                                                    {var $moduleTemplate = $modulesPath.$content['moduleLabel'].S.'default.latte'}
-                                                    {include $moduleTemplate, moduleContent => $content['moduleContent']}
-                                                    {*var $block = 'contentModule'.$content['moduleLabel']*}
-                                                    {*include #$block, moduleContent => $content['moduleContent']*}
+                                                    {includeblock ''.(\Kate\Main\Loader::MODULES_DIR).S.$content['moduleLabel'].S.'default.latte'}
+                                                    {var $contentBlock =  'contentModule'.$content['moduleLabel']}
+                                                    {include #$contentBlock, moduleContent => $content['moduleContent']}
                                                 </div>
                                             </div>
                                         </div>
@@ -63,4 +62,19 @@
         {/foreach}
     {/foreach}
 </style>
+
+
+    {if $page['cells']}
+        {foreach $page['cells'] as $row}
+            {foreach $row as $cell}
+                {if $cell['slot']['contents']}
+                    {foreach $cell['slot']['contents'] as $content}
+                        {includeblock ''.(\Kate\Main\Loader::MODULES_DIR).S.$content['moduleLabel'].S.'default.latte'}
+                        {var $headBlock = 'headModule'.$content['moduleLabel']}
+                        {include #$headBlock, moduleContent => $content['moduleContent']}
+                    {/foreach}
+                {/if}
+            {/foreach}
+        {/foreach}
+    {/if}
 {/define}
