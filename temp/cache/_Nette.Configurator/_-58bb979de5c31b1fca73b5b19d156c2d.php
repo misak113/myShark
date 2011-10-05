@@ -1,4 +1,4 @@
-<?php //netteCache[01]000255a:2:{s:4:"time";s:21:"0.47839500 1317054387";s:9:"callbacks";a:1:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:85:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark/config.neon";i:2;i:1317054385;}}}?><?php
+<?php //netteCache[01]000255a:2:{s:4:"time";s:21:"0.24949000 1317812064";s:9:"callbacks";a:1:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:85:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark/config.neon";i:2;i:1317812032;}}}?><?php
 // source file C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark/config.neon
 
 $container->addService('authenticator', function($container) {

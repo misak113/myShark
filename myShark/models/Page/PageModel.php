@@ -1,6 +1,7 @@
 <?php
 
-use \Kate\Main\Model;
+use Kate\Main\Model,
+    Kate\Main\Loader;
 /**
  * Obstarává veškerá data co se základního rozvržení týká
  * @author Michael Žabka
@@ -8,7 +9,7 @@ use \Kate\Main\Model;
 class PageModel extends Model {
     const ID = 0;
     
-    const VERSION = '1.0.12';
+    const VERSION = '1.0.17';
     
     const DEFAULT_PAGE_NAME_LINK = 'myShark';
     const DEFAULT_PAGE_NAME = 'Redakční systém myShark';
@@ -18,22 +19,38 @@ class PageModel extends Model {
     
     
     
-    private $setting, $web, $modules, $languages,
+    private $setting = array(), $web = array(), $modules = array(), $languages = array(),
             // Defaultní stránka null
             $pageParameters = array(self::ID => null),
             // Deafaultní jazyk
-            $language = array(
+            $defaultLanguage = array(
                 'shortcut' => 'cs',
                 'location' => 'cz',
-            );
+            ),
+            $language = null;
+    
+    // Pole pro čas expirace při cachování jednotlivých funkcí ve třídách
+    private static $cacheExpirations = array(
+        //Classes
+        'PageModel' => array(
+            //methods
+            'alterDatabase' => '+7 days',
+            'loadWeb' => '+20 minutes',
+            'loadSetting' => '+20 minutes',
+            'loadLanguages' => '+20 minutes',
+            'loadContent' => '+20 minutes',
+            'loadModules' => '+20 minutes',
+            'loadPageId' => '+20 minutes',
+            'loadPageLayout' => '+20 minutes',
+            'loadSlot' => '+20 minutes',
+        ),
+    );
     
     protected function __construct() {
         parent::__construct();
         $this->cache->alterDatabase();
-        $this->web = $this->cache->loadWeb();
-        $this->setting =$this->cache->loadSetting();
-        $this->modules = $this->cache->loadModules();
         $this->languages = $this->cache->loadLanguages();
+        $this->setting =$this->cache->loadSetting();
     }
     
     /**
@@ -65,17 +82,67 @@ class PageModel extends Model {
         return $web;
     }
     
+    /**
+     * Vrátí nastavení z databáze
+     * @return array nastavení
+     */
     public function loadSetting() {
-        return array();
+        $q = $this->db->table('setting')
+                ->select('setting.value, setting.name');
+        $setting = $q->fetchPairs('name', 'value');
+        return $setting;
     }
     
+    /**
+     * Vrátí povolené jazyky z databáze
+     * @return array jazyky
+     */
     public function loadLanguages() {
-        return array(
-            1 => array(
-                'shortcut' => 'cs',
-                'location' => 'cz',
-            ),
-        );
+        $q = $this->db->table('language')
+                ->select('language.id_language, language.shortcut, language.location, language.title');
+        $langs = array();
+        while ($row = $q->fetch()) {
+            $lang = array(
+                'shortcut' => $row['shortcut'],
+                'location' => $row['location'],
+                'title' => $row['title'],
+            );
+            $langs[$row['id_language']] = $lang;
+        }
+        return $langs;
+    }
+    
+    public function isDefaultLanguage() {
+        $shortcut = $this->language['shortcut'];
+        $location = $this->language['location'];
+        $defaultLanguage = $this->getDefaultLanguage();
+        if ($shortcut == $defaultLanguage['shortcut'] &&
+                ($location == $defaultLanguage['location'] || $location == null)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getUrl($path) {
+        if ($this->isDefaultLanguage()) {
+            $lang = false;
+        } else {
+            $lang = $this->language['shortcut'].($this->language['location'] ?'_'.strtoupper($this->language['location']) :'');
+        }
+        return Loader::getBaseUrl().($lang ?'/'.$lang :'').'/'.$path;
+    }
+    
+    /**
+     * Vrací povolené jazyky z DB... něco ve stylu '[a-zA-Z]{2}(_[a-zA-Z]{2})?'
+     * @return string pattern
+     */
+    public function getPatternOfAllowedLanguages() {
+        $pat = array();
+        foreach ($this->languages as $id => $lang) {
+            $pat[] = $lang['shortcut'].'(_'.strtoupper($lang['location']).')?';
+        }
+        return '('.implode('|', $pat).')';
     }
 
 
@@ -112,6 +179,9 @@ class PageModel extends Model {
      * @return string link
      */
     public function getWebNameLink() {
+        if (empty($this->web)) {
+            $this->web = $this->loadWeb();
+        }
         return $this->web['nameLink'];
     }
     
@@ -120,6 +190,9 @@ class PageModel extends Model {
      * @return string název
      */
     public function getWebName() {
+        if (empty($this->web)) {
+            $this->web = $this->loadWeb();
+        }
         return $this->web['name'];
     }
     
@@ -177,9 +250,10 @@ class PageModel extends Model {
     public function loadSlot($idPage, $idCell, $parameters) {
         unset($parameters[self::ID]);
         $res = false;
+        $modules = $this->getModules();
         foreach ($parameters as $idModule => $param) {
             // zjisti z modelu danneho modulu zda neovlivnil tento cell... pokud ano vraci true a je treba nacist cell podle modulu
-            $moduleModelName = $this->modules[$idModule]['label'] . 'ModuleModel'; // @todo loaduje z cache takze muze byt stara verze modules
+            $moduleModelName = $modules[$idModule]['label'] . 'ModuleModel'; // @todo loaduje z cache takze muze byt stara verze modules
             if (!class_exists($moduleModelName)) {
                 throw new Kate\ClassNotFoundException('Modul "' . $moduleModelName . '" dosun nebyl implementován.');
             }
@@ -225,7 +299,7 @@ class PageModel extends Model {
      */
     public function loadContent($content, $parameters) {
         $idModule = $content['id_module'];
-        $moduleModelName = $content['moduleLabel'] . 'ModuleModel'; // @todo loaduje z cache takze muze byt stara verze modules
+        $moduleModelName = $content['moduleLabel'] . 'ModuleModel'; 
         if (!class_exists($moduleModelName)) {
             throw new Kate\ClassNotFoundException('Modul "' . $moduleModelName . '" dosun nebyl implementován.');
         }
@@ -250,6 +324,7 @@ class PageModel extends Model {
             'link' => $first->offsetGet('slot_link'),
         );
         $contents = array();
+        $modules = $this->getModules();
         foreach ($res as $row) {
             $idModule = $row->offsetGet('id_module');
             $contents[] = array(
@@ -258,7 +333,7 @@ class PageModel extends Model {
                 'text' => $row->offsetGet('content_text'),
                 'link' => $row->offsetGet('content_link'),
                 'id_module' => $idModule,
-                'moduleLabel' => $this->modules[$idModule]['label'], // @todo spatne nacita z cache
+                'moduleLabel' => $modules[$idModule]['label'], // @todo spatne nacita z cache
             );
         }
         $slot['contents'] = $contents;
@@ -349,6 +424,9 @@ class PageModel extends Model {
     }
     
     public function getLanguage() {
+        if ($this->language === null) {
+            $this->language = $this->defaultLanguage;
+        }
         $activeIdLanguage = null;
         foreach ($this->languages as $idLanguage => $language) {
             if ($language['shortcut'] == $this->language['shortcut']) {
@@ -375,10 +453,25 @@ class PageModel extends Model {
      */
     public function getModuleLinks() {
         $moduleLinks = array();
-        foreach ($this->modules as $id => $module) {
+        foreach ($this->getModules() as $id => $module) {
             $moduleLinks[$id] = $module['link'];
         }
         return $moduleLinks;
+    }
+    
+    public static function getCacheExpirations() {
+        return self::$cacheExpirations;
+    }
+    
+    public function getModules() {
+        if (empty($this->modules)) {
+            $this->modules = $this->loadModules();
+        }
+        return $this->modules;
+    }
+    
+    public function getDefaultLanguage() {
+        return $this->defaultLanguage;
     }
 }
 ?>

@@ -1,5 +1,7 @@
 <?php
 
+namespace Kate\External;
+
 /**
  * Třída na parsování SQL dotazů
  * @link http://code.google.com/p/php-sql-parser/
@@ -14,6 +16,136 @@ class SqlParser {
         $this->load_reserved_words();
         if ($sql)
             $this->parse($sql);
+    }
+    
+    /**
+     * Vrací Postavený dotaz z parsovaného
+     * @param array $parsed parsovaný dotaz z fce parse
+     * @return string sql dotaz po složení
+     */
+    function build($parsed) {
+        $sql = '';
+        
+        // SELECT | DISTINCT
+        // @todo sub_tree když má sub_tree tak podle něj... jako u WHERE
+        if (key_exists('SELECT', $parsed)) {
+            $select = array();
+            foreach ($parsed['SELECT'] as $column) {
+                if ($column['expr_type'] == 'expression') {
+                    $sub_expr = $this->getExpression($column['sub_tree']);
+                    if (preg_match('~ *\w+\. *\* *~', $sub_expr)) {
+                        $expr = $sub_expr.' ';
+                    } else {
+                        $expr = '('.$sub_expr.') ';
+                    }
+                } elseif ($column['expr_type'] == 'subquery') {
+                    $expr = '('.$this->getSubquery($column['sub_tree']).')';
+                } else {
+                    $expr = $column['base_expr'];
+                }
+                
+                $as = $column['alias'] == '`'.$column['base_expr'].'`';
+                $select[] = $expr . (!$as ?' AS '.$column['alias'] :'');
+            }
+            $distinct = isset($parsed['OPTIONS']) && in_array('DISTINCT', $parsed['OPTIONS']) ?true :false;
+            $sql .= 'SELECT ' .($distinct?'DISTINCT ':''). implode(', ', $select) . ' ';
+        }
+        
+        // FROM
+        // @todo sub_tree když má sub_tree tak podle něj... jako u WHERE
+        if (key_exists('FROM', $parsed)) {
+            $from = '';
+            $first = true;
+            foreach ($parsed['FROM'] as $table) {
+                switch ($table['join_type']) {
+                    case 'LEFT ':
+                        $join = 'LEFT JOIN ';
+                        break;
+                    case 'RIGHT ':
+                        $join = 'RIGHT JOIN ';
+                        break;
+                    case 'JOIN':
+                        $join = 'JOIN ';
+                        if (!$table['ref_clause']) {
+                            $join = 'FROM ';
+                        }
+                        break;
+                }
+                $on = ' ';
+                if ($table['ref_type']) {
+                    $using = $table['ref_type'] == 'USING' ?true :false;
+                    $on = $table['ref_type'] . ' ' .($using?'(':''). $table['ref_clause'] .($using?')':''). ' ';
+                }
+                $from .= $join.$table['table'] . ' AS ' . $table['alias'] . ' ' . $on;
+            }
+            $sql .= $from . ' ';
+        }
+        
+        
+        // WHERE
+        if (key_exists('WHERE', $parsed)) {
+            $expr = $this->getExpression($parsed['WHERE']);
+            $sql .= 'WHERE ' . $expr . ' ';
+        }
+        
+        // GROUP BY
+        if (key_exists('GROUP', $parsed)) {
+            $group = array();
+            foreach ($parsed['GROUP'] as $ex) {
+                $group[] = $ex['base_expr'] . ' ' ;//. $ex['direction'] . ' ';
+            }
+            $sql .= 'GROUP BY ' . implode(', ', $group) . ' ';
+        }
+        
+        // HAVING
+        // @todo 
+        
+        // ORDER BY
+        if (key_exists('ORDER', $parsed)) {
+            $order = array();
+            foreach ($parsed['ORDER'] as $ex) {
+                $order[] = $ex['base_expr'] . ' ' ;//. $ex['direction'] . ' ';
+            }
+            $sql .= 'ORDER BY ' . implode(', ', $order) . ' ';
+        }
+        
+        // LIMIT
+        if (key_exists('LIMIT', $parsed)) {
+            $sql .= 'LIMIT ' . $parsed['LIMIT']['start'] . ', ' . $parsed['LIMIT']['end'] . ' ';
+        }
+        
+        // FOR UPDATE | LOCK IN SHARE MODE | INTO OUTFILE | PROCEDURE
+        // @todo
+        
+        $this->sql = $sql;
+        return $this->sql;
+    }
+    
+    private function getExpression($tree) {
+        $where = array();
+        if (!is_array($tree)) return '';
+        foreach ($tree as $i => $ex) {
+            if ($ex['expr_type'] == 'expression') {
+                $sub_expr = $this->getExpression($ex['sub_tree']);
+                if (preg_match('~ *\w+\. *\* *~', $sub_expr)) {
+                    $where[] = $sub_expr.' ';
+                } else {
+                    $where[] = '('.$sub_expr.') ';
+                }
+            } elseif ($ex['expr_type'] == 'subquery') {
+                $where[] = '('.$this->getSubquery($ex['sub_tree']).') ';
+            } elseif ($ex['expr_type'] == 'function' || $ex['expr_type'] == 'aggregate_function') {
+                $where[] = $ex['base_expr'].'';
+            } else {
+                $where[] = $ex['base_expr'].' ';
+            }
+        }
+        $expr = implode('', $where);
+        return $expr;
+    }
+    
+    private function getSubquery($tree) {
+        return $this->build($tree);
     }
 
     function parse($sql) {

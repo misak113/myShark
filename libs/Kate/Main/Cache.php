@@ -64,7 +64,16 @@ class Cache extends \Nette\Object {
      * @todo
      */
     private function getExpiration($name) {
-        return '+20 minutes';
+        $expirations = \PageModel::getCacheExpirations();
+        $className = get_class($this->class);
+        if (!key_exists($className, $expirations)) {
+            return null;
+        }
+        $methods = $expirations[$className];
+        if (!key_exists($name, $methods)) {
+            return null;
+        }
+        return $methods[$name];
     }
     
     /**

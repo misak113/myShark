@@ -28,12 +28,14 @@ class RouterModel extends \Kate\Main\Model
         $router[] = new Route('favicon.ico', 'Help:favicon');
         //Administrace
         //$router[] = new Route('[<path .*>/]admin', 'Admin:default');
+        $language = PageModel::get()->cache()->getDefaultLanguage();
         //Frontend
 	$router[] = new Route('[<language>/][<path>]', array(
             'presenter' => 'Homepage',
             'action' => 'default',
             'language' => array(
-                Route::PATTERN => '[a-zA-Z]{2}(_[a-zA-Z]{2})?', // @todo (new Cache(PageModel::get()))->getPatternOfAllowedLanguages();
+                Route::VALUE => $language['shortcut'],
+                Route::PATTERN => PageModel::get()->cache()->getPatternOfAllowedLanguages(), 
                 Route::FILTER_IN => array(__CLASS__, 'parseLanguage'),
                 Route::FILTER_OUT => array(__CLASS__, 'buildLanguage'),
             ),
@@ -81,6 +83,12 @@ class RouterModel extends \Kate\Main\Model
             $location = $l[1];
         }
         $shortcut = $l[0];
+        
+        if (Loader::get()->getPageModel()->isDefaultLanguage()) {
+            $language = PageModel::get()->cache()->getDefaultLanguage();
+            return $language['shortcut'];
+        }
+        
         $return = $shortcut.($location !== null?'_'.strtoupper($location):'');
         return $return;
     }

@@ -4,7 +4,7 @@
     {if $moduleContent['sections']}
         {foreach $moduleContent['sections'] as $section}
         <div class="wrapper-section link--{$section['link']}">
-            <div id="Html-section-{$section['id_section']}" class="section">
+            <div id="Html-section-{$section['id_section']}" class="section style--{$section['style']['link']}">
                 <div class="brace-section">
                     {!$section['text']}
                 </div>
@@ -15,4 +15,11 @@
 {/define}
 
 {define headModuleHtml}
+    <style type="text/css">
+    {if $moduleContent['sections']}
+        {foreach $moduleContent['sections'] as $section}
+            {!$section['style']['css']}
+        {/foreach}
+    {/if}
+    </style>
 {/define}

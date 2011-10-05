@@ -1,8 +1,8 @@
-<?php //netteCache[01]000419a:2:{s:4:"time";s:21:"0.19043100 1317589591";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:97:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\@layout.latte";i:2;i:1317589589;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"f38d86f released on 2011-08-24";}}}?><?php
+<?php //netteCache[01]000419a:2:{s:4:"time";s:21:"0.27544400 1317813390";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:97:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\@layout.latte";i:2;i:1317813386;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"f38d86f released on 2011-08-24";}}}?><?php
 
 // source file: C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\@layout.latte
 
-?><?php list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, '4w1hh3q1m9')
+?><?php list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, 'f13fxaltg9')
 ;
 // snippets support
 if (!empty($control->snippetMode)) {
@@ -25,17 +25,17 @@ if (!empty($control->snippetMode)) {
 
         <title><?php echo Nette\Templating\DefaultHelpers::escapeHtml($title, ENT_NOQUOTES) ?></title>
 
-<?php $iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($styles) as $style): ?>
+<?php if (isset($styles)): $iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($styles) as $style): ?>
         <link rel="stylesheet" media="<?php echo htmlSpecialChars($style[1]) ?>" href="<?php echo htmlSpecialChars($style[0]) ?>
 " type="<?php echo htmlSpecialChars($style[2]) ?>" />
-<?php $iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ?>
+<?php $iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ;endif ?>
         
         <link rel="shortcut icon" href="<?php echo htmlSpecialChars($basePath) ?>/favicon.ico" type="image/x-icon" />
         <link rel="icon" href="<?php echo htmlSpecialChars($basePath) ?>/favicon.ico" type="image/vnd.microsoft.icon" />
 
-<?php $iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($scripts) as $script): ?>
+<?php if (isset($scripts)): $iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($scripts) as $script): ?>
         <script type="text/javascript" src="<?php echo htmlSpecialChars($script) ?>"></script>
-<?php $iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ?>
+<?php $iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ;endif ?>
         
 <?php Nette\Latte\Macros\UIMacros::callBlock($_l, 'head', $template->getParams()) ?>
     </head>

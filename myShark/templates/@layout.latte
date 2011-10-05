@@ -18,12 +18,16 @@
 
         <title>{$title}</title>
 
-        <link  n:foreach="$styles as $style" rel="stylesheet" media="{$style[1]}" href="{$style[0]}" type="{$style[2]}">
+        {ifset $styles}
+        <link n:foreach="$styles as $style" rel="stylesheet" media="{$style[1]}" href="{$style[0]}" type="{$style[2]}">
+        {/ifset}
         
         <link rel="shortcut icon" href="{$basePath}/favicon.ico" type="image/x-icon">
         <link rel="icon" href="{$basePath}/favicon.ico" type="image/vnd.microsoft.icon" />
 
+        {ifset $scripts}
         <script n:foreach="$scripts as $script" type="text/javascript" src="{$script}"></script>
+        {/ifset}
         
         {include #head}
     </head>

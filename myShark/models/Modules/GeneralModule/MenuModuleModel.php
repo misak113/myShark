@@ -145,10 +145,10 @@ class MenuModuleModel extends ModuleModel {
             
             switch ($row->offsetGet('referenceType')) {
                 case 'page':
-                    $reference = Kate\Main\Loader::$BASE_URL.'/'.$item['references']['page']['link'];
+                    $reference = PageModel::get()->getUrl($item['references']['page']['link']);
                     break;
                 case 'slot':
-                    $reference = Kate\Main\Loader::$BASE_URL.'/'.$item['references']['page']['link'].'/'.$linksParent.$item['references']['slot']['link'];
+                    $reference = PageModel::get()->getUrl($item['references']['page']['link'].'/'.$linksParent.$item['references']['slot']['link']);
                     break;
                 case 'url':
                     $reference = $item['references']['url']['uri'];
