@@ -26,13 +26,20 @@ class SqlParser {
     function build($parsed) {
         $sql = '';
         
+        // EXPLAIN
+        if (key_exists('EXPLAIN', $parsed)) {
+            $sql .= 'EXPLAIN ';
+        }
+        
         // SELECT | DISTINCT
-        // @todo sub_tree když má sub_tree tak podle něj... jako u WHERE
         if (key_exists('SELECT', $parsed)) {
             $select = array();
             foreach ($parsed['SELECT'] as $column) {
                 if ($column['expr_type'] == 'expression') {
                     $sub_expr = $this->getExpression($column['sub_tree']);
+                    if ($sub_expr === false) {
+                        $sub_expr = $column['base_expr'];
+                    }
                     if (preg_match('~ *\w+\. *\* *~', $sub_expr)) {
                         $expr = $sub_expr.' ';
                     } else {
@@ -85,6 +92,9 @@ class SqlParser {
         // WHERE
         if (key_exists('WHERE', $parsed)) {
             $expr = $this->getExpression($parsed['WHERE']);
+            if ($expr === false) {
+                $expr = '1';
+            }
             $sql .= 'WHERE ' . $expr . ' ';
         }
         
@@ -98,7 +108,13 @@ class SqlParser {
         }
         
         // HAVING
-        // @todo 
+        if (key_exists('HAVING', $parsed)) {
+            $expr = $this->getExpression($parsed['HAVING']);
+            if ($expr === false) {
+                $expr = '1';
+            }
+            $sql .= 'HAVING ' . $expr . ' ';
+        }
         
         // ORDER BY
         if (key_exists('ORDER', $parsed)) {
@@ -123,10 +139,13 @@ class SqlParser {
     
     private function getExpression($tree) {
         $where = array();
-        if (!is_array($tree)) return '';
+        if (!is_array($tree)) return false;
         foreach ($tree as $i => $ex) {
             if ($ex['expr_type'] == 'expression') {
                 $sub_expr = $this->getExpression($ex['sub_tree']);
+                if ($sub_expr === false) {
+                    $sub_expr = $ex['base_expr'];
+                }
                 if (preg_match('~ *\w+\. *\* *~', $sub_expr)) {
                     $where[] = $sub_expr.' ';
                 } else {

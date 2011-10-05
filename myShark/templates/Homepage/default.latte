@@ -2,7 +2,19 @@
 
 {define content}
 <div class="wrapper-page link--{$page['page']['link']}">
-        
+        {snippet header}
+            {if count($page['languages']) > 1}
+    <div class="languages">
+        {foreach $page['languages'] as $lang}
+        <a href="{$lang['actualPath']}">
+            <img src="{$lang['imgPath']}" alt="{$lang['title']}" />
+        </a>
+        {/foreach}
+    </div>
+            {/if}
+        {/snippet}
+    
+    
         {snippet page}
     <div id="page-{$page['page']['id_page']}" class="page">
         <div class="brace-page">
@@ -46,6 +58,11 @@
     
 </div>
 {/define}
+
+
+
+
+
 
 
 {define head}

@@ -18,6 +18,8 @@ class Loader extends \Nette\Object implements IEnclosed {
     const USERFILES_DIR = 'userfiles';
     const MODULES_DIR = 'modules';
     const CSS_DIR = 'css';
+    const ICON_DIR = 'icon';
+    const LANGUAGE_DIR = 'language';
 
 
 

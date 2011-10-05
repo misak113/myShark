@@ -13,6 +13,12 @@ class Connection extends \Nette\Database\Connection {
      * @return \Nette\Database\Statement statement
      */
     public function queryArgs($sql, $args) {
+        
+        // Pro Nette diagnostics
+        if (substr($sql, 0, 7) == 'EXPLAIN') {
+            return parent::queryArgs($sql, $args);
+        }
+        
         $parser = new SqlParser();
         $parsed = $parser->parse($sql);
         $changed = false;

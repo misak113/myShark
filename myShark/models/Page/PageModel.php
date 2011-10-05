@@ -9,7 +9,7 @@ use Kate\Main\Model,
 class PageModel extends Model {
     const ID = 0;
     
-    const VERSION = '1.0.17';
+    const VERSION = '1.0.18';
     
     const DEFAULT_PAGE_NAME_LINK = 'myShark';
     const DEFAULT_PAGE_NAME = 'Redakční systém myShark';
@@ -26,6 +26,7 @@ class PageModel extends Model {
             $defaultLanguage = array(
                 'shortcut' => 'cs',
                 'location' => 'cz',
+                'title' => 'Česky',
             ),
             $language = null;
     
@@ -103,8 +104,8 @@ class PageModel extends Model {
         $langs = array();
         while ($row = $q->fetch()) {
             $lang = array(
-                'shortcut' => $row['shortcut'],
-                'location' => $row['location'],
+                'shortcut' => strtolower($row['shortcut']),
+                'location' => strtolower($row['location']),
                 'title' => $row['title'],
             );
             $langs[$row['id_language']] = $lang;
@@ -112,6 +113,10 @@ class PageModel extends Model {
         return $langs;
     }
     
+    /**
+     * Vrací zda je právě nastaven defaultní jazyk
+     * @return boolean je defaultní
+     */
     public function isDefaultLanguage() {
         $shortcut = $this->language['shortcut'];
         $location = $this->language['location'];
@@ -124,14 +129,23 @@ class PageModel extends Model {
         }
     }
 
-    public function getUrl($path) {
-        if ($this->isDefaultLanguage()) {
-            $lang = false;
-        } else {
-            $lang = $this->language['shortcut'].($this->language['location'] ?'_'.strtoupper($this->language['location']) :'');
+    /**
+     * Vrací adresu pro odkaz na zadanou stránku i s jazykovou vlozkou
+     * @param string $path pozadovaný path stránky pro odkaz
+     * @param string jazyk zobrazený v url
+     * @return string výsledná uri pro odkaz
+     */
+    public function getUrl($path, $lang = false) {
+        if ($lang === false) {
+            if ($this->isDefaultLanguage()) {
+                $lang = false;
+            } else {
+                $lang = $this->language['shortcut'].($this->language['location'] ?'_'.strtoupper($this->language['location']) :'');
+            }
         }
         return Loader::getBaseUrl().($lang ?'/'.$lang :'').'/'.$path;
     }
+    
     
     /**
      * Vrací povolené jazyky z DB... něco ve stylu '[a-zA-Z]{2}(_[a-zA-Z]{2})?'
@@ -197,6 +211,11 @@ class PageModel extends Model {
     }
     
     
+    /**
+     * Podle link vrátí id aktuální stránky
+     * @param string $pageLink
+     * @return int id page
+     */
     public function loadPageId($pageLink) {
         $args = array();
         $sql = 'SELECT page.id_page
@@ -343,7 +362,7 @@ class PageModel extends Model {
     /**
      * Přemění z řádku databáze na pole
      * @param Nette\Database\Row $res řádek databáze
-     * @return pole
+     * @return array pole
      */
     private function createPageLayoutFromDBFetch($res) {
         if (!$res || count($res) == 0 || !is_array($res)) {
@@ -394,7 +413,53 @@ class PageModel extends Model {
             'link' => $first->offsetGet('layout_link'),
             'width' => max($layoutWidths),
         );
+        
+        // Jazyky
+        $languages = array();
+        $langD = $this->getDefaultLanguage();
+        foreach ($this->getLanguages() as $idLang => $lang) {
+            $language = array();
+            
+            $full = false;
+            foreach ($this->getLanguages() as $idLangS => $langS) {
+                if ($idLangS !== $idLang) {
+                    if ($langS['shortcut'] == $lang['shortcut']) {
+                        $full = true;
+                        break;
+                    }
+                }
+            }
+            $langFull = $langauge['lang'] = $lang['shortcut'] . '_' . $lang['location'];
+            $langPath = $langauge['lang'] = $lang['shortcut'] . ($full ?'_'.$lang['location'] :'');
+            if ($lang['shortcut'] == $langD['shortcut'] && $lang['location'] == $langD['location']) {
+                $langPath = '';
+            }
+            $langauge['actualPath'] = $this->getUrl($this->getActualPath(), $langPath);
+            $langauge['imgPath'] = Loader::getBaseUrl().'/'.Loader::IMAGES_DIR.'/'.Loader::ICON_DIR.'/'.Loader::LANGUAGE_DIR.'/'.$langFull.'.png';
+            $langauge['title'] = $lang['title'];
+            $languages[] = $langauge;
+        }
+        $pageLayout['languages'] = $languages;
+        
+        
         return $pageLayout;
+    }
+    
+    public function getActualPath() {
+        foreach ($this->pageParameters as $id => $params) {
+            if ($id === self::ID) {
+                $part[] = $params;
+                continue;
+            }
+            $modules = $this->getModules();
+            if ($id !== MenuModuleModel::ID) {
+                $part[] =  $modules[$id]['link'];
+            }
+            foreach ($params as $param) {
+                $part[] = $param;
+            }
+        }
+        return implode('/', $part);
     }
     
     
@@ -418,11 +483,20 @@ class PageModel extends Model {
         }
     }
     
+    /**
+     * Nastaví aktuální jazyk dle mezinárodního standardu
+     * @param string $shortcut zkratka
+     * @param string $location umístění
+     */
     public function setLanguage($shortcut, $location) {
         $this->language['shortcut'] = $shortcut;
         $this->language['location'] = $location;
     }
     
+    /**
+     * Vrátí id aktuálního jazyku
+     * @return int id_language
+     */
     public function getLanguage() {
         if ($this->language === null) {
             $this->language = $this->defaultLanguage;
@@ -439,10 +513,18 @@ class PageModel extends Model {
         return $activeIdLanguage;
     }
     
+    /**
+     * Nastaví parametry získané z URL
+     * @param array $parameters parametry
+     */
     public function setPageParameters($parameters) {
         $this->pageParameters = $parameters;
     }
     
+    /**
+     * Vrátí parametry z URL
+     * @return array paramtery
+     */
     public function getPageParameters() {
         return $this->pageParameters;
     }
@@ -459,19 +541,35 @@ class PageModel extends Model {
         return $moduleLinks;
     }
     
+    /**
+     * Vrátí časy expirace cache pro jednotlivé třídy a metody
+     * @return array expirace
+     */
     public static function getCacheExpirations() {
         return self::$cacheExpirations;
     }
     
+    /**
+     * Vrátí všechny moduly
+     * @return array moduly
+     */
     public function getModules() {
         if (empty($this->modules)) {
-            $this->modules = $this->loadModules();
+            $this->modules = $this->cache()->loadModules();
         }
         return $this->modules;
     }
     
+    /**
+     * Vrátí defaultní jazyk: standart v poly
+     * @return array jazyk
+     */
     public function getDefaultLanguage() {
         return $this->defaultLanguage;
+    }
+    
+    public function getLanguages() {
+        return $this->languages;
     }
 }
 ?>
