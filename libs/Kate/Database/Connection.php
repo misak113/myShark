@@ -1,6 +1,7 @@
 <?php
 
 namespace Kate\Database;
+
 use Kate\External\SqlParser,
         Kate\Main\Loader;
 
@@ -15,7 +16,7 @@ class Connection extends \Nette\Database\Connection {
     public function queryArgs($sql, $args) {
         
         // Pro Nette diagnostics
-        if (substr($sql, 0, 7) == 'EXPLAIN') {
+        if (strpos($sql, 'SELECT') !== 0) {
             return parent::queryArgs($sql, $args);
         }
         

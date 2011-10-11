@@ -6,6 +6,9 @@ class GeneralModuleModel extends ModuleModel {
     const LABEL = 'General';
     const PARENT_ID = null;
     
+    public function getPermissions() {
+        return array();
+    }
     public function loadSlot($idPage, $idCell, $params) {
         return false;
     }

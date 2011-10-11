@@ -22,7 +22,14 @@ class HomepagePresenter extends Kate\Main\Presenter {
      */
     public function renderDefault() {
         $pageModel = PageModel::get();
-
+        $userModel = UserModel::get();
+        
+        $userModel->logUser();
+        if (!$userModel->isAllowed('web', 'display')) {
+            $this->error403();
+            return;
+        }
+        
         $parameters = $pageModel->getPageParameters();
 
         // Naloaduje stránku
@@ -124,6 +131,17 @@ class HomepagePresenter extends Kate\Main\Presenter {
         $this->setView('error');
         $this->template->errorNumber = 500;
         $this->template->errorMessage = 'Na serveru nastala chyba. Omlouváme se, zkuste znovu načíst později nebo přejít na jinou stránku.'; // @todo prelozit ze statických překladačů
+    }
+    
+    /**
+     * Nastaví vykreslování na error 403 stránku... Nedostatečná práva
+     */
+    public function error403() {
+        $this->getHttpResponse()->setCode(Nette\Http\Response::S403_FORBIDDEN);
+        
+        $this->setView('error');
+        $this->template->errorNumber = 403;
+        $this->template->errorMessage = 'Pro zobrazení této stránky nemáte dostatečná práva'; // @todo prelozit ze statických překladačů
     }
 
 }

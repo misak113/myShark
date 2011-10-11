@@ -9,6 +9,19 @@ class MenuModuleModel extends ModuleModel {
     const ID = 1;
     const LABEL = 'Menu';
     const PARENT_ID = 2;
+    private static $permissions = array(
+        array('type' => 'item', 'operation' => 'display', 'text' => 'Zobrazení položek'),
+        array('type' => 'item', 'operation' => 'edit', 'text' => 'Editace položek'),
+        array('type' => 'item', 'operation' => 'add', 'text' => 'Přidání položek'),
+    );
+    
+    /**
+     * Vrací pole všech dostupných práv pro module menu
+     * @return array práva
+     */
+    public function getPermissions() {
+        return self::$permissions;
+    }
     
     /**
      * Tato funkce zjistuje, zda parametry predané tomuto modulu neovlivnuji 

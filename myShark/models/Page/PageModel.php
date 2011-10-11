@@ -30,6 +30,10 @@ class PageModel extends Model {
             ),
             $language = null;
     
+    private static $permissions = array(
+        array('type' => 'web', 'operation' => 'display', 'text' => 'Zobrazení webových stránek'),
+    );
+    
     // Pole pro čas expirace při cachování jednotlivých funkcí ve třídách
     private static $cacheExpirations = array(
         //Classes
@@ -44,6 +48,9 @@ class PageModel extends Model {
             'loadPageId' => '+20 minutes',
             'loadPageLayout' => '+20 minutes',
             'loadSlot' => '+20 minutes',
+        ),
+        'UserModel' => array(
+            'loadUser' => '+60 minutes',
         ),
     );
     

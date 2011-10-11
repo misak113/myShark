@@ -56,6 +56,7 @@ class Loader extends \Nette\Object implements IEnclosed {
      * Zajistí základní prvky pro běh aplikace
      */
     private function initApplication() {
+        $cookies = \Kate\Http\Cookies::get();
 
         //zjistí zda je v debugovacím módu
         self::$DEBUG_MODE = isset($this->configurator->container->params['debugMode']) ? $this->configurator->container->params['debugMode'] : false;

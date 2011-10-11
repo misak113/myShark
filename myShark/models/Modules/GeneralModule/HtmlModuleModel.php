@@ -8,6 +8,18 @@ class HtmlModuleModel extends ModuleModel {
     const ID = 3;
     const LABEL = 'Html';
     const PARENT_ID = 2;
+    private static $permissions = array(
+        array('type' => 'section', 'operation' => 'display', 'text' => 'Zobrazení sekcí'),
+        array('type' => 'section', 'operation' => 'edit', 'text' => 'Editace sekcí'),
+    );
+    
+    /**
+     * Vrací pole všech dostupných práv pro module html
+     * @return array práva
+     */
+    public function getPermissions() {
+        return self::$permissions;
+    }
     
     /**
      * Metoda loaduje jak modul ovlivňuje zadaný cell podle zadaných parametrů
