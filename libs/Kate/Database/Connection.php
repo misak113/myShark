@@ -104,5 +104,9 @@ class Connection extends \Nette\Database\Connection {
         return parent::queryArgs($sql, $args);
     }
     
+    public function queryForce($sql) {
+        return parent::queryArgs($sql, array());
+    }
+    
 }
 ?>

@@ -13,9 +13,19 @@ class UserModel extends \Kate\Main\Model
     
     const FRONTEND_USER_GROUP_ID = 1;
     const ROBOT_USER_GROUP_ID = 2;
+    const ADMIN_USER_GROUP_ID = 2;
     
+    private static $defaultUserGroups = array(
+        self::FRONTEND_USER_GROUP_ID => array('text' => 'Frontend uživatel', 'parent' => null),
+        self::ROBOT_USER_GROUP_ID => array('text' => 'Robot', 'parent' => null),
+        self::ADMIN_USER_GROUP_ID => array('text' => 'Administrátor', 'parent' => 1),
+    );
     
-    private $user, $userAgent, $ip, $request, $response, $userInstance = null;
+    private static $permissionsGeneral = array(
+        array('type' => 'web', 'operation' => 'display', 'text' => 'Zobrazení webových stránek'),
+    );
+    
+    private $user, $userAgent, $ip, $request, $response, $userInstance = null, $permissions = array();
     
     protected function __construct() {
         parent::__construct();
@@ -24,6 +34,9 @@ class UserModel extends \Kate\Main\Model
         $this->response = \Nette\Environment::getHttpResponse();
         $this->userAgent = $this->request->getHeader('user-agent', reset($robots));
         $this->ip = $this->request->getRemoteAddress();
+        
+        $this->cache()->alterPermissions();
+        $this->cache()->alterUserGroups();
     }
     
     /**
@@ -161,10 +174,18 @@ class UserModel extends \Kate\Main\Model
             'link' => $row->offsetGet('link'),
             'parent' => $this->loadUserGroup($row->offsetGet('id_userGroup_parent')),
         );
-        $userGroup['permissions'] = $this->loadPermissions($idUserGroup) + ($userGroup['parent']?$userGroup['parent']['permissions']:array());
+        $userGroup['permissions'] = $this->getPermissions($idUserGroup) + ($userGroup['parent']?$userGroup['parent']['permissions']:array());
         return $userGroup;
     }
     
+    public function getPermissions($idUserGroup = false) {
+        if (!isset($this->permissions[$idUserGroup])) {
+            $this->permissions[$idUserGroup] = $this->cache->loadPermissions($idUserGroup);
+        }
+        return $this->permissions[$idUserGroup];
+    }
+
+
     /**
      * Načte prává dané skupiny
      * @param int $idUserGroup id skupiny
@@ -173,7 +194,7 @@ class UserModel extends \Kate\Main\Model
         $args = array();
         $sql = 'SELECT permission.id_permission, type, operation, text, link
             FROM usergrouphaspermission
-            JOIN permission ON (permission.id_permission = usergrouphaspermission.id_permission)
+            RIGHT JOIN permission ON (permission.id_permission = usergrouphaspermission.id_permission)
             LEFT JOIN phrase AS permission_phrase ON (permission_phrase.id_phrase = permission.id_phrase) ';
         if ($idUserGroup) {
             $sql .= 'WHERE id_userGroup = ?';
@@ -205,6 +226,60 @@ class UserModel extends \Kate\Main\Model
             }
         }
         return false;
+    }
+    
+    
+    
+    public function alterPermissions() {
+        $modules = PageModel::get()->getModules();
+        $perms = self::$permissionsGeneral;
+        
+        foreach ($modules as $module) {
+            $moduleModel = $module['label'].'ModuleModel';
+            $modulePerms = $moduleModel::get()->getPermissions();
+            foreach ($modulePerms as $perm) {
+                $perm['type'] = 'Module' . $module['label'] . '_' . $perm['type'];
+                $perms[] = $perm;
+            }
+        }
+        $nowPerms = $this->loadPermissions();
+        foreach ($perms as $perm) {
+            foreach ($nowPerms as $nowPerm) {
+                if ($nowPerm['operation'] == $perm['operation'] && $nowPerm['type'] == $perm['type']) {
+                    continue 2;
+                }
+            }
+            $this->db->beginTransaction();
+            $idPhrase = ControlModel::get()->insertPhrase(PageModel::get()->getDefaultLanguage(), $perm['text']);
+            $data = array(
+                'id_phrase' => $idPhrase,
+                'type' => $perm['type'],
+                'operation' => $perm['operation'],
+            );
+            $this->db->table('permission')->insert($data);
+            $this->db->commit();
+        }
+        return true;
+    }
+    
+    public function alterUserGroups() {
+        foreach (self::$defaultUserGroups as $idUserGroup => $userGroup) {
+            try {
+                $this->db->beginTransaction();
+                $idPhrase = ControlModel::get()->insertPhrase(PageModel::get()->getDefaultLanguage(), $userGroup['text']);
+                $data = array(
+                    'id_phrase' => $idPhrase,
+                    'id_userGroup' => $idUserGroup,
+                    'id_userGroup_parent' => $userGroup['parent'],
+                );
+                $this->db->table('usergroup')->insert($data);
+                $this->db->commit();
+            } catch (PDOException $e) {
+                // Již existuje
+                $this->db->rollBack();
+            }
+        }
+        return true;
     }
 
 }

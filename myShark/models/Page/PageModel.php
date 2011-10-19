@@ -19,20 +19,29 @@ class PageModel extends Model {
     
     
     
-    private $setting = array(), $web = array(), $modules = array(), $languages = array(),
+    private $setting = null, $web = array(), $modules = array(), $languages = null,
             // Defaultní stránka null
             $pageParameters = array(self::ID => null),
+            $language = null;
             // Deafaultní jazyk
-            $defaultLanguage = array(
+            private static $defaultLanguage = array(
+                'id_language' => 1,
                 'shortcut' => 'cs',
                 'location' => 'cz',
                 'title' => 'Česky',
             ),
-            $language = null;
+            $defaultLayouts = array(
+                1 => array('text' => 'Standardní', 'cells' => array(
+                        array('width' => 1000, 'height' => 300, 'row' => 1, 'col' => 1, 'static' => true, 'rowspan' => 1, 'colspan' => 2),
+                        array('width' => 300, 'height' => null, 'row' => 2, 'col' => 1, 'static' => true, 'rowspan' => 1, 'colspan' => 1),
+                        array('width' => 700, 'height' => null, 'row' => 2, 'col' => 2, 'static' => false, 'rowspan' => 1, 'colspan' => 1),
+                        array('width' => 1000, 'height' => 40, 'row' => 3, 'col' => 1, 'static' => true, 'rowspan' => 1, 'colspan' => 2),
+                    ),
+                ),
+            );
+            
     
-    private static $permissions = array(
-        array('type' => 'web', 'operation' => 'display', 'text' => 'Zobrazení webových stránek'),
-    );
+    
     
     // Pole pro čas expirace při cachování jednotlivých funkcí ve třídách
     private static $cacheExpirations = array(
@@ -51,22 +60,68 @@ class PageModel extends Model {
         ),
         'UserModel' => array(
             'loadUser' => '+60 minutes',
+            'alterPermissions' => '+7 days',
         ),
     );
     
-    protected function __construct() {
-        parent::__construct();
+    public function init() {
         $this->cache->alterDatabase();
-        $this->languages = $this->cache->loadLanguages();
-        $this->setting =$this->cache->loadSetting();
     }
     
     /**
      * Pokusí se updatovat databázi podle schéma a vložit základní prvky do databáze...
-     * @todo
      */
     public function alterDatabase() {
+        // @todo Updatovat strukturu
         
+        // Language default
+        $data = array(
+            'id_language' => self::$defaultLanguage['id_language'],
+            'shortcut' => self::$defaultLanguage['shortcut'],
+            'location' => self::$defaultLanguage['location'],
+            'title' => self::$defaultLanguage['title'],
+        );
+        try {
+            $this->db->table('language')->insert($data);
+        } catch (PDOException $e) {
+            //Již existuje
+        }
+        
+        // Layout default
+        foreach (self::$defaultLayouts as $idLayout => $layout) {
+            try {
+                $this->db->beginTransaction();
+                $idPhrase = ControlModel::get()->insertPhrase(self::$defaultLanguage, $layout['text']);
+                $data = array(
+                    'id_phrase' => $idPhrase,
+                    'id_layout' => $idLayout,
+                );
+                $this->db->table('layout')->insert($data);
+                foreach ($layout['cells'] as $cell) {
+                    $idGeometry = ControlModel::get()->insertGeometry($cell['width'], $cell['height']);
+                    $data = array(
+                        'id_layout' => $idLayout,
+                        'id_geometry' => $idGeometry,
+                        'row' => $cell['row'],
+                        'col' => $cell['col'],
+                        'static' => $cell['static'],
+                        'rowspan' => $cell['rowspan'],
+                        'colspan' => $cell['colspan'],
+                    );
+                    $this->db->table('cell')->insert($data);
+                }
+                $this->db->commit();
+            } catch (PDOException $e) {
+                $this->db->rollBack();
+            }
+        }
+        
+        // Modules
+        
+        
+        // Error 404 stránka
+        
+        return true;
     }
     
     /**
@@ -160,7 +215,7 @@ class PageModel extends Model {
      */
     public function getPatternOfAllowedLanguages() {
         $pat = array();
-        foreach ($this->languages as $id => $lang) {
+        foreach ($this->getLanguages() as $id => $lang) {
             $pat[] = $lang['shortcut'].'(_'.strtoupper($lang['location']).')?';
         }
         return '('.implode('|', $pat).')';
@@ -201,7 +256,7 @@ class PageModel extends Model {
      */
     public function getWebNameLink() {
         if (empty($this->web)) {
-            $this->web = $this->loadWeb();
+            $this->web = $this->cache()->loadWeb();
         }
         return $this->web['nameLink'];
     }
@@ -212,7 +267,7 @@ class PageModel extends Model {
      */
     public function getWebName() {
         if (empty($this->web)) {
-            $this->web = $this->loadWeb();
+            $this->web = $this->cache()->loadWeb();
         }
         return $this->web['name'];
     }
@@ -477,7 +532,7 @@ class PageModel extends Model {
      */
     public function getSetting($key = null) {
         if ($this->setting == null) {
-            /** @todo load setting from database */
+            $this->setting = $this->cache->loadSetting();
         }
         if ($key === null) {
             return $this->setting;
@@ -506,10 +561,10 @@ class PageModel extends Model {
      */
     public function getLanguage() {
         if ($this->language === null) {
-            $this->language = $this->defaultLanguage;
+            $this->language = self::$defaultLanguage;
         }
         $activeIdLanguage = null;
-        foreach ($this->languages as $idLanguage => $language) {
+        foreach ($this->getLanguages() as $idLanguage => $language) {
             if ($language['shortcut'] == $this->language['shortcut']) {
                 $activeIdLanguage = $idLanguage;
                 if ($language['location'] == $this->language['location']) {
@@ -572,10 +627,13 @@ class PageModel extends Model {
      * @return array jazyk
      */
     public function getDefaultLanguage() {
-        return $this->defaultLanguage;
+        return self::$defaultLanguage;
     }
     
     public function getLanguages() {
+        if ($this->languages === null) {
+            $this->languages = $this->cache->loadLanguages();
+        }
         return $this->languages;
     }
 }
