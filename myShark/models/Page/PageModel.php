@@ -64,8 +64,31 @@ class PageModel extends Model {
         ),
     );
     
+    
+    private static $iconMap = array(
+        'language' => array(
+            'cs_cz' => array(
+                'width' => 23,
+                'height' => 13,
+                'left' => 0,
+                'top' => 0,
+            ),
+            'en_us' => array(
+                'width' => 23,
+                'height' => 13,
+                'left' => 0,
+                'top' => 13,
+            ),
+        ),
+    );
+    
     public function init() {
         $this->cache->alterDatabase();
+        
+        Kate\Helper\ImagePrinter::create(array(
+            'iconPath' => Loader::getBaseUrl().'/'.Loader::IMAGES_DIR.'/'.Loader::ICON_DIR.'/icons.png',
+            'iconMap' => self::$iconMap,
+        ));
     }
     
     /**
@@ -491,15 +514,17 @@ class PageModel extends Model {
                     }
                 }
             }
-            $langFull = $langauge['lang'] = $lang['shortcut'] . '_' . $lang['location'];
-            $langPath = $langauge['lang'] = $lang['shortcut'] . ($full ?'_'.$lang['location'] :'');
+            $langFull = $language['lang'] = $lang['shortcut'] . '_' . $lang['location'];
+            $langPath = $language['lang'] = $lang['shortcut'] . ($full ?'_'.$lang['location'] :'');
             if ($lang['shortcut'] == $langD['shortcut'] && $lang['location'] == $langD['location']) {
                 $langPath = '';
             }
-            $langauge['actualPath'] = $this->getUrl($this->getActualPath(), $langPath);
-            $langauge['imgPath'] = Loader::getBaseUrl().'/'.Loader::IMAGES_DIR.'/'.Loader::ICON_DIR.'/'.Loader::LANGUAGE_DIR.'/'.$langFull.'.png';
-            $langauge['title'] = $lang['title'];
-            $languages[] = $langauge;
+            $language['actualPath'] = $this->getUrl($this->getActualPath(), $langPath);
+            $language['title'] = $lang['title'];
+            //$langauge['imgPath'] = Loader::getBaseUrl().'/'.Loader::IMAGES_DIR.'/'.Loader::ICON_DIR.'/'.Loader::LANGUAGE_DIR.'/'.$langFull.'.png';
+            $language['active'] = $this->getLanguage() === $idLang;
+            $language['imgHtml'] = Kate\Helper\ImagePrinter::get()->getHtmlIcon($langFull, $language['title'], 'language', $language['active'] ?array('active') :false);
+            $languages[] = $language;
         }
         $pageLayout['languages'] = $languages;
         

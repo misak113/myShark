@@ -7,7 +7,8 @@
     <div class="languages">
         {foreach $page['languages'] as $lang}
         <a href="{$lang['actualPath']}">
-            <img src="{$lang['imgPath']}" alt="{$lang['title']}" />
+            {*<img src="{$lang['imgPath']}" alt="{$lang['title']}" />*}
+            {$lang['imgHtml']}
         </a>
         {/foreach}
     </div>

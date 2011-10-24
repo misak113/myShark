@@ -26,3 +26,18 @@ body {
 .clear {
     clear: both;
 }
+
+
+
+.image {
+    display: inline-block;
+    
+}
+
+.icon {
+    
+}
+
+.icon.active {
+    
+}

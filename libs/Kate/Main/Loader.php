@@ -78,9 +78,9 @@ class Loader extends \Nette\Object implements IEnclosed {
         if (!class_exists('PageModel')) {
             throw new Kate\ClassNotFoundException('Vytvořte třídu PageModel Která bude obstarávat základní data pro zobrazení.');
         }
-        \PageModel::get()->init();
         $this->initPathAndUrl();
-
+        \PageModel::get()->init();
+        
 
 
         //naloduje routery
