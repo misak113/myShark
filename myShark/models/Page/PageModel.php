@@ -453,6 +453,7 @@ class PageModel extends Model {
         if (!$res || count($res) == 0 || !is_array($res)) {
             return false;
         }
+		$langs =  $this->getLanguages();
         $first = reset($res);
         $pageLayout = array(
             'page' => array(
@@ -460,6 +461,7 @@ class PageModel extends Model {
                 'text' => $first->offsetGet('page_text'),
                 'link' => $first->offsetGet('page_link'),
                 'order' => $first->offsetGet('page_order'),
+				'activeLanguage' => $langs[$this->getLanguage()],
             ),
             
         );
@@ -502,13 +504,13 @@ class PageModel extends Model {
         // Jazyky
         $languages = array();
         $langD = $this->getDefaultLanguage();
-        foreach ($this->getLanguages() as $idLang => $lang) {
+        foreach ($langs as $idLang => $lang) {
             $language = array();
             
             $full = false;
-            foreach ($this->getLanguages() as $idLangS => $langS) {
-                if ($idLangS !== $idLang) {
-                    if ($langS['shortcut'] == $lang['shortcut']) {
+            foreach ($langs as $idLangSC => $langSC) {
+                if ($idLangSC !== $idLang) {
+                    if ($langSC['shortcut'] == $lang['shortcut']) {
                         $full = true;
                         break;
                     }

@@ -17,17 +17,17 @@
     
     
         {snippet page}
-    <div id="page-{$page['page']['id_page']}" class="page">
+    <section id="page-{$page['page']['id_page']}" class="page">
         <div class="brace-page">
             {if $page['cells']}
                 {foreach $page['cells'] as $row}
                     {foreach $row as $cell}
             <div class="wrapper-cell">
                         {snippet 'cell-'.$cell['id_cell']}
-                <div id="cell-{$cell['id_cell']}" class="cell">
+                <section id="cell-{$cell['id_cell']}" class="cell">
                     <div class="brace-cell">
                         <div class="wrapper-slot link--{$cell['slot']['link']}">
-                            <div id="slot-{$cell['slot']['id_slot']}" class="slot">
+                            <section id="slot-{$cell['slot']['id_slot']}" class="slot">
                                 <div class="brace-slot">
                             {if $cell['slot']['contents']}
                                 {foreach $cell['slot']['contents'] as $content}
@@ -43,10 +43,10 @@
                                 {/foreach}
                             {/if}
                                 </div>
-                            </div>
+                            </section>
                         </div>
                     </div>
-                </div>
+                </section>
                         {/snippet}
             </div>
                     {/foreach}
@@ -54,7 +54,7 @@
                 {/foreach}
             {/if}
         </div>
-    </div>
+    </section>
         {/snippet}
     
 </div>

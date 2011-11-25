@@ -53,6 +53,7 @@ class UserModel extends \Kate\Main\Model
             
             if (!$hashCode) {
                 $this->createUserNotExists();
+				return;
             } else {
                 $args = array();
                 $args['lastAccessDate'] = new Nette\Database\SqlLiteral('NOW()');
@@ -62,10 +63,9 @@ class UserModel extends \Kate\Main\Model
                 $rowsAffected = $this->db->table('user')->where('hashCode', $hashCode)->update($args);
                 if ($rowsAffected === 0) {
                     $this->createUserNotExists();
-                    return;
+					return;
                 }
             }
-            
             $this->user = $this->db->table('user')->where('hashCode', $hashCode)->limit(1)->fetch();
         }
     }
@@ -86,7 +86,7 @@ class UserModel extends \Kate\Main\Model
     private function createUserNotExists() {
         $hashCode = sha1(self::HASH_KEY . $this->ip . $this->userAgent);
         $this->user = $this->db->table('user')->where('hashCode', $hashCode)->where('noCookie', true)->limit(1)->fetch();
-        if ($this->user['id_user'] === null) {
+		if ($this->user['id_user'] === null) {
             $this->createUserInDatabase();
             return;
         } else {

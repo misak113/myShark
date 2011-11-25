@@ -3,23 +3,25 @@
 {define contentModuleMenu}
     {var $items = $moduleContent['items']}
 
-    {block MenuItems}
+    <nav class="Menu">
+	{block MenuItems}
         {if $items}
-        <ul n:if="$items" class="items">
-            {foreach $items as $item}
-            <li id="Menu-item-{$item['id_item']}" class="item link--{$item['link']}">
-                <a n:if="$item['reference']" href="{$item['reference']}" class="label">
-                {$item['text']}
-                </a>
-                <span n:if="!$item['reference']" class="label">
-                {$item['text']}
-                </span>
-                {include #MenuItems, items => $item['items']}
-            </li>
-            {/foreach}
-        </ul>
+			<ul n:if="$items" class="items">
+				{foreach $items as $item}
+				<li id="Menu-item-{$item['id_item']}" class="item link--{$item['link']}">
+					<a n:if="$item['reference']" href="{$item['reference']}" class="label">
+					{$item['text']}
+					</a>
+					<span n:if="!$item['reference']" class="label">
+					{$item['text']}
+					</span>
+					{include #MenuItems, items => $item['items']}
+				</li>
+				{/foreach}
+			</ul>
         {/if}
     {/block}
+	</nav>
 {/define}
 
 

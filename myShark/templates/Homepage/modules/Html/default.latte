@@ -4,11 +4,11 @@
     {if $moduleContent['sections']}
         {foreach $moduleContent['sections'] as $section}
         <div class="wrapper-section link--{$section['link']}">
-            <div id="Html-section-{$section['id_section']}" class="section style--{$section['style']['link']}">
+            <article id="Html-section-{$section['id_section']}" class="section style--{$section['style']['link']}">
                 <div class="brace-section">
                     {!$section['text']}
                 </div>
-            </div>
+            </article>
         </div>
         {/foreach}
     {/if}
