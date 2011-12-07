@@ -30,7 +30,7 @@ class RouterModel extends \Kate\Main\Model
         //$router[] = new Route('[<path .*>/]admin', 'Admin:default');
         $language = PageModel::get()->cache()->getDefaultLanguage();
         //Frontend
-	$router[] = new Route('[<language>/][<path>]', array(
+	$router[] = new Route('[<language>/][<path>][#<hashmark>]', array(
             'presenter' => 'Homepage',
             'action' => 'default',
             'language' => array(
@@ -43,6 +43,11 @@ class RouterModel extends \Kate\Main\Model
                 Route::PATTERN => '.*',
                 Route::FILTER_IN => array(__CLASS__, 'parsePath'),
                 Route::FILTER_OUT => array(__CLASS__, 'buildPath'),
+            ),
+			'hashmark' => array(
+                Route::PATTERN => '.*',
+                Route::FILTER_IN => array(__CLASS__, 'parseHashmark'),
+                Route::FILTER_OUT => array(__CLASS__, 'buildHashmark'),
             ),
         ));
     }
@@ -113,7 +118,10 @@ class RouterModel extends \Kate\Main\Model
         $parameters = array(
             PageModel::ID => $page
         );
-        
+        if (end($params) === AdminModel::ADMIN_LINK) {
+			AdminModel::get()->setLoadAdmin();
+			unset($params[count($params)]);
+		}
         foreach ($params as $param) {
             if (in_array($param, $moduleLinks)) {
                 $moduleId = array_search($param, $moduleLinks);
@@ -135,6 +143,29 @@ class RouterModel extends \Kate\Main\Model
     public static function buildPath($path) {
         $path = strtolower($path);
         return $path;
+    }
+	
+	
+	
+	/**
+     * Parsuje url a získává instrukce z hashmarku, které předá AdminModelu pro pozdější zpracování
+     * @param string $instructions url hashamrku v adresa
+     * @return string instructions
+     */
+    public static function parseHashmark($hashmark) {
+        $hashmark = strtolower($hashmark);
+        return $hashmark;
+    }
+    
+    /**
+     * @todo Změní adresu na to co je za hashmarkem
+     * @param string $hashmark hashmark
+     * @return string hashmark
+     */
+    public static function buildHashmark($hashmark) {
+        $hashmark = strtolower($hashmark);
+		
+        return $hashmark;
     }
     
 }

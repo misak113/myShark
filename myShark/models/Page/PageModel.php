@@ -9,7 +9,7 @@ use Kate\Main\Model,
 class PageModel extends Model {
     const ID = 0;
     
-    const VERSION = '1.0.18';
+    const VERSION = '1.0.21';
     
     const DEFAULT_PAGE_NAME_LINK = 'myShark';
     const DEFAULT_PAGE_NAME = 'Redakční systém myShark';
@@ -343,7 +343,9 @@ class PageModel extends Model {
         $args = array($idPage);
         $q = $this->db->queryArgs($sql, $args);
         $res = $q->fetchAll();
-        return $this->createPageLayoutFromDBFetch($res);
+        $page = $this->createPageLayoutFromDBFetch($res);
+		$page['login'] = AdminModel::get()->isLoadAdmin();
+		return $page;
     }
     
     /**
