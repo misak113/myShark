@@ -119,7 +119,7 @@ class RouterModel extends \Kate\Main\Model
             PageModel::ID => $page
         );
         if (end($params) === AdminModel::ADMIN_LINK) {
-			AdminModel::get()->setLoadAdmin();
+			AdminModel::get()->setLoadAdminLogin();
 			unset($params[count($params)]);
 		}
         foreach ($params as $param) {

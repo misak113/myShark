@@ -33,7 +33,7 @@
     </head>
 
     <body>
-        <div n:foreach="$flashes as $flash" class="flash {$flash->type}">{$flash->message}</div>
+        <div n:foreach="$flashes as $flash" class="flash {$flash->type}">{_$flash->message}</div>
         <div id="body">
             {include #content}
         </div>    

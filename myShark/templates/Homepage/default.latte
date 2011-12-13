@@ -14,9 +14,10 @@
     </div>
             {/if}
 	
-			{if $page['login']}
+			{if $page['loginForm']}
 	<div class="window login">
-		PRIHLASIT
+				{includeblock ''.(\Kate\Main\Loader::WINDOWS_DIR).S.'login.latte'}
+				{include #loginWindow, loginForm => $page['loginForm']}
 	</div>
 			{/if}
 	

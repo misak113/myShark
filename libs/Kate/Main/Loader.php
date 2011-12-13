@@ -20,6 +20,7 @@ class Loader extends \Nette\Object implements IEnclosed {
     const CSS_DIR = 'css';
     const ICON_DIR = 'icon';
     const LANGUAGE_DIR = 'language';
+	const WINDOWS_DIR = 'windows';
 
 
 
@@ -133,6 +134,14 @@ class Loader extends \Nette\Object implements IEnclosed {
     private function setConfigurator(\Nette\Configurator $configurator) {
         $this->configurator = $configurator;
     }
+	
+	public function getContainer() {
+		return $this->configurator->container;
+	}
+	
+	public function getPresenter() {
+		return $this->application->getPresenter();
+	}
 
     public static function isDebugMode() {
         return self::$DEBUG_MODE;

@@ -32,7 +32,13 @@ class Cache extends \Nette\Object {
         $key = array_merge(array('name' => $name), $args);
         
         $forceCall = $this->hasForceCall($name);
-        $value = $this->cache->load($key);
+		try {
+			$value = $this->cache->load($key);
+		} catch(\Nette\NotImplementedException $e) {
+			/** @todo \Nette\Caching\Storages\FileStorage::readData(), line:355, error: @unserialize($data) */
+			\Nette\Diagnostics\Debugger::log($e);
+			$value = NULL;
+		}
         if ($value === NULL || $forceCall === true) {
             $expiration = $this->getExpiration($name);
             // @todo udelat aby se do klice cache zapisovali i stavy instance tedy jeji atributy a nejlepe i jeji stavy atributu po provedeni fce
@@ -48,11 +54,14 @@ class Cache extends \Nette\Object {
             
             $value = call_user_func_array(array($this->class, $name), $args);
             
-            
-            $this->cache->save($key, $value, array(
-                \Nette\Caching\Cache::EXPIRE => $expiration,
-                )
-            );
+            try {
+				$this->cache->save($key, $value, array(
+					\Nette\Caching\Cache::EXPIRE => $expiration,
+				));
+			} catch(Exception $e) {
+				/** @todo \Nette\Caching\Storages\FileStorage::???, line:205, error: serialize($data) */
+				\Nette\Diagnostics\Debugger::log($e);
+			}
         }
         return $value;
     }

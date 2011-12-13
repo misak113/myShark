@@ -344,7 +344,7 @@ class PageModel extends Model {
         $q = $this->db->queryArgs($sql, $args);
         $res = $q->fetchAll();
         $page = $this->createPageLayoutFromDBFetch($res);
-		$page['login'] = AdminModel::get()->isLoadAdmin();
+		$page['loginForm'] = AdminModel::get()->createLoginForm();
 		return $page;
     }
     

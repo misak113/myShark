@@ -51,6 +51,7 @@ abstract class Presenter extends \Nette\Application\UI\Presenter
     private function initPresenter() {
         $this->baseUrl = Loader::getBaseUrl();
         $this->initTitle();
+		$this->template->setTranslator(\Kate\Helper\Translator::get());
     }
     
     /**
@@ -83,4 +84,10 @@ abstract class Presenter extends \Nette\Application\UI\Presenter
     }
     
     
+	abstract public function formSuccess();
+	
+	
+	protected function redirectBack() {
+		$this->redirectUri($this->getHttpRequest()->getReferer(), 302);
+	}
 }

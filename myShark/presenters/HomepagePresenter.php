@@ -47,6 +47,13 @@ class HomepagePresenter extends Kate\Main\Presenter {
         // Nastavý proměnné pro tamplate
         $this->initDefault($page);
     }
+	
+	
+	
+	
+	public function formSuccess() {
+		
+	}
     
     /**
      * Vrací stránku s načtenými buňky do page
@@ -100,9 +107,15 @@ class HomepagePresenter extends Kate\Main\Presenter {
         $this->initScripts();
         $this->initStyles();
     }
+	
+	
+	
+	
+	
 
     /**
      * Při zavolání nastaví na vykreslení error 404 či 500 pokud nenajde 404
+	 * @internal !Je třeba psát return s touto funkcí, aby se nepřerenderoval 404
      */
     public function error404() {
         $pageModel = PageModel::get();

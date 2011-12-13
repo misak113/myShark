@@ -2,7 +2,27 @@
 
 namespace Kate\Helper;
 
-class Translator {
+class Translator extends \Nette\Object implements \Nette\Localization\ITranslator, \Kate\Main\IEnclosed {
+	
+	protected static $translator = null;
+    
+    public static function get() {
+        if (self::$translator === null) {
+            self::$translator = new Translator();
+        }
+        return self::$translator;
+    }
+	
+	/**
+	 * Přeloží zprávu do aktuálního jazyka
+	 * @param type $message
+	 * @param type $count
+	 * @return type 
+	 */
+	public function translate($message, $count = NULL) {
+		
+		return '@trans '.$message;
+	}
     
     /**
      * @todo

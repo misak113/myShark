@@ -25,7 +25,7 @@ class UserModel extends \Kate\Main\Model
         array('type' => 'web', 'operation' => 'display', 'text' => 'Zobrazení webových stránek'),
     );
     
-    private $user, $userAgent, $ip, $request, $response, $userInstance = null, $permissions = array();
+    private $userFetch, $userAgent, $ip, $request, $response, $user = null, $permissions = array();
     
     protected function __construct() {
         parent::__construct();
@@ -34,7 +34,7 @@ class UserModel extends \Kate\Main\Model
         $this->response = \Nette\Environment::getHttpResponse();
         $this->userAgent = $this->request->getHeader('user-agent', reset($robots));
         $this->ip = $this->request->getRemoteAddress();
-        
+		
         $this->cache()->alterPermissions();
         $this->cache()->alterUserGroups();
     }
@@ -66,7 +66,7 @@ class UserModel extends \Kate\Main\Model
 					return;
                 }
             }
-            $this->user = $this->db->table('user')->where('hashCode', $hashCode)->limit(1)->fetch();
+            $this->userFetch = $this->db->table('user')->where('hashCode', $hashCode)->limit(1)->fetch();
         }
     }
     
@@ -80,13 +80,13 @@ class UserModel extends \Kate\Main\Model
         $args['userAgent'] = $this->userAgent;
         $args['noCookie'] = true;
         $args['countLoads'] = 0;
-        $this->user = $this->db->table('user')->insert($args);
+        $this->userFetch = $this->db->table('user')->insert($args);
     }
     
     private function createUserNotExists() {
         $hashCode = sha1(self::HASH_KEY . $this->ip . $this->userAgent);
-        $this->user = $this->db->table('user')->where('hashCode', $hashCode)->where('noCookie', true)->limit(1)->fetch();
-		if ($this->user['id_user'] === null) {
+        $this->userFetch = $this->db->table('user')->where('hashCode', $hashCode)->where('noCookie', true)->limit(1)->fetch();
+		if ($this->userFetch['id_user'] === null) {
             $this->createUserInDatabase();
             return;
         } else {
@@ -102,14 +102,14 @@ class UserModel extends \Kate\Main\Model
                 $args['ip'] = $this->ip;
                 $args['userAgent'] = $this->userAgent;
                 $args['countLoads'] = new Nette\Database\SqlLiteral('countLoads + 1');
-                $this->db->table('user')->where('id_user', $this->user['id_user'])->update($args);
+                $this->db->table('user')->where('id_user', $this->userFetch['id_user'])->update($args);
             } else {
                 $args = array();
                 $args['lastAccessDate'] = new Nette\Database\SqlLiteral('NOW()');
                 $args['ip'] = $this->ip;
                 $args['userAgent'] = $this->userAgent;
                 $args['countLoads'] = new Nette\Database\SqlLiteral('countLoads + 1');
-                $this->db->table('user')->where('id_user', $this->user['id_user'])->update($args);
+                $this->db->table('user')->where('id_user', $this->userFetch['id_user'])->update($args);
             }
         }
     }
@@ -126,10 +126,11 @@ class UserModel extends \Kate\Main\Model
      * @return array uživatel
      */
     public function getUser() {
-        if ($this->userInstance === null) {
-            $this->userInstance = $this->cache()->loadUser($this->user['id_user']);
+        if ($this->user === null) {
+			$userData = $this->cache()->loadUserData($this->userFetch['id_user']);
+            $this->user = new Kate\Security\User($this->container->user, $userData);
         }
-        return $this->userInstance;
+        return $this->user;
     }
     
     /**
@@ -137,13 +138,13 @@ class UserModel extends \Kate\Main\Model
      * @param int $idUser id uživatele
      * @return array uživatel pole 
      */
-    public function loadUser($idUser) {
-        if ($idUser === $this->user['id_user']) {
+    public function loadUserData($idUser) {
+        if ($idUser === $this->userFetch['id_user']) {
             $user = array();
-            foreach ($this->user as $attr => $val) {
+            foreach ($this->userFetch as $attr => $val) {
                 $user[$attr] = $val;
             }
-            $user['userGroup'] = $this->loadUserGroup($this->user['id_userGroup']);
+            $user['userGroup'] = $this->loadUserGroup($this->userFetch['id_userGroup']);
             return $user;
         } else {
             // @todo načte požadovaného uživatele
@@ -219,7 +220,7 @@ class UserModel extends \Kate\Main\Model
 
     public function isAllowed($type, $operation) {
         $user = $this->getUser();
-        $perms = $user['userGroup']['permissions'];
+        $perms = $user->getPermissions();
         foreach ($perms as $perm) {
             if ($perm['type'] == $type && $perm['operation'] == $operation) {
                 return true;
