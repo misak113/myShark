@@ -29,6 +29,9 @@ class HomepagePresenter extends Kate\Main\Presenter {
             $this->error403();
             return;
         }
+		if ($userModel->getUser()->isAllowed('web', 'animate')) {
+			$this->addScript('animate');
+        }
         
         $parameters = $pageModel->getPageParameters();
 

@@ -30,7 +30,7 @@ abstract class Presenter extends \Nette\Application\UI\Presenter
         'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js',
 		'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js',
         '/js/libs/netteForms.js',
-		'/js/desktop.js',
+		'/js/myshark/desktop.js',
     );
     
     protected $baseUrl;
@@ -86,6 +86,27 @@ abstract class Presenter extends \Nette\Application\UI\Presenter
         $this->template->title = Loader::getPageModel()->getTitle();
     }
     
+	
+	/**
+	 * Přidá JS script do zobrazování
+	 * @param string $path cesta ke scriptu
+	 */
+	public function addScript($path) {
+		if (!preg_match('~^.+\.js$~', $path)) {
+			$path = '/js/myshark/'.$path.'.js';
+		}
+		$this->scripts[] = $path;
+	}
+	
+	/**
+	 * Přidá styl do zobrazování
+	 * @param string $path cesta ke stylu
+	 * @param string $media media atribut
+	 * $param string $type typ stylu
+	 */
+	public function addStyle($path, $media = 'screen,projection,tv', $type = 'text/css') {
+		$this->styles[] = array($path, $media, $type);
+	}
     
 	
 }

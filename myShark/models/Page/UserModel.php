@@ -10,10 +10,11 @@ class UserModel extends \Kate\Main\Model implements Nette\Security\IAuthenticato
 {
     const HASH_KEY = 'key_for_hash_generation';
     const COOKIE_UID = 'user_uid_hash';
+	const LOGIN_EXPIRATION = '+ 30 minutes';
     
     const FRONTEND_USER_GROUP_ID = 1;
     const ROBOT_USER_GROUP_ID = 2;
-    const ADMIN_USER_GROUP_ID = 2;
+    const ADMIN_USER_GROUP_ID = 3;
     
     private static $defaultUserGroups = array(
         self::FRONTEND_USER_GROUP_ID => array('text' => 'Frontend uživatel', 'parent' => null),
@@ -23,6 +24,7 @@ class UserModel extends \Kate\Main\Model implements Nette\Security\IAuthenticato
     
     private static $permissionsGeneral = array(
         array('type' => 'web', 'operation' => 'display', 'text' => 'Zobrazení webových stránek'),
+		array('type' => 'web', 'operation' => 'animate', 'text' => 'Zobrazení animovaných webových stránek'),
     );
     
     private $userFetch, $userAgent, $ip, $request, $response, 
@@ -134,6 +136,7 @@ class UserModel extends \Kate\Main\Model implements Nette\Security\IAuthenticato
         if ($this->user === null) {
             $this->user = $this->container->user;
 			$this->user->setAuthorizator($this);
+			$this->user->setExpiration(self::LOGIN_EXPIRATION, true);
 			if (!$this->user->isLoggedIn()) {
 				$this->user->setAuthenticator($this);
 				$this->user->login();
@@ -146,7 +149,7 @@ class UserModel extends \Kate\Main\Model implements Nette\Security\IAuthenticato
 	
 	public function authenticate(array $credentials) {
 		$userData = $this->cache()->loadUserData();
-		$identity = new Nette\Security\Identity($userData['id_user'], $userData['id_userGroup'], $userData);
+		$identity = new Nette\Security\Identity($userData['id_user'], self::FRONTEND_USER_GROUP_ID, $userData);
 		return $identity;
 	}
     

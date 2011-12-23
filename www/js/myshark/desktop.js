@@ -34,7 +34,7 @@ function MyShark ($) {
 (function ($) {
 	
 	var myshark = new MyShark($);
-	$.fn.myshark = myshark;
+	$.myshark = myshark;
 	
 	
 	myshark.windows.hideAll();
