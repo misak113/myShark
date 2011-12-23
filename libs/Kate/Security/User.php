@@ -2,7 +2,7 @@
 
 namespace Kate\Security;
 
-class User extends \Nette\Http\User {
+class User {
 	
 	private $user, $userData;
 	
@@ -13,6 +13,14 @@ class User extends \Nette\Http\User {
 	
 	public function getPermissions() {
 		return $this->userData['userGroup']['permissions'];
+	}
+	
+	public function setAuthenticator(\Nette\Security\IAuthenticator $handler) {
+		return $this->user->setAuthenticator($handler);		
+	}
+	
+	public function getUser() {
+		return $this->user;
 	}
 }
 

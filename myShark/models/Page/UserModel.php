@@ -6,7 +6,7 @@ use Kate\Http\UserAgentParser,
 /**
  * Model který zajišťuje práci s uživateli
  */
-class UserModel extends \Kate\Main\Model 
+class UserModel extends \Kate\Main\Model implements Nette\Security\IAuthenticator, \Nette\Security\IAuthorizator
 {
     const HASH_KEY = 'key_for_hash_generation';
     const COOKIE_UID = 'user_uid_hash';
@@ -25,7 +25,8 @@ class UserModel extends \Kate\Main\Model
         array('type' => 'web', 'operation' => 'display', 'text' => 'Zobrazení webových stránek'),
     );
     
-    private $userFetch, $userAgent, $ip, $request, $response, $user = null, $permissions = array();
+    private $userFetch, $userAgent, $ip, $request, $response, 
+			$user = null, $permissions = array();
     
     protected function __construct() {
         parent::__construct();
@@ -49,6 +50,7 @@ class UserModel extends \Kate\Main\Model
         if (UserAgentParser::isRobot($this->userAgent)) {
             // @todo Zaloguje příchod robota
         } else {
+			
             $hashCode = $this->request->getCookie(self::COOKIE_UID);
             
             if (!$hashCode) {
@@ -67,6 +69,8 @@ class UserModel extends \Kate\Main\Model
                 }
             }
             $this->userFetch = $this->db->table('user')->where('hashCode', $hashCode)->limit(1)->fetch();
+			
+			// @todo pokud je prihlasen tak nastavi jako user z AdminModel
         }
     }
     
@@ -80,7 +84,8 @@ class UserModel extends \Kate\Main\Model
         $args['userAgent'] = $this->userAgent;
         $args['noCookie'] = true;
         $args['countLoads'] = 0;
-        $this->userFetch = $this->db->table('user')->insert($args);
+        $this->db->table('user')->insert($args);
+		$this->userFetch = $this->db->table('user')->where('hashCode', $hashCode)->where('noCookie', true)->limit(1)->fetch();
     }
     
     private function createUserNotExists() {
@@ -127,19 +132,31 @@ class UserModel extends \Kate\Main\Model
      */
     public function getUser() {
         if ($this->user === null) {
-			$userData = $this->cache()->loadUserData($this->userFetch['id_user']);
-            $this->user = new Kate\Security\User($this->container->user, $userData);
+            $this->user = $this->container->user;
+			$this->user->setAuthorizator($this);
+			if (!$this->user->isLoggedIn()) {
+				$this->user->setAuthenticator($this);
+				$this->user->login();
+			}
+			
         }
         return $this->user;
     }
+	
+	
+	public function authenticate(array $credentials) {
+		$userData = $this->cache()->loadUserData();
+		$identity = new Nette\Security\Identity($userData['id_user'], $userData['id_userGroup'], $userData);
+		return $identity;
+	}
     
     /**
      * Vrátí uživatele podle ID_user
      * @param int $idUser id uživatele
      * @return array uživatel pole 
      */
-    public function loadUserData($idUser) {
-        if ($idUser === $this->userFetch['id_user']) {
+    public function loadUserData($idUser = false) {
+        if ($idUser === $this->userFetch['id_user'] || ($idUser === false && $this->userFetch['id_user'])) {
             $user = array();
             foreach ($this->userFetch as $attr => $val) {
                 $user[$attr] = $val;
@@ -194,11 +211,12 @@ class UserModel extends \Kate\Main\Model
     public function loadPermissions($idUserGroup = false) {
         $args = array();
         $sql = 'SELECT permission.id_permission, type, operation, text, link
-            FROM usergrouphaspermission
-            RIGHT JOIN permission ON (permission.id_permission = usergrouphaspermission.id_permission)
+            FROM usergroup
+			LEFT JOIN usergrouphaspermission ON (usergrouphaspermission.id_userGroup = usergroup.id_userGroup)
+            LEFT JOIN permission ON (permission.id_permission = usergrouphaspermission.id_permission)
             LEFT JOIN phrase AS permission_phrase ON (permission_phrase.id_phrase = permission.id_phrase) ';
         if ($idUserGroup) {
-            $sql .= 'WHERE id_userGroup = ?';
+            $sql .= 'WHERE usergroup.id_userGroup = ?';
             $args[] = $idUserGroup;
         }
         $q = $this->db->queryArgs($sql, $args);
@@ -208,6 +226,7 @@ class UserModel extends \Kate\Main\Model
         }
         $perms = array();
         foreach ($res as $row) {
+			if (!$row->offsetGet('id_permission')) continue;
             $perms[$row->offsetGet('id_permission')] = array(
                 'type' => $row->offsetGet('type'),
                 'operation' => $row->offsetGet('operation'),
@@ -218,9 +237,9 @@ class UserModel extends \Kate\Main\Model
         return $perms;
     }
 
-    public function isAllowed($type, $operation) {
-        $user = $this->getUser();
-        $perms = $user->getPermissions();
+    public function isAllowed($idUserGroup, $type, $operation) {
+        $userGroup = $this->cache()->loadUserGroup($idUserGroup);
+		$perms = $userGroup['permissions'];
         foreach ($perms as $perm) {
             if ($perm['type'] == $type && $perm['operation'] == $operation) {
                 return true;
@@ -229,6 +248,36 @@ class UserModel extends \Kate\Main\Model
         return false;
     }
     
+	
+	public function adminUserLogged($idUser) {
+		$userFetch = $this->db->table('user')
+				->where('id_user', $idUser)
+				->limit(1)->fetch();
+		if (!$userFetch) {
+			throw new \Nette\Security\AuthenticationException();
+		}
+		
+		$args = array();
+		$args['countLoads'] = 0;
+		$this->db->table('user')->where('id_user', $this->userFetch['id_user'])->update($args);
+		
+		$hashCode = sha1($this->userFetch['hashCode'] . rand());
+		$args = array();
+		$args['hashCode'] = $hashCode;
+		$args['lastAccessDate'] = new Nette\Database\SqlLiteral('NOW()');
+		$args['ip'] = $this->ip;
+		$args['userAgent'] = $this->userAgent;
+		$args['countLoads'] = new Nette\Database\SqlLiteral('countLoads + '.$this->userFetch['countLoads']);
+		$this->db->table('user')->where('id_user', $idUser)->update($args);
+		$this->response->setCookie(self::COOKIE_UID, $hashCode, '+10 years', '/');
+		
+		$userFetch = $this->db->table('user')
+				->where('id_user', $idUser)
+				->limit(1)->fetch();
+		
+		
+		$this->userFetch = $userFetch;
+	}
     
     
     public function alterPermissions() {
@@ -282,6 +331,7 @@ class UserModel extends \Kate\Main\Model
         }
         return true;
     }
+
 
 }
 

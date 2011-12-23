@@ -550,7 +550,11 @@ class PageModel extends Model {
                 $part[] = $param;
             }
         }
-        return implode('/', $part);
+		$path = implode('/', $part);
+		if (AdminModel::get()->getLoadAdminLogin()) {
+			$path .= '/'.AdminModel::ADMIN_LINK;
+		}
+        return $path;
     }
     
     

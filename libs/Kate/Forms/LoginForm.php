@@ -22,7 +22,9 @@ class LoginForm extends \Kate\Forms\Form {
 				->setRequired('Zadejte prosím heslo')
 				->addRule(Form::MIN_LENGTH, 'Heslo musí mít alespoň %d znamků', self::PASS_MIN_LENGTH);
 		$this->addSubmit('login', 'Přihlásit');
-		$this->setTranslator(\Kate\Helper\Translator::get());
+		$this->setAction(\Kate\Main\Loader::getBaseUrl().'/'.\PageModel::get()->getActualPath());
+		
+		
 	}
 }
 

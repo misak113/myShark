@@ -15,10 +15,8 @@
             {/if}
 	
 			{if $page['loginForm']}
-	<div class="window login">
 				{includeblock ''.(\Kate\Main\Loader::WINDOWS_DIR).S.'login.latte'}
 				{include #loginWindow, loginForm => $page['loginForm']}
-	</div>
 			{/if}
 	
         {/snippet}

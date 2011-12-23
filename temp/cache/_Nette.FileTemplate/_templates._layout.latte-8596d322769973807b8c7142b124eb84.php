@@ -1,8 +1,8 @@
-<?php //netteCache[01]000419a:2:{s:4:"time";s:21:"0.97436600 1323805032";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:97:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\@layout.latte";i:2;i:1323805028;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"f38d86f released on 2011-08-24";}}}?><?php
+<?php //netteCache[01]000419a:2:{s:4:"time";s:21:"0.49533300 1324634832";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:97:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\@layout.latte";i:2;i:1324634827;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"f38d86f released on 2011-08-24";}}}?><?php
 
 // source file: C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\@layout.latte
 
-?><?php list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, '30kjgu0pc4')
+?><?php list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, 'cuq7skn5d2')
 ;
 // snippets support
 if (!empty($control->snippetMode)) {
@@ -14,7 +14,7 @@ if (!empty($control->snippetMode)) {
 //
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo htmlSpecialChars($page['page']['activeLanguage']['shortcut']) ?>">
+<html lang="<?php if (isset($page['page']['activeLanguage']['shortcut'])): echo htmlSpecialChars($page['page']['activeLanguage']['shortcut']) ;endif ?>">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 

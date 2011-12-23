@@ -23,11 +23,14 @@ abstract class Presenter extends \Nette\Application\UI\Presenter
     protected $styles = array(
         array('/css/screen.css', 'screen,projection,tv', 'text/css'),
         array('/css/print.css', 'print', 'text/css'),
+		array('/css/libs/jquery-ui/dark-hive/jquery-ui-1.8.16.custom.css', 'screen,projection,tv', 'text/css'),
     );
     // Vždy načítané javascripty
     protected $scripts = array(
-        'http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js',
+        'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js',
+		'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js',
         '/js/libs/netteForms.js',
+		'/js/desktop.js',
     );
     
     protected $baseUrl;
@@ -36,6 +39,7 @@ abstract class Presenter extends \Nette\Application\UI\Presenter
     public function __construct() {
         parent::__construct();
     }
+	
     
     /**
      * přepisuje kuli inicializaci presenteru
@@ -44,8 +48,7 @@ abstract class Presenter extends \Nette\Application\UI\Presenter
      */
     protected function tryCall($method, array $params) {
         $this->initPresenter();
-        $func = __FUNCTION__;
-        parent::$func($method, $params);
+        parent::tryCall($method, $params);
     }
     
     private function initPresenter() {
@@ -84,10 +87,5 @@ abstract class Presenter extends \Nette\Application\UI\Presenter
     }
     
     
-	abstract public function formSuccess();
 	
-	
-	protected function redirectBack() {
-		$this->redirectUri($this->getHttpRequest()->getReferer(), 302);
-	}
 }

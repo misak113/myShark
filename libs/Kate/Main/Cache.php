@@ -58,7 +58,7 @@ class Cache extends \Nette\Object {
 				$this->cache->save($key, $value, array(
 					\Nette\Caching\Cache::EXPIRE => $expiration,
 				));
-			} catch(Exception $e) {
+			} catch(\Exception $e) {
 				/** @todo \Nette\Caching\Storages\FileStorage::???, line:205, error: serialize($data) */
 				\Nette\Diagnostics\Debugger::log($e);
 			}

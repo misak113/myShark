@@ -41,3 +41,8 @@ body {
 .icon.active {
     
 }
+
+
+.window {
+	display: none;
+}

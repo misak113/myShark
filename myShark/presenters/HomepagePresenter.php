@@ -25,7 +25,7 @@ class HomepagePresenter extends Kate\Main\Presenter {
         $userModel = UserModel::get();
         
         $userModel->logUser();
-        if (!$userModel->isAllowed('web', 'display')) {
+        if (!$userModel->getUser()->isAllowed('web', 'display')) {
             $this->error403();
             return;
         }
@@ -46,14 +46,14 @@ class HomepagePresenter extends Kate\Main\Presenter {
         
         // Nastavý proměnné pro tamplate
         $this->initDefault($page);
+		
+		\Kate\Main\Hook::get()->process();
+		
+		Kate\Helper\LogService::realtimeDebug($this->getUser()->getIdentity()->getData());
     }
 	
 	
 	
-	
-	public function formSuccess() {
-		
-	}
     
     /**
      * Vrací stránku s načtenými buňky do page
