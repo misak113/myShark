@@ -28,6 +28,13 @@
         {ifset $scripts}
         <script n:foreach="$scripts as $script" type="text/javascript" src="{$script}"></script>
         {/ifset}
+		{ifset $jsVariables}
+        <script type="text/javascript">
+			{foreach $jsVariables as $var => $value}
+				{!$var} = '{!$value}';
+			{/foreach}
+		</script>
+        {/ifset}
         
         {include #head}
     </head>

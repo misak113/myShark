@@ -21,6 +21,8 @@ class HomepagePresenter extends Kate\Main\Presenter {
      * Hlavní render pro defaultní stránku
      */
     public function renderDefault() {
+		$this->addJsVariable('jQuery.myshark.baseUrl', Loader::getBaseUrl());
+		
         $pageModel = PageModel::get();
         $userModel = UserModel::get();
         

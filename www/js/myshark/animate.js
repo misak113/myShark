@@ -6,15 +6,27 @@
 (function ($) {
 	var myshark = $.myshark;
 	
-	var animate = new function ($) {
+	var animate = new function () {
+		var anim = this;
 		
-		this.test = function () {
-			alert('test animate');
+		this.start = function () {
+			anim.observeAnchors();
+		}
+		
+		this.observeAnchors = function () {
+			$('a').unbind('click', anim.anchorClicked);
+			$('a').click(anim.anchorClicked);
+		}
+		
+		this.anchorClicked = function (ev) {
+			ev.preventDefault();
+			var path = myshark.url.getActualPath();
+			myshark.url.setHashmark(path);
 		}
 		
 	};
 	myshark.animate = animate;
 	
-	$(document).ready(animate.test);
+	$(document).ready(animate.start);
 	
 })(jQuery);

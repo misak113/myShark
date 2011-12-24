@@ -1,8 +1,8 @@
-<?php //netteCache[01]000419a:2:{s:4:"time";s:21:"0.49533300 1324634832";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:97:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\@layout.latte";i:2;i:1324634827;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"f38d86f released on 2011-08-24";}}}?><?php
+<?php //netteCache[01]000419a:2:{s:4:"time";s:21:"0.88716000 1324713795";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:97:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\@layout.latte";i:2;i:1324713791;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"f38d86f released on 2011-08-24";}}}?><?php
 
 // source file: C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\@layout.latte
 
-?><?php list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, 'cuq7skn5d2')
+?><?php list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, '9srwufnn4o')
 ;
 // snippets support
 if (!empty($control->snippetMode)) {
@@ -35,7 +35,13 @@ if (!empty($control->snippetMode)) {
 
 <?php if (isset($scripts)): $iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($scripts) as $script): ?>
         <script type="text/javascript" src="<?php echo htmlSpecialChars($script) ?>"></script>
-<?php $iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ;endif ?>
+<?php $iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ;endif ;if (isset($jsVariables)): ?>
+        <script type="text/javascript">
+<?php $iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($jsVariables) as $var => $value): ?>
+				<?php echo $var ?> = '<?php echo $value ?>';
+<?php $iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ?>
+		</script>
+<?php endif ?>
         
 <?php Nette\Latte\Macros\UIMacros::callBlock($_l, 'head', $template->getParams()) ?>
     </head>

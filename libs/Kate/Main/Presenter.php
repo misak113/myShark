@@ -32,7 +32,8 @@ abstract class Presenter extends \Nette\Application\UI\Presenter
         '/js/libs/netteForms.js',
 		'/js/myshark/desktop.js',
     );
-    
+    protected $jsVariables = array();
+		
     protected $baseUrl;
     
 
@@ -79,6 +80,7 @@ abstract class Presenter extends \Nette\Application\UI\Presenter
                 $scripts[] = $script;
             }
         }
+		$this->template->jsVariables = $this->jsVariables;
         $this->template->scripts = $scripts;
     }
     
@@ -96,6 +98,13 @@ abstract class Presenter extends \Nette\Application\UI\Presenter
 			$path = '/js/myshark/'.$path.'.js';
 		}
 		$this->scripts[] = $path;
+	}
+	
+	public function addJsVariable($var, $value) {
+		if (!preg_match('~\.~', $var)) {
+			$var = 'var '.$var;
+		}
+		$this->jsVariables[$var] = str_replace("'", "\\'", $value);
 	}
 	
 	/**

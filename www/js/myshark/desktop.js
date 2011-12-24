@@ -6,6 +6,7 @@
  */
 
 function MyShark ($) {
+	var myshark = this;
 	
 	this.windows = new function () {
 		var win = this;
@@ -26,6 +27,21 @@ function MyShark ($) {
 			$('.window').dialog(win.defaultDialogOptions);
 		}
 		
+	}
+	
+	this.url = new function () {
+		var url = this;
+		
+		this.getActualPath = function () {
+			var href = $(location).attr('href').split('#');
+			href = href[0];
+			href = href.replace(myshark.baseUrl+'/', '');
+			return href;
+		}
+
+		this.setHashmark = function (hashmark) {
+			$(location).attr('hash', hashmark);
+		}
 	}
 	
 }
