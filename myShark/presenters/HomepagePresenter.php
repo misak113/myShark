@@ -26,15 +26,23 @@ class HomepagePresenter extends Kate\Main\Presenter {
         $pageModel = PageModel::get();
         $userModel = UserModel::get();
         
+		// má právo web zobrazit
         $userModel->logUser();
         if (!$userModel->getUser()->isAllowed('web', 'display')) {
             $this->error403();
             return;
         }
+		
+		// Animovaný web
 		if ($userModel->getUser()->isAllowed('web', 'animate')) {
+			$path = $pageModel->getActualRealPath();
+			if ($path != '') {
+				$this->redirectUrl(Loader::getBaseUrl().'#'.$path, 301);
+			}
 			$this->addScript('animate');
         }
         
+		// parametry
         $parameters = $pageModel->getPageParameters();
 
         // Naloaduje stránku

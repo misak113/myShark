@@ -11,6 +11,7 @@
 		
 		this.start = function () {
 			anim.observeAnchors();
+			anim.observeHashmark();
 		}
 		
 		this.observeAnchors = function () {
@@ -19,14 +20,34 @@
 		}
 		
 		this.anchorClicked = function (ev) {
-			ev.preventDefault();
-			var path = myshark.url.getActualPath();
-			myshark.url.setHashmark(path);
+			var path = myshark.url.getPath($(this).attr('href')); 
+			if (!path.match(/^https?:\/\//)) {
+				ev.preventDefault();
+				myshark.url.setHashmark(path);
+			} else {
+				$(this).attr('target', '_blank')
+			}
+		}
+		
+		this.observeHashmark = function () {
+			$(window).bind("hashchange", anim.hashmarkChanged);
+		}
+		
+		this.hashmarkChanged = function () {
+			var hash = $(location).attr('hash');
+			hash = hash.replace('#', '');
+			// @todo AJAX na adresu
 		}
 		
 	};
-	myshark.animate = animate;
 	
-	$(document).ready(animate.start);
+	// Před "načtením" stránky
+	myshark.animate = animate;
+	myshark.redirectHashmark = false;
+	
+	// Po "načtením" stránky
+	$(document).ready(function () {
+		animate.start();
+	});
 	
 })(jQuery);

@@ -8,6 +8,10 @@
 function MyShark ($) {
 	var myshark = this;
 	
+	this.redirectHashmark = true;
+	this.baseUrl = null;
+	this.animate = null;
+	
 	this.windows = new function () {
 		var win = this;
 		
@@ -35,6 +39,10 @@ function MyShark ($) {
 		this.getActualPath = function () {
 			var href = $(location).attr('href').split('#');
 			href = href[0];
+			return url.getPath(href);
+		}
+		
+		this.getPath = function (href) {
 			href = href.replace(myshark.baseUrl+'/', '');
 			return href;
 		}
@@ -53,8 +61,24 @@ function MyShark ($) {
 	$.myshark = myshark;
 	
 	
+	// Před "načtením" stránky
 	myshark.windows.hideAll();
-	$(document).ready(myshark.windows.showAll);
+	
+	// Po "načtení" stránky
+	$(document).ready(function () {
+		// windows
+		myshark.windows.showAll();
+		
+		// redirect hash, if not animate
+		if (myshark.redirectHashmark) {
+			var hash = $(location).attr('hash');
+			hash = hash.replace('#', '');
+			if (hash != '') {
+				$(location).attr('href', myshark.baseUrl+'/'+hash);
+			}
+		}
+		
+	});
 	
 	
 })(jQuery);

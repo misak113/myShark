@@ -556,7 +556,14 @@ class PageModel extends Model {
 		}
         return $path;
     }
-    
+	
+	public function getActualRealPath() {
+		$path = \Nette\Environment::getHttpRequest()->getUrl()->getPath();
+		$base = \Nette\Environment::getHttpRequest()->getUrl()->getBasePath();
+		$realPath = preg_replace('~^'.$base.'~', '', $path);
+		return $realPath;
+	}
+	
     
     /**
      * Vrací nastavení podle klíče z tabulky setting
