@@ -13,14 +13,16 @@
         {/foreach}
     </div>
             {/if}
-	
+        {/snippet}
+    
+    {snippet windows}
+    <div id="windows">
 			{if $page['loginForm']}
 				{includeblock ''.(\Kate\Main\Loader::WINDOWS_DIR).S.'login.latte'}
 				{include #loginWindow, loginForm => $page['loginForm']}
 			{/if}
-	
-        {/snippet}
-    
+    </div>
+    {/snippet}
     
         {snippet page}
     <section id="page-{$page['page']['id_page']}" class="page">

@@ -371,9 +371,6 @@ class PageModel extends Model {
         }
         if ($res !== false) {
             $slot = $this->createSlotFromDBFetch($res);
-            if ($slot) {
-                $slot['invalidate'] = true;
-            }
             return $slot;
         } else {
             $sql = 'SELECT slot.id_slot, slot_phrase.text AS slot_text, slot_phrase.link AS slot_link, 
@@ -391,9 +388,6 @@ class PageModel extends Model {
             $q = $this->db->queryArgs($sql, $args);
             $res = $q->fetchAll();
             $slot = $this->createSlotFromDBFetch($res);
-            if ($slot) {
-                $slot['invalidate'] = false;
-            }
             return $slot;
         }
     }
