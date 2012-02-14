@@ -19,6 +19,10 @@
 	this.windows = new function () {
 	    var win = this;
 		
+	    this.ERROR = 'error';
+	    this.flashQueue = [];
+	    this.flashNowShowed = false;
+	
 	    this.defaultDialogOptions = {
 		width: 640,
 		height: 480,
@@ -33,6 +37,38 @@
 		
 	    this.showAll = function () {
 		$('#windows .window').dialog(win.defaultDialogOptions);
+	    }
+	    
+	    this.errorFlash = function (text) {
+		win.flash(text, win.ERROR);
+	    }
+	    
+	    this.flash = function (text, type) {
+		var window = $('<div/>').addClass('flash').addClass(type).html(text);
+		$('#flashes').append(window);
+		win.showFlashes();
+	    }
+	    
+	    this.showFlashes = function () {
+		$('.flash').each(function () {
+		    var flash = $(this);
+		    win.flashQueue.push(flash);
+		});
+		win.showNextFlash();
+	    }
+	    
+	    this.showNextFlash = function () {
+		var flash = win.flashQueue.pop();
+		if (flash && !win.flashNowShowed) {
+		    var showTime = 80*flash.html().length;
+		    showTime = showTime < 1500 ?1500: showTime;
+		    flash.fadeIn('fast').delay(showTime).fadeOut('fast', function () {
+			    flash.remove();
+			    win.flashNowShowed = false;
+			    win.showNextFlash();		    
+		    });
+		    win.flashNowShowed = true;
+		}
 	    }
 		
 	}
@@ -78,6 +114,15 @@
 		    success: function (resp) {
 			myshark.loader.hideLoading();
 			cb(resp);
+		    },
+		    error: function (resp) {
+			myshark.loader.hideLoading();
+			
+			if (resp.status == 401) {
+			    myshark.redirectHashmark = true;
+			    myshark.url.redirectByHash();
+			}
+			myshark.windows.errorFlash(_t('Při načítání stránky došlo k chybě. (%s - %s)', [resp.status, resp.statusText]));
 		    }
 		});
 	    }
@@ -159,10 +204,31 @@
 	$(window).bind('load', function () {
 	    // windows
 	    myshark.windows.showAll();
-	    myshark.loader.hideLoading();
+	    myshark.windows.showFlashes();
+	//myshark.loader.hideLoading();
 	});
 		
     });
 	
+	
+	
+	// Přídavné objektové funkce
+
+    // Helper funkce
+    
+    /**
+     * Funkce pro překlad
+     */
+    function _t(text, params) {
+	// @todo dodelat cachovany preklad
+	return _.sprintf(text, params);
+    }
+    
+    /**
+     * Debugovací funkce
+     */
+    function _d(message) {
+	console.log(message);
+    }
 	
 })(jQuery);

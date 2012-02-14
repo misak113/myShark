@@ -7,7 +7,9 @@
  * @package    myShark
  */
 use Nette\Diagnostics\Debugger,
-    Kate\Main\Loader;
+    Kate\Main\Loader,
+    Kate\Helper\Translator,
+    Kate\Helper as T;
 
 /**
  * Homepage presenter.
@@ -23,6 +25,7 @@ class HomepagePresenter extends Kate\Main\Presenter {
      * Hlavní render pro defaultní stránku
      */
     public function renderDefault() {
+	
 	$this->addJsVariable('jQuery.myshark.baseUrl', Loader::getBaseUrl());
 
 	$pageModel = PageModel::get();
@@ -45,6 +48,11 @@ class HomepagePresenter extends Kate\Main\Presenter {
 	    $this->addStyle('animate');
 	    $this->setting['loadingBox'] = true;
 	}
+	if (!$userModel->getUser()->isAllowed('web', 'animate') && $this->isAjax()) {
+	    // Pokud je v animovaném webu a odhlasi se tak se ma presmerovat
+	    $this->error401(_t('Po delší neaktivitě jste byl odhlášen'));
+	    return;
+	}
 
 	// parametry
 	$parameters = $pageModel->getPageParameters();
@@ -66,7 +74,7 @@ class HomepagePresenter extends Kate\Main\Presenter {
 
 	\Kate\Main\Hook::get()->process();
 
-	//Kate\Helper\LogService::realtimeDebug($this->getUser()->getIdentity()->getData());
+	_d($this->getUser()->getIdentity()->getData());
     }
 
     /**
@@ -150,7 +158,7 @@ class HomepagePresenter extends Kate\Main\Presenter {
 
 	$this->setView('error');
 	$this->template->errorNumber = 500;
-	$this->template->errorMessage = 'Na serveru nastala chyba. Omlouváme se, zkuste znovu načíst později nebo přejít na jinou stránku.'; // @todo prelozit ze statických překladačů
+	$this->template->errorMessage = _t('Na serveru nastala chyba. Omlouváme se, zkuste znovu načíst později nebo přejít na jinou stránku.'); // @todo prelozit ze statických překladačů
     }
 
     /**
@@ -161,7 +169,22 @@ class HomepagePresenter extends Kate\Main\Presenter {
 
 	$this->setView('error');
 	$this->template->errorNumber = 403;
-	$this->template->errorMessage = 'Pro zobrazení této stránky nemáte dostatečná práva'; // @todo prelozit ze statických překladačů
+	$this->template->errorMessage = _t('Pro zobrazení této stránky nemáte dostatečná práva'); // @todo prelozit ze statických překladačů
+    }
+    
+    /**
+     * Nastaví vykreslování na error 401 stránku... Neautorizovaný přístup
+     */
+    public function error401($message = false) {
+	$this->getHttpResponse()->setCode(Nette\Http\Response::S401_UNAUTHORIZED);
+
+	if ($message === false) {
+	    $message = _t('Pro zobrazení této stránky musíte být autorizován');
+	}
+	
+	$this->setView('error');
+	$this->template->errorNumber = 403;
+	$this->template->errorMessage = $message;
     }
 
 }

@@ -18,6 +18,9 @@ use Kate;
  * @package    myShark
  */
 abstract class Presenter extends \Nette\Application\UI\Presenter {
+    
+    const FLASH_ERROR = 'error';
+    const FLASH_INFO = 'info';
 
     // Atributy
     // Vždy načítané styly
@@ -28,10 +31,12 @@ abstract class Presenter extends \Nette\Application\UI\Presenter {
     );
     // Vždy načítané javascripty
     protected $scripts = array(
-	'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js',
-	'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js',
-	//'/js/libs/jquery-1.7.1.min.js',
-	//'/js/libs/jquery-ui-1.8.17.minimal.min.js',
+	//'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js',
+	//'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js',
+	//'http://documentcloud.github.com/underscore/underscore-min.js',
+	'/js/libs/underscore-min.js',
+	'/js/libs/jquery-1.7.1.min.js',
+	'/js/libs/jquery-ui-1.8.17.minimal.min.js',
 	'/js/libs/netteForms.js',
 	'/js/myshark/desktop.js',
     );
@@ -40,6 +45,7 @@ abstract class Presenter extends \Nette\Application\UI\Presenter {
 
     public function __construct() {
 	parent::__construct();
+	new \shorthands; // Pro naloadování daného common helperu pro zkracování zápisů
     }
 
     /**

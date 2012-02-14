@@ -15,6 +15,11 @@
             {/if}
         {/snippet}
     
+    {snippet flashes}
+    <div id="flashes">
+	<div n:foreach="$flashes as $flash" class="flash {$flash->type}">{_$flash->message}</div>
+    </div>
+    {/snippet}
     {snippet windows}
     <div id="windows">
 			{if $page['loginForm']}
