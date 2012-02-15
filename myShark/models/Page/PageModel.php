@@ -66,6 +66,14 @@ class PageModel extends Model {
     
     
     private static $iconMap = array(
+	'general' => array(
+            'default' => array(
+                'width' => 1,
+                'height' => 1,
+                'left' => 0,
+                'top' => 0,
+            ),
+	),
         'language' => array(
             'cs_cz' => array(
                 'width' => 23,
@@ -80,11 +88,32 @@ class PageModel extends Model {
                 'top' => 13,
             ),
         ),
+	'admin' => array(
+	    'edit' => array(
+		'width' => 16,
+		'height' => 16,
+		'top' => 0,
+		'left' => 24,
+	    ),
+	    'edit-small' => array(
+		'width' => 10,
+		'height' => 10,
+		'top' => 0,
+		'left' => 40,
+	    ),
+	    'move-small' => array(
+		'width' => 10,
+		'height' => 10,
+		'top' => 10,
+		'left' => 40,
+	    ),
+	),
     );
     
     public function init() {
         $this->cache->alterDatabase();
         
+	// Vytvoří obrázek pro vykreslování ikon
         Kate\Helper\ImagePrinter::create(array(
             'iconPath' => Loader::getBaseUrl().'/'.Loader::IMAGES_DIR.'/'.Loader::ICON_DIR.'/icons.png',
             'iconMap' => self::$iconMap,

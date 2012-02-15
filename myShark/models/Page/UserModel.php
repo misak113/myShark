@@ -19,7 +19,7 @@ class UserModel extends \Kate\Main\Model implements Nette\Security\IAuthenticato
     private static $defaultUserGroups = array(
         self::FRONTEND_USER_GROUP_ID => array('text' => 'Frontend uživatel', 'parent' => null),
         self::ROBOT_USER_GROUP_ID => array('text' => 'Robot', 'parent' => null),
-        self::ADMIN_USER_GROUP_ID => array('text' => 'Administrátor', 'parent' => 1),
+        self::ADMIN_USER_GROUP_ID => array('text' => 'Administrátor', 'parent' => self::FRONTEND_USER_GROUP_ID),
     );
     
     private static $permissionsGeneral = array(
@@ -214,14 +214,15 @@ class UserModel extends \Kate\Main\Model implements Nette\Security\IAuthenticato
     public function loadPermissions($idUserGroup = false) {
         $args = array();
         $sql = 'SELECT permission.id_permission, type, operation, text, link
-            FROM usergroup
-			LEFT JOIN usergrouphaspermission ON (usergrouphaspermission.id_userGroup = usergroup.id_userGroup)
-            LEFT JOIN permission ON (permission.id_permission = usergrouphaspermission.id_permission)
-            LEFT JOIN phrase AS permission_phrase ON (permission_phrase.id_phrase = permission.id_phrase) ';
+	    FROM permission
+	    LEFT JOIN phrase AS permission_phrase ON (permission_phrase.id_phrase = permission.id_phrase) 
+	    LEFT JOIN usergrouphaspermission ON (usergrouphaspermission.id_permission = permission.id_permission)
+            LEFT JOIN usergroup ON (usergroup.id_userGroup = usergrouphaspermission.id_userGroup) ';
         if ($idUserGroup) {
-            $sql .= 'WHERE usergroup.id_userGroup = ?';
+            $sql .= 'WHERE usergroup.id_userGroup = ? ';
             $args[] = $idUserGroup;
         }
+	$sql.= 'GROUP BY type, operation ';
         $q = $this->db->queryArgs($sql, $args);
         $res = $q->fetchAll();
         if (!$res) {
@@ -296,13 +297,13 @@ class UserModel extends \Kate\Main\Model implements Nette\Security\IAuthenticato
             }
         }
         $nowPerms = $this->loadPermissions();
+        $this->db->beginTransaction();
         foreach ($perms as $perm) {
             foreach ($nowPerms as $nowPerm) {
                 if ($nowPerm['operation'] == $perm['operation'] && $nowPerm['type'] == $perm['type']) {
                     continue 2;
                 }
             }
-            $this->db->beginTransaction();
             $idPhrase = ControlModel::get()->insertPhrase(PageModel::get()->getDefaultLanguage(), $perm['text']);
             $data = array(
                 'id_phrase' => $idPhrase,
@@ -310,8 +311,8 @@ class UserModel extends \Kate\Main\Model implements Nette\Security\IAuthenticato
                 'operation' => $perm['operation'],
             );
             $this->db->table('permission')->insert($data);
-            $this->db->commit();
         }
+        $this->db->commit();
         return true;
     }
     

@@ -36,7 +36,7 @@ abstract class Presenter extends \Nette\Application\UI\Presenter {
 	//'http://documentcloud.github.com/underscore/underscore-min.js',
 	'/js/libs/underscore-min.js',
 	'/js/libs/jquery-1.7.1.min.js',
-	'/js/libs/jquery-ui-1.8.17.minimal.min.js',
+	'/js/libs/jquery-ui-1.8.16.custom.min.js',
 	'/js/libs/netteForms.js',
 	'/js/myshark/desktop.js',
     );

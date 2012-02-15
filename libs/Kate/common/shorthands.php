@@ -24,11 +24,29 @@ function _d($message) {
     Kate\Helper\LogService::realtimeDebug($message);
 }
 
-// Returns an instance of __ for OO-style calls
+/** 
+ * Returns an instance of __ for OO-style calls
+ * 
+ */
 function __($item=null) {
   $__ = new Kate\External\__;
   if(func_num_args() > 0) $__->_wrapped = $item;
   return $__;
+}
+
+/**
+ * Vrátí zda je aktuální uživatel oprávněn činit zvolenou akci
+ * @param string $type typ
+ * @param operace $operation operace
+ * @return boolean je oprávněn?
+ */
+function isAllowed($type, $operation) {
+    return UserModel::get()->getUser()->isAllowed($type, $operation);
+}
+
+
+function getHtmlIconHref($iconName, $alt, $action, $param = '', $namespace = 'general', $addClasses = false, $href = false) {
+    return \Kate\Helper\ImagePrinter::get()->getHtmlIconHref($iconName, $alt, $action, $param, $namespace, $addClasses, $href);
 }
 
 ?>

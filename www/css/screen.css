@@ -5,6 +5,10 @@ body {
     margin: 0;
 }
 
+div {
+    position: relative;
+}
+
 #body {
     position: relative;
     margin: 0 auto 0 auto;

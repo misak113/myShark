@@ -49,7 +49,7 @@
                                                 <div class="brace-content {$content['moduleLabel']}">
                                                     {includeblock ''.(\Kate\Main\Loader::MODULES_DIR).S.$content['moduleLabel'].S.'default.latte'}
                                                     {var $contentBlock =  'contentModule'.$content['moduleLabel']}
-                                                    {include #$contentBlock, moduleContent => $content['moduleContent']}
+                                                    {include #$contentBlock, moduleContent => $content['moduleContent'], content => $content}
                                                 </div>
                                             </div>
                                         </div>

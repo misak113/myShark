@@ -15,11 +15,12 @@
 	
 	this.restart = function () {
 	    this.loadSubMenuTypes();
-	    
+	    this.bindMenuIcons();
 	}
 	
 	this.start = function () {
 	    this.loadSubMenuTypes();
+	    this.bindMenuIcons();
 	}
 	
 	this.loadSubMenuTypes = function () {
@@ -51,6 +52,19 @@
 	    });
 	}
 	
+	
+	this.bindMenuIcons = function () {
+	    $('.Menu .edit_menu').unbind('click').click(function (ev) {
+		ev.preventDefault();
+		var id = $(this).attr('data-myshark-param');
+		var icons = $('#content-'+id+' .Menu .items .icon-href');
+		if (icons.css('display') == 'inline') {
+		    icons.fadeOut('fast');
+		} else {
+		    icons.fadeIn('fast');
+		}
+	    });
+	}
 		
     };
 	

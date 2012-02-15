@@ -4,19 +4,26 @@
     {var $items = $moduleContent['items']}
 
     <nav class="Menu">
+	{if $moduleContent['canEdit']}
+	{getHtmlIconHref('edit', _t('Editovat menu'), 'edit_menu', $content['id_content'], 'admin')}
+	{/if}
 	{block MenuItems}
         {if $items}
 			<ul n:if="$items" class="items">
 				{foreach $items as $item}
 				<li id="Menu-item-{$item['id_item']}" class="item link--{$item['link']} {$item['active']?'active':'inactive'} {$item['visible']?'visible':'invisible'}"
 				    data-myshark-sub_menu_type="{$item['subMenuType']}">
-					<a n:if="$item['reference']" href="{$item['reference']}" class="label">
+				    {if $moduleContent['canEdit']}
+					{getHtmlIconHref('edit-small', _t('Editovat položku'), 'edit_menu_item', $item['id_item'], 'admin')}
+					{getHtmlIconHref('move-small', _t('Přesunout položku'), 'move_menu_item', $item['id_item'], 'admin')}
+				    {/if}
+				    <a n:if="$item['reference']" href="{$item['reference']}" class="label">
 					{$item['text']}
 					</a>
 					<span n:if="!$item['reference']" class="label">
 					{$item['text']}
 					</span>
-					{include #MenuItems, items => $item['items']}
+					{include #MenuItems, items => $item['items'], moduleContent => $moduleContent}
 				</li>
 				{/foreach}
 			</ul>

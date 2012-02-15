@@ -115,6 +115,7 @@ class MenuModuleModel extends ModuleModel {
     public function loadContent($idContent, $params) {
         $moduleContent = array();
         $moduleContent['items'] = $this->loadItems($idContent);
+	$moduleContent['canEdit'] = isAllowed('ModuleMenu_item', 'edit');
         return $moduleContent;
     }
     

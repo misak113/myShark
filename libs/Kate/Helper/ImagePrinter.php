@@ -51,7 +51,11 @@ class ImagePrinter implements \Kate\Main\IEnclosed {
      * @return Utils\Html ikona v html
      */
     public function getHtmlIcon($iconName, $alt, $namespace = 'general', $addClasses = false) {
-        $icon = $this->iconMap[$namespace][$iconName];
+	if (isset($this->iconMap[$namespace][$iconName])) {
+	    $icon = $this->iconMap[$namespace][$iconName];
+	} else {
+	    $icon = $this->iconMap['general']['default'];
+	}
         $iconEl = Html::el('div', array(
             'style' => array(
                 'width' => $icon['width'].'px',
@@ -66,6 +70,19 @@ class ImagePrinter implements \Kate\Main\IEnclosed {
             foreach ($addClasses as $class) 
                 $iconEl->class[] = $class;
         return $iconEl;
+    }
+    
+    public function getHtmlIconHref($iconName, $alt, $action, $param = '', $namespace = 'general', $addClasses = false, $href = false) {
+	$iconEl = $this->getHtmlIcon($iconName, $alt, $namespace, $addClasses);
+	$hrefEl = Html::el('a', array(
+	    'href' => $href? $href :'#',
+	    'class' => array(
+		'icon-href',
+		$action,
+	    ),
+	    'data-myshark-param' => $param,
+	))->setHtml($iconEl);
+	return $hrefEl;
     }
     
 }
