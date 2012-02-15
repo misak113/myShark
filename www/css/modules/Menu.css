@@ -1,2 +1,12 @@
 /* style pro menu modul */
 
+.Menu .items .item {
+    list-style: none;
+    position: relative;
+}
+
+.Menu .items.fade-in {
+    position: absolute;
+    left: 0px;
+    top: 2px;
+}

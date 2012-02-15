@@ -16,6 +16,22 @@
 	this.baseUrl = null;
 	this.animate = null;
 	
+	
+	
+	this.modules = new function () {
+	    var modules = this;
+	    
+	    this.restart = function () {
+		for (var i in modules) {
+		    try {
+			modules[i].restart();
+		    } catch (e) {
+			_d('Chyba při restartování modulu');
+		    }
+		}
+	    }
+	};
+	
 	this.windows = new function () {
 	    var win = this;
 		
@@ -31,11 +47,11 @@
 		resizable: false
 	    };
 		
-	    this.hideAll = function () {
+	    this.hideWindows = function () {
 		$('#windows .window').hide();
 	    }
 		
-	    this.showAll = function () {
+	    this.showWindows = function () {
 		$('#windows .window').dialog(win.defaultDialogOptions);
 	    }
 	    
@@ -50,7 +66,7 @@
 	    }
 	    
 	    this.showFlashes = function () {
-		$('.flash').each(function () {
+		$('#flashes .flash').each(function () {
 		    var flash = $(this);
 		    win.flashQueue.push(flash);
 		});
@@ -194,7 +210,7 @@
 	
     	
     // Před "načtením" stránky
-    myshark.windows.hideAll();
+    myshark.windows.hideWindows();
 	
     // Po "načtení" stránky
     $(document).ready(function () {
@@ -203,7 +219,7 @@
 	// Po "načtení" celého okna
 	$(window).bind('load', function () {
 	    // windows
-	    myshark.windows.showAll();
+	    myshark.windows.showWindows();
 	    myshark.windows.showFlashes();
 	//myshark.loader.hideLoading();
 	});

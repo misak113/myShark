@@ -45,6 +45,7 @@ abstract class Presenter extends \Nette\Application\UI\Presenter {
 
     public function __construct() {
 	parent::__construct();
+	new \Kate\External\__; // Načtení underscore knihovny
 	new \shorthands; // Pro naloadování daného common helperu pro zkracování zápisů
     }
 

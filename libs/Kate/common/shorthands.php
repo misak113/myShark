@@ -24,4 +24,11 @@ function _d($message) {
     Kate\Helper\LogService::realtimeDebug($message);
 }
 
+// Returns an instance of __ for OO-style calls
+function __($item=null) {
+  $__ = new Kate\External\__;
+  if(func_num_args() > 0) $__->_wrapped = $item;
+  return $__;
+}
+
 ?>

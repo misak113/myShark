@@ -107,6 +107,7 @@ class HomepagePresenter extends Kate\Main\Presenter {
 			    'screen,projection,tv',
 			    'text/css'
 			);
+			$this->addScript(Loader::DESKTOP_DIR . '/' . Loader::MODULES_DIR . '/' . $content['moduleLabel']);
 		    }
 		}
 		$cell['slot'] = $slot;

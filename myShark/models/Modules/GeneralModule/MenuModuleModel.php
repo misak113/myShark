@@ -9,6 +9,27 @@ class MenuModuleModel extends ModuleModel {
     const ID = 1;
     const LABEL = 'Menu';
     const PARENT_ID = 2;
+    
+    const TYPE_PAGE = 'page';
+    const TYPE_SLOT = 'slot';
+    const TYPE_URL = 'url';
+    const TYPE_NONE = 'none';
+    public static $referenceTypes = array(
+	self::TYPE_PAGE => 'Na tránku', 
+	self::TYPE_SLOT => 'Na slot', 
+	self::TYPE_URL => 'Na URL',
+	self::TYPE_NONE => 'Bez odkazu',
+    );
+    
+    const SUB_MENU_TYPE_NORMAL = 'normal';
+    const SUB_MENU_TYPE_ROLL_DOWN = 'roll_down';
+    const SUB_MENU_TYPE_FADE_IN = 'fade_in';
+    public static $subMenuTypes = array(
+	self::SUB_MENU_TYPE_NORMAL => 'Běžné',
+	self::SUB_MENU_TYPE_ROLL_DOWN => 'Rolovací dolů', 
+	self::SUB_MENU_TYPE_FADE_IN => 'Zprůhlednění', 
+    );
+    
     private static $permissions = array(
         array('type' => 'item', 'operation' => 'display', 'text' => 'Zobrazení položek'),
         array('type' => 'item', 'operation' => 'edit', 'text' => 'Editace položek'),
@@ -101,6 +122,7 @@ class MenuModuleModel extends ModuleModel {
         $args = array();
         $sql = 'SELECT modulemenu_item.id_item, modulemenu_item.id_page_reference, modulemenu_item.id_slot_reference, 
                 modulemenu_item.id_cell_reference, modulemenu_item.referenceType, modulemenu_item.referenceUrl, 
+		modulemenu_item.subMenuType, modulemenu_item.active, modulemenu_item.visible,
                 item_phrase.link AS item_link, item_phrase.text AS item_text, 
                 page_phrase.link AS page_link, slot_phrase.link AS slot_link,
                 COUNT(item_child.id_item) AS num_childs
@@ -121,6 +143,10 @@ class MenuModuleModel extends ModuleModel {
         } else {
             $sql .= 'modulemenu_item.id_item_parent IS NULL ';
         }
+	if (!UserModel::get()->getUser()->isAllowed('ModuleMenu_item', 'edit')) {
+	    $sql .= 'AND modulemenu_item.active = 1 ';
+	    $sql .= 'AND modulemenu_item.visible = 1 ';
+	}
         $sql .= 'GROUP BY modulemenu_item.id_item
             ORDER BY modulemenu_item.order ';
         $q = $this->db->queryArgs($sql, $args);
@@ -138,33 +164,36 @@ class MenuModuleModel extends ModuleModel {
                 'id_item' => $row->offsetGet('id_item'),
                 'items' => $itemsChild,
                 'references' => array(
-                    'page' => array(
+                    self::TYPE_PAGE => array(
                         'id_page' => $row->offsetGet('id_page_reference'),
                         'link' => $row->offsetGet('page_link'),
                     ),
-                    'slot' => array(
+                    self::TYPE_SLOT => array(
                         'id_cell' => $row->offsetGet('id_cell_reference'),
                         'id_slot' => $row->offsetGet('id_slot_reference'),
                         'link' => $row->offsetGet('slot_link'),
                     ),
-                    'url' => array(
+                    self::TYPE_URL => array(
                         'uri' => $row->offsetGet('referenceUrl'),
                     ),
                     'type' => $row->offsetGet('referenceType'),
                 ),
+		'subMenuType' => $row->offsetGet('subMenuType'),
+                'active' => $row->offsetGet('active'),
+                'visible' => $row->offsetGet('visible'),
                 'link' => $row->offsetGet('item_link'),
                 'text' => $row->offsetGet('item_text'),
             );
             
             switch ($row->offsetGet('referenceType')) {
-                case 'page':
-                    $reference = PageModel::get()->getUrl($item['references']['page']['link']);
+                case self::TYPE_PAGE:
+                    $reference = PageModel::get()->getUrl($item['references'][self::TYPE_PAGE]['link']);
                     break;
-                case 'slot':
-                    $reference = PageModel::get()->getUrl($item['references']['page']['link'].'/'.$linksParent.$item['references']['slot']['link']);
+                case self::TYPE_SLOT:
+                    $reference = PageModel::get()->getUrl($item['references'][self::TYPE_PAGE]['link'].'/'.$linksParent.$item['references'][self::TYPE_SLOT]['link']);
                     break;
-                case 'url':
-                    $reference = $item['references']['url']['uri'];
+                case self::TYPE_URL:
+                    $reference = $item['references'][self::TYPE_URL]['uri'];
                     break;
                 default:
                     $reference = false;

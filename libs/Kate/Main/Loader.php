@@ -21,6 +21,7 @@ class Loader extends \Nette\Object implements IEnclosed {
     const ICON_DIR = 'icon';
     const LANGUAGE_DIR = 'language';
 	const WINDOWS_DIR = 'windows';
+	const DESKTOP_DIR = 'desktop';
 
 
 

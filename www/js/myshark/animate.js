@@ -57,11 +57,12 @@
 	    var ids = myshark.dom.getDifferentIds(snippetSelector, $('#body'), body);
 	    animate.changeElementsHtmls(ids, $('#body'), body, function () {
 		anim.restart();
-		myshark.windows.showAll();
-	    });
+		myshark.windows.showWindows();
+		myshark.windows.showFlashes();
+	    }, myshark.modules.restart);
 	}
 	
-	this.changeElementsHtmls = function (ids, oldMain, newMain, cb) {
+	this.changeElementsHtmls = function (ids, oldMain, newMain, cb, afterChangeCb) {
 	    $.each(ids, function (i, id) {
 		//oldMain.find('#'+id).html(newMain.find('#'+id).html());
 		var oldEl = oldMain.find('#'+id);
@@ -69,6 +70,7 @@
 		oldEl.fadeOut('fast', 
 		function () {
 		    oldEl.html(newEl.html());
+		    afterChangeCb();
 		    oldEl.fadeIn('fast', cb);
 		});
 	    });
