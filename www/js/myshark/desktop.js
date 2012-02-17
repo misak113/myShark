@@ -36,6 +36,7 @@
 	    var win = this;
 		
 	    this.ERROR = 'error';
+	    this.INFO = 'info';
 	    this.flashQueue = [];
 	    this.flashNowShowed = false;
 	
@@ -59,6 +60,10 @@
 		win.flash(text, win.ERROR);
 	    }
 	    
+	    this.infoFlash = function (text) {
+		win.flash(text, win.INFO);
+	    }
+	    
 	    this.flash = function (text, type) {
 		var window = $('<div/>').addClass('flash').addClass(type).html(text);
 		$('#flashes').append(window);
@@ -79,9 +84,9 @@
 		    var showTime = 80*flash.html().length;
 		    showTime = showTime < 1500 ?1500: showTime;
 		    flash.fadeIn('fast').delay(showTime).fadeOut('fast', function () {
-			    flash.remove();
-			    win.flashNowShowed = false;
-			    win.showNextFlash();		    
+			flash.remove();
+			win.flashNowShowed = false;
+			win.showNextFlash();		    
 		    });
 		    win.flashNowShowed = true;
 		}
@@ -96,6 +101,12 @@
 		var href = $(location).attr('href').split('#');
 		href = href[0];
 		return url.getPath(href);
+	    }
+	    
+	    this.getActualHashPath = function () {
+		var hash = $(location).attr('hash');
+		hash = hash.replace('#', '');
+		return hash;
 	    }
 		
 	    this.getPath = function (href) {
@@ -126,7 +137,7 @@
 		$.ajax({
 		    url: myshark.baseUrl+'/'+url,
 		    dataType: 'html',
-		    method: 'GET',
+		    type: 'GET',
 		    success: function (resp) {
 			myshark.loader.hideLoading();
 			cb(resp);
@@ -139,6 +150,30 @@
 			    myshark.url.redirectByHash();
 			}
 			myshark.windows.errorFlash(_t('Při načítání stránky došlo k chybě. (%s - %s)', [resp.status, resp.statusText]));
+		    }
+		});
+	    }
+	    
+	    this.post = function (params, cb, errorCb) {
+		myshark.loader.showLoading();
+		$.ajax({
+		    url: myshark.baseUrl+'/'+myshark.url.getActualHashPath(),
+		    dataType: 'html',
+		    type: 'POST',
+		    data: params,
+		    success: function (resp) {
+			myshark.loader.hideLoading();
+			cb(resp);
+		    },
+		    error: function (resp) {
+			myshark.loader.hideLoading();
+			
+			if (resp.status == 401) {
+			    myshark.redirectHashmark = true;
+			    myshark.url.redirectByHash();
+			}
+			myshark.windows.errorFlash(_t('Při načítání stránky došlo k chybě. (%s - %s)', [resp.status, resp.statusText]));
+			errorCb(resp);
 		    }
 		});
 	    }
@@ -228,23 +263,27 @@
 	
 	
 	
-	// Přídavné objektové funkce
+// Přídavné objektové funkce
 
-    // Helper funkce
     
-    /**
-     * Funkce pro překlad
-     */
-    function _t(text, params) {
-	// @todo dodelat cachovany preklad
-	return _.sprintf(text, params);
-    }
-    
-    /**
-     * Debugovací funkce
-     */
-    function _d(message) {
-	console.log(message);
-    }
 	
 })(jQuery);
+
+
+// Helper funkce
+    
+/**
+     * Funkce pro překlad
+     */
+function _t(text, params) {
+    // @todo dodelat cachovany preklad
+    if (typeof params != 'Array') params = [];
+    return _.string.sprintf(text, params.shift(), params.shift(), params.shift());
+}
+    
+/**
+     * Debugovací funkce
+     */
+function _d(message) {
+    console.log(message);
+}

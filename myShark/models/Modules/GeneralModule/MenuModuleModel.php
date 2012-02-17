@@ -206,5 +206,10 @@ class MenuModuleModel extends ModuleModel {
         }
         return $items;
     }
+    
+    
+    public function postMethod($method, $post) {
+	
+    }
 }
 ?>

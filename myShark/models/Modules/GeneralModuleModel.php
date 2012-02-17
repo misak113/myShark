@@ -15,5 +15,9 @@ class GeneralModuleModel extends ModuleModel {
     public function loadContent($content, $params) {
         return false;
     }
+    
+    public function postMethod($method, $post) {
+	
+    }
 }
 ?>

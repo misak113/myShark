@@ -14,13 +14,15 @@
 	this.SUB_MENU_TYPE_FADE_IN = 'fade_in';
 	
 	this.restart = function () {
-	    this.loadSubMenuTypes();
-	    this.bindMenuIcons();
+	    menu.loadSubMenuTypes();
+	    menu.bindMenuIcons();
+	    menu.sortableMenuItems();
 	}
 	
 	this.start = function () {
-	    this.loadSubMenuTypes();
-	    this.bindMenuIcons();
+	    menu.loadSubMenuTypes();
+	    menu.bindMenuIcons();
+	    menu.sortableMenuItems();
 	}
 	
 	this.loadSubMenuTypes = function () {
@@ -59,10 +61,54 @@
 		var id = $(this).attr('data-myshark-param');
 		var icons = $('#content-'+id+' .Menu .items .icon-href');
 		if (icons.css('display') == 'inline') {
-		    icons.fadeOut('fast');
+		    icons.animate({
+			opacity: 0
+		    }, 'fast', function () {
+			icons.css('display', 'none');
+		    });
 		} else {
-		    icons.fadeIn('fast');
+		    icons.css('display', 'inline').animate({
+			opacity: 1
+		    }, 'fast');
 		}
+	    });
+	}
+	
+	this.sortableMenuItems = function () {
+	    $('.Menu ul.items').sortable({
+		update: function (ev, ui) {
+		    var itemsEl = $(this);
+		    var items = itemsEl.children('li.item');
+		    var itemsIds = [];
+		    _.each(items, function (item) {
+			var id = $(item).attr('data-myshark-param');
+			itemsIds.push(id);
+		    });
+		    menu.updateMenuItemsOrder(itemsIds, function () {
+			itemsEl.sortable('cancel');
+		    });
+		}
+	    }).sortable('disable');
+	    $('.move_menu_item').bind('mousedown', function (ev) {
+		var id = $(this).attr('data-myshark-param');
+		$('#Menu-item-'+id).parent('ul.items').sortable('enable');
+	    }).bind('mouseout', function (ev) {
+		var id = $(this).attr('data-myshark-param');
+		$('#Menu-item-'+id).parent('ul.items').sortable('disable');
+	    });
+	}
+	
+	this.updateMenuItemsOrder = function (itemsIds, errorCb) {
+	    myshark.loader.post({
+		module: 'Menu',
+		method: 'sort',
+		itemsIds: itemsIds
+	    }, function (resp) {
+		// Povedlo se
+		myshark.windows.infoFlash(_t('Položka menu byla úspěšně přesunuta'));
+	    }, function (resp) {
+		// nastala chyba
+		errorCb();
 	    });
 	}
 		

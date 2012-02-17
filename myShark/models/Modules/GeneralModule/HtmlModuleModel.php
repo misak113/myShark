@@ -82,5 +82,9 @@ class HtmlModuleModel extends ModuleModel {
         }
         return $sections;
     }
+    
+    public function postMethod($method, $post) {
+	
+    }
 }
 ?>

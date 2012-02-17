@@ -26,6 +26,14 @@ class HomepagePresenter extends Kate\Main\Presenter {
      */
     public function renderDefault() {
 	
+	$request = \Nette\Environment::getHttpRequest();
+	if ($request->isPost()) {
+	    $moduleModelName = $request->getPost('module') . 'ModuleModel';
+	    if ($moduleModelName && class_exists($moduleModelName)) {
+		$moduleModelName::get()->postMethod($request->getPost('method'), $request->getPost());
+	    }
+	}
+	
 	$this->addJsVariable('jQuery.myshark.baseUrl', Loader::getBaseUrl());
 
 	$pageModel = PageModel::get();
