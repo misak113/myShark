@@ -29,7 +29,7 @@ class HomepagePresenter extends Kate\Main\Presenter {
 	$request = \Nette\Environment::getHttpRequest();
 	if ($request->isPost()) {
 	    $moduleModelName = $request->getPost('module') . 'ModuleModel';
-	    if ($moduleModelName && class_exists($moduleModelName)) {
+	    if ($request->getPost('module') && $moduleModelName && class_exists($moduleModelName)) {
 		$moduleModelName::get()->postMethod($request->getPost('method'), $request->getPost());
 	    }
 	}

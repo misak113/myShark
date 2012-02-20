@@ -209,7 +209,31 @@ class MenuModuleModel extends ModuleModel {
     
     
     public function postMethod($method, $post) {
-	
+	switch ($method) {
+	    case 'sort':
+		$this->sortMenuItems($post['itemsIds']);
+		break;
+	}
+    }
+    
+    
+    
+    private function sortMenuItems($itemsOrder) {
+	if (!isAllowed('ModuleMenu_item', 'edit')) {
+	    return false;
+	}
+	$order = 0;
+	foreach ($itemsOrder as $idItem) {
+	    $order++;
+	    $data = array(
+		'order' => $order,
+	    );
+	    $where = array(
+		'id_item' => $idItem,
+	    );
+	    $this->db->table('modulemenu_item')->where($where)->update($data);
+	}
+	return true;
     }
 }
 ?>
