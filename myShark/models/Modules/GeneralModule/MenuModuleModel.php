@@ -126,10 +126,12 @@ class MenuModuleModel extends ModuleModel {
 		modulemenu_item.subMenuType, modulemenu_item.active, modulemenu_item.visible,
                 item_phrase.link AS item_link, item_phrase.text AS item_text, 
                 page_phrase.link AS page_link, slot_phrase.link AS slot_link,
+		geometry.width, geometry.height, geometry.width_unit, geometry.height_unit,
                 COUNT(item_child.id_item) AS num_childs
             FROM modulemenu_item
             LEFT JOIN phrase AS item_phrase ON (item_phrase.id_phrase = modulemenu_item.id_phrase)
             LEFT JOIN modulemenu_item AS item_child ON (item_child.id_item_parent = modulemenu_item.id_item)
+	    LEFT JOIN geometry ON (geometry.id_geometry = modulemenu_item.id_geometry)
             
             LEFT JOIN page ON (page.id_page = modulemenu_item.id_page_reference)
             LEFT JOIN phrase AS page_phrase ON (page_phrase.id_phrase = page.id_phrase)
@@ -184,6 +186,10 @@ class MenuModuleModel extends ModuleModel {
                 'visible' => $row->offsetGet('visible'),
                 'link' => $row->offsetGet('item_link'),
                 'text' => $row->offsetGet('item_text'),
+		'geometry' => array(
+		    'width' => $row->offsetGet('width').$row->offsetGet('width_unit'),
+		    'height' => $row->offsetGet('height').$row->offsetGet('height_unit'),
+		),
             );
             
             switch ($row->offsetGet('referenceType')) {

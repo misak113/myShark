@@ -26,7 +26,7 @@
 		    try {
 			modules[i].restart();
 		    } catch (e) {
-			_d('Chyba při restartování modulu');
+			_d('Chyba při restartování modulu', e);
 		    }
 		}
 	    }
@@ -284,6 +284,6 @@ function _t(text, params) {
 /**
      * Debugovací funkce
      */
-function _d(message) {
-    console.log(message);
+function _d(message, e) {
+    console.log(message+(e ?', Exception:'+e :''));
 }

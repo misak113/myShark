@@ -104,7 +104,9 @@ abstract class Presenter extends \Nette\Application\UI\Presenter {
 	if (!preg_match('~^.+\.js$~', $path)) {
 	    $path = '/js/myshark/' . $path . '.js';
 	}
-	$this->scripts[] = $path;
+	if (!in_array($path, $this->scripts)) {
+	    $this->scripts[] = $path;
+	}
     }
 
     public function addJsVariable($var, $value) {

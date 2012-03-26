@@ -17,12 +17,14 @@
 	    menu.loadSubMenuTypes();
 	    menu.bindMenuIcons();
 	    menu.sortableMenuItems();
+	    menu.editableMenuItems();
 	}
 	
 	this.start = function () {
 	    menu.loadSubMenuTypes();
 	    menu.bindMenuIcons();
 	    menu.sortableMenuItems();
+	    menu.editableMenuItems();
 	}
 	
 	this.loadSubMenuTypes = function () {
@@ -58,7 +60,7 @@
 	this.bindMenuIcons = function () {
 	    $('.Menu .edit_menu').unbind('click').click(function (ev) {
 		ev.preventDefault();
-		var id = $(this).attr('data-myshark-param');
+		var id = $.parseJSON($(this).attr('data-myshark-params'));
 		var icons = $('#content-'+id+' .Menu .items .icon-href');
 		if (icons.css('display') == 'inline') {
 		    icons.animate({
@@ -81,7 +83,7 @@
 		    var items = itemsEl.children('li.item');
 		    var itemsIds = [];
 		    _.each(items, function (item) {
-			var id = $(item).attr('data-myshark-param');
+			var id = $.parseJSON($(item).attr('data-myshark-params')).id_item;
 			itemsIds.push(id);
 		    });
 		    menu.updateMenuItemsOrder(itemsIds, function () {
@@ -90,10 +92,10 @@
 		}
 	    }).sortable('disable');
 	    $('.move_menu_item').bind('mousedown', function (ev) {
-		var id = $(this).attr('data-myshark-param');
+		var id = $.parseJSON($(this).attr('data-myshark-params'));
 		$('#Menu-item-'+id).parent('ul.items').sortable('enable');
 	    }).bind('mouseout', function (ev) {
-		var id = $(this).attr('data-myshark-param');
+		var id = $.parseJSON($(this).attr('data-myshark-params'));
 		$('#Menu-item-'+id).parent('ul.items').sortable('disable');
 	    });
 	}
@@ -110,6 +112,22 @@
 		// nastala chyba
 		errorCb();
 	    });
+	}
+
+	this.editableMenuItems = function () {
+	    $('.edit_menu_item').bind('click', menu.showEditWindow);
+	}
+
+	this.showEditWindow = function (ev) {
+	    var menuItem = $(this).parent('.item');
+	    var id_item = $.parseJSON(menuItem.attr('data-myshark-params')).id_item;
+	    var editWindow = $('#Menu-window-edit').clone();
+	    editWindow.attr('id', 'Menu-window-edit-'+id_item);
+
+	    var name = $.parseJSON(menuItem.attr('data-myshark-params')).name;
+	    editWindow.find('[name="name"]').val(name);
+
+	    myshark.windows.window(editWindow);
 	}
 		
     };

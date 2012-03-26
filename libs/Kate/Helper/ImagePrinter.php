@@ -72,7 +72,7 @@ class ImagePrinter implements \Kate\Main\IEnclosed {
         return $iconEl;
     }
     
-    public function getHtmlIconHref($iconName, $alt, $action, $param = '', $namespace = 'general', $addClasses = false, $href = false) {
+    public function getHtmlIconHref($iconName, $alt, $action, $param = false, $namespace = 'general', $addClasses = false, $href = false) {
 	$iconEl = $this->getHtmlIcon($iconName, $alt, $namespace, $addClasses);
 	$hrefEl = Html::el('a', array(
 	    'href' => $href? $href :'#',
@@ -80,7 +80,7 @@ class ImagePrinter implements \Kate\Main\IEnclosed {
 		'icon-href',
 		$action,
 	    ),
-	    'data-myshark-param' => $param,
+	    'data-myshark-params' => json_encode($param),
 	))->setHtml($iconEl);
 	return $hrefEl;
     }

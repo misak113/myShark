@@ -31,6 +31,9 @@ class Translator extends \Nette\Object implements \Nette\Localization\ITranslato
      * @param int $languageFrom id jazyka z 
      * @param int $languageTo id jazyka do
      * @return string přeložený text
+     *
+     * @assert ('Ahoj', 1, 2) == 'Hello'
+     * @assert ('vytvořit', 1, 2) == 'create'
      */
     public static function googleTranslate($text, $languageFrom, $languageTo) {
         return $text.'-'.$languageTo;
