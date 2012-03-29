@@ -35,22 +35,8 @@
         {/if}
     {/block}
     {block MenuWindows}
-	<div id="Menu-window-edit" class="window menu-window-edit">
-	    <form action="#" method="post">
-	    <table class="menu-window-edit-table">
-		<tbody>
-		    <tr class="name-row">
-			<td>{_'Název:'}</td>
-			<td><input name="name" value="" class="name" /></td>
-		    </tr>
-		    <tr class="link-row">
-			<td>{_'link:'}</td>
-			<td><input name="link" value="" class="link" /></td>
-		    </tr>
-		</tbody>
-	    </table>
-	    </form>
-	</div>
+	{includeblock ''._window('editItem')}
+	{include #editItemWindow}
     {/block}
 	</nav>
 {/define}

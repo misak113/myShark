@@ -1,0 +1,27 @@
+{* Editační okno položky *}
+
+{define editItemWindow}
+    {*snippet menu-window-edit*}
+    <div id="snippet--menu-window-edit">
+	<div id="Menu-window-edit" class="window menu-window-edit" data-myshark-window-options="{json_encode(array('width' => 350, 'height' => 350))}">
+	    <form action="#" method="post">
+	    <table class="menu-window-edit-table">
+		<tbody>
+		    <tr class="name-row">
+			<td>{_'Název:'}</td>
+			<td><input type="text" name="name" value="" class="name" /></td>
+		    </tr>
+		    <tr class="link-row">
+			<td>{_'link:'}</td>
+			<td><input type="text" name="link" value="" class="link" /></td>
+		    </tr>
+		    <tr colspan="2">
+			<td><input type="submit" name="save" value="{_'Uložit'}" class="save" /></td>
+		    </tr>
+		</tbody>
+	    </table>
+	    </form>
+	</div>
+    </div>
+    {*/snippet*}
+{/define}

@@ -60,7 +60,7 @@
 	this.bindMenuIcons = function () {
 	    $('.Menu .edit_menu').unbind('click').click(function (ev) {
 		ev.preventDefault();
-		var id = $.parseJSON($(this).attr('data-myshark-params'));
+		var id = $.parseJSON($(this).attr('data-kate-params'));
 		var icons = $('#content-'+id+' .Menu .items .icon-href');
 		if (icons.css('display') == 'inline') {
 		    icons.animate({
@@ -92,10 +92,10 @@
 		}
 	    }).sortable('disable');
 	    $('.move_menu_item').bind('mousedown', function (ev) {
-		var id = $.parseJSON($(this).attr('data-myshark-params'));
+		var id = $.parseJSON($(this).attr('data-kate-params'));
 		$('#Menu-item-'+id).parent('ul.items').sortable('enable');
 	    }).bind('mouseout', function (ev) {
-		var id = $.parseJSON($(this).attr('data-myshark-params'));
+		var id = $.parseJSON($(this).attr('data-kate-params'));
 		$('#Menu-item-'+id).parent('ul.items').sortable('disable');
 	    });
 	}
@@ -115,19 +115,20 @@
 	}
 
 	this.editableMenuItems = function () {
-	    $('.edit_menu_item').bind('click', menu.showEditWindow);
+	    $('.edit_menu_item').unbind('click').bind('click', menu.showEditWindow);
 	}
 
 	this.showEditWindow = function (ev) {
 	    var menuItem = $(this).parent('.item');
 	    var id_item = $.parseJSON(menuItem.attr('data-myshark-params')).id_item;
-	    var editWindow = $('#Menu-window-edit').clone();
+	    var editWindow = $('#Menu-window-edit').clone(true);
 	    editWindow.attr('id', 'Menu-window-edit-'+id_item);
 
 	    var name = $.parseJSON(menuItem.attr('data-myshark-params')).name;
 	    editWindow.find('[name="name"]').val(name);
 
 	    myshark.windows.window(editWindow);
+	    
 	}
 		
     };

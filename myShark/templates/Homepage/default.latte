@@ -23,7 +23,7 @@
     {snippet windows}
     <div id="windows">
 			{if $page['loginForm']}
-				{includeblock ''.(\Kate\Main\Loader::WINDOWS_DIR).S.'login.latte'}
+				{includeblock ''._window('login')}
 				{include #loginWindow, loginForm => $page['loginForm']}
 			{/if}
     </div>

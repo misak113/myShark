@@ -53,7 +53,7 @@
 	    }
 		
 	    this.showWindows = function () {
-		$('#windows .window').dialog(win.defaultDialogOptions);
+		win.dialog($('#windows .window'));
 	    }
 	    
 	    this.errorFlash = function (text) {
@@ -68,6 +68,17 @@
 		var window = $('<div/>').addClass('flash').addClass(type).html(text);
 		$('#flashes').append(window);
 		win.showFlashes();
+	    }
+
+	    this.window = function (el, addOptions) {
+		if (typeof addOptions == 'undefined') addOptions = {};
+		win.dialog(el, addOptions);
+	    }
+
+	    this.dialog = function (el, addOptions) {
+		var options = el.attr('data-myshark-window-options') ?$.parseJSON(el.attr('data-myshark-window-options')) :{};
+		options = $.extend(win.defaultDialogOptions, options, addOptions)
+		el.dialog(options);
 	    }
 	    
 	    this.showFlashes = function () {
@@ -149,7 +160,11 @@
 			    myshark.redirectHashmark = true;
 			    myshark.url.redirectByHash();
 			}
-			myshark.windows.errorFlash(_t('Při načítání stránky došlo k chybě. (%s - %s)', [resp.status, resp.statusText]));
+			myshark.windows.errorFlash(_t('Při načítání stránky došlo k chybě. (%s - %s)', [
+			    resp.status ?resp.status :'0',
+			    resp.statusText ?resp.statusText :_t('Neznámá chyba')
+			]));
+			_d('Chyba při načítání stránky', resp);
 		    }
 		});
 	    }
@@ -269,21 +284,3 @@
 	
 })(jQuery);
 
-
-// Helper funkce
-    
-/**
-     * Funkce pro překlad
-     */
-function _t(text, params) {
-    // @todo dodelat cachovany preklad
-    if (typeof params != 'Array') params = [];
-    return _.string.sprintf(text, params.shift(), params.shift(), params.shift());
-}
-    
-/**
-     * Debugovací funkce
-     */
-function _d(message, e) {
-    console.log(message+(e ?', Exception:'+e :''));
-}

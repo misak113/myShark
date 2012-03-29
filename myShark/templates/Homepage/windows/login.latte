@@ -1,10 +1,14 @@
 {* Okno pro příhlášení administrace *}
 
 {define loginWindow}
-	<div class="window login" id="snippet--login-window" data-myshark-windows-options="{syntax double}{width:400,height:200}{{/syntax}}">
+    {*snippet login-window*}
+    <div id="snippet--login-window">
+	<div class="window login" data-myshark-window-options="{json_encode(array('width' => 400, 'height' => 300))}">
 	{*form loginForm}
 	@todo vlastni layout pro formular
 	{/form*}
 	{$loginForm}
 	</div>
+    </div>
+    {*/snippet*}
 {/define}

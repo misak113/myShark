@@ -18,6 +18,9 @@ define('LIBS_DIR', WWW_DIR . '/../libs');
 // absolute filesystem path to the temporary files
 define('TEMP_DIR', WWW_DIR . '/../temp');
 
+// absolute filesystem path to the temporary files
+define('CONFIG_DIR', WWW_DIR . '/../config');
+
 //Konstanty pro zkrácení zápisu
 define('S', DIRECTORY_SEPARATOR);
 

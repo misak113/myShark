@@ -21,6 +21,10 @@ class HomepagePresenter extends Kate\Main\Presenter {
 
     private $setting = array();
 
+    public function __construct() {
+	parent::__construct();
+	$this->setAppName(PageModel::MYSHARK_DIR);
+    }
     /**
      * Hlavní render pro defaultní stránku
      */
@@ -35,6 +39,9 @@ class HomepagePresenter extends Kate\Main\Presenter {
 	}
 	
 	$this->addJsVariable('jQuery.myshark.baseUrl', Loader::getBaseUrl());
+	$this->addScript('default/myshark');
+	$this->addScript('shorthands');
+	$this->addStyle('default/myshark');
 
 	$pageModel = PageModel::get();
 	$userModel = UserModel::get();
@@ -52,8 +59,8 @@ class HomepagePresenter extends Kate\Main\Presenter {
 	    if ($path != '') {
 		$this->redirectUrl(Loader::getBaseUrl() . '#' . $path, 301);
 	    }
-	    $this->addScript('animate');
-	    $this->addStyle('animate');
+	    $this->addScript('default/animate');
+	    $this->addStyle('default/animate');
 	    $this->setting['loadingBox'] = true;
 	}
 	if (!$userModel->getUser()->isAllowed('web', 'animate') && $this->isAjax()) {
@@ -110,12 +117,8 @@ class HomepagePresenter extends Kate\Main\Presenter {
 		    foreach ($slot['contents'] as &$content) {
 			$content['moduleContent'] = $pageModel->cache()->loadContent($content, $parameters);
 			// Načte styly pro moduly
-			$this->styles[$content['moduleLabel']] = array(
-			    '/' . Loader::CSS_DIR . '/' . Loader::MODULES_DIR . '/' . $content['moduleLabel'] . '.css',
-			    'screen,projection,tv',
-			    'text/css'
-			);
-			$this->addScript(Loader::DESKTOP_DIR . '/' . Loader::MODULES_DIR . '/' . $content['moduleLabel']);
+			$this->addStyle(Loader::DEFAULT_DIR . '/' . Loader::MODULES_DIR . '/' . $content['moduleLabel']);
+			$this->addScript(Loader::DEFAULT_DIR . '/' . Loader::MODULES_DIR . '/' . $content['moduleLabel']);
 		    }
 		}
 		$cell['slot'] = $slot;

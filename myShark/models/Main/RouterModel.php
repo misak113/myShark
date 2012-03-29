@@ -10,7 +10,7 @@ use Nette\Application\Routers\SimpleRouter,
  * 
  * @autor Michael Žabka
  */
-class RouterModel extends \Kate\Main\Model {
+class RouterModel extends \Kate\Main\Model implements \Kate\Main\IRouterModel {
 
     /**
      * Přidá do routeru správné routy

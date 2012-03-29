@@ -20,8 +20,8 @@ class Loader extends \Nette\Object implements IEnclosed {
     const CSS_DIR = 'css';
     const ICON_DIR = 'icon';
     const LANGUAGE_DIR = 'language';
-	const WINDOWS_DIR = 'windows';
-	const DESKTOP_DIR = 'desktop';
+    const WINDOWS_DIR = 'windows';
+    const DEFAULT_DIR = 'default';
 
 
 
@@ -144,6 +144,10 @@ class Loader extends \Nette\Object implements IEnclosed {
 		return $this->application->getPresenter();
 	}
 
+	public function getUserModel() {
+	    return \PageModel::get()->getUserModel();
+	}
+
     public static function isDebugMode() {
         return self::$DEBUG_MODE;
     }
@@ -154,6 +158,10 @@ class Loader extends \Nette\Object implements IEnclosed {
 
     public static function getBasePath() {
         return self::$BASE_PATH;
+    }
+
+    public static function getWindowTemplatePath($name) {
+	return self::WINDOWS_DIR.S.$name.'.latte';
     }
 
     public static function getCacheStoragePath() {

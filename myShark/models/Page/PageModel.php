@@ -6,7 +6,7 @@ use Kate\Main\Model,
  * Obstarává veškerá data co se základního rozvržení týká
  * @author Michael Žabka
  */
-class PageModel extends Model {
+class PageModel extends \Kate\Main\Model implements \Kate\Main\IPageModel {
     const ID = 0;
     
     const VERSION = '1.0.21';
@@ -15,7 +15,8 @@ class PageModel extends Model {
     const DEFAULT_PAGE_NAME = 'Redakční systém myShark';
     
     const LINK_ERROR_404 = 'error-404';
-    
+
+    const MYSHARK_DIR = 'myshark';
     
     
     
@@ -644,6 +645,10 @@ class PageModel extends Model {
      */
     public function setPageParameters($parameters) {
         $this->pageParameters = $parameters;
+    }
+
+    public function getUserModel() {
+	return UserModel::get();
     }
     
     /**

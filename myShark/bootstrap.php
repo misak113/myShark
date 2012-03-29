@@ -18,7 +18,7 @@ require LIBS_DIR . '/Nette/loader.php';
 
 // Load configuration from config.neon file
 $configurator = new Nette\Configurator;
-$configurator->loadConfig(__DIR__ . '/config.neon');
+$configurator->loadConfig(CONFIG_DIR . '/config.neon');
 
 
 // Configure application

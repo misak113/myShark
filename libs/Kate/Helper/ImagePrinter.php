@@ -80,7 +80,7 @@ class ImagePrinter implements \Kate\Main\IEnclosed {
 		'icon-href',
 		$action,
 	    ),
-	    'data-myshark-params' => json_encode($param),
+	    'data-kate-params' => json_encode($param),
 	))->setHtml($iconEl);
 	return $hrefEl;
     }

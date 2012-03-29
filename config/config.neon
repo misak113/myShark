@@ -23,12 +23,12 @@ production < common:
 		driver:	mysql
 		host:	localhost
 		database:	myshark
-		username:	root
-		password:	misak
+		username:	myshark
+		password:	3c6cb5518e92aa6d8cc246197f9046b1
 		profiler:	true
 
-	debugMode:	false
-	cacheMode:	true
+	debugMode:	true
+	cacheMode:	false
 
 development < common:
 	database:

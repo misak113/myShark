@@ -1,10 +1,10 @@
 <?php
 
 /**
- * myShark
+ * Kate Presenter
  *
  * @copyright  Copyright (c) 2011 Michael Žabka
- * @package    myShark
+ * @package    Kate
  */
 
 namespace Kate\Main;
@@ -15,7 +15,7 @@ use Kate;
  * Base class for all application presenters.
  *
  * @author     Michael Žabka
- * @package    myShark
+ * @package    Kate
  */
 abstract class Presenter extends \Nette\Application\UI\Presenter {
     
@@ -39,15 +39,20 @@ abstract class Presenter extends \Nette\Application\UI\Presenter {
 	'/js/libs/jquery-1.7.1.min.js',
 	'/js/libs/jquery-ui-1.8.16.custom.min.js',
 	'/js/libs/netteForms.js',
-	'/js/myshark/desktop.js',
     );
     protected $jsVariables = array();
     protected $baseUrl;
+    protected $appName;
 
     public function __construct() {
 	parent::__construct();
 	new \Kate\External\__; // Načtení underscore knihovny
 	new \shorthands; // Pro naloadování daného common helperu pro zkracování zápisů
+	$this->appName = 'kate';
+    }
+
+    protected function setAppName($appName) {
+	$this->appName = $appName;
     }
 
     /**
@@ -102,7 +107,7 @@ abstract class Presenter extends \Nette\Application\UI\Presenter {
      */
     public function addScript($path) {
 	if (!preg_match('~^.+\.js$~', $path)) {
-	    $path = '/js/myshark/' . $path . '.js';
+	    $path = '/js/'.$this->appName.'/' . $path . '.js';
 	}
 	if (!in_array($path, $this->scripts)) {
 	    $this->scripts[] = $path;
@@ -124,9 +129,12 @@ abstract class Presenter extends \Nette\Application\UI\Presenter {
      */
     public function addStyle($path, $media = 'screen,projection,tv', $type = 'text/css') {
 	if (!preg_match('~^.+\.css$~', $path)) {
-	    $path = '/css/myshark/' . $path . '.css';
+	    $path = '/css/'.$this->appName.'/' . $path . '.css';
 	}
-	$this->styles[] = array($path, $media, $type);
+	$style = array($path, $media, $type);
+	if (!in_array($style, $this->styles)) {
+	    $this->styles[] = $style;
+	}
     }
 
 }

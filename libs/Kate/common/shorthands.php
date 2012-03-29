@@ -41,12 +41,16 @@ function __($item=null) {
  * @return boolean je oprávněn?
  */
 function isAllowed($type, $operation) {
-    return UserModel::get()->getUser()->isAllowed($type, $operation);
+    return \Kate\Main\Loader::get()->getUserModel()->getUser()->isAllowed($type, $operation);
 }
 
 
 function getHtmlIconHref($iconName, $alt, $action, $param = '', $namespace = 'general', $addClasses = false, $href = false) {
     return \Kate\Helper\ImagePrinter::get()->getHtmlIconHref($iconName, $alt, $action, $param, $namespace, $addClasses, $href);
+}
+
+function _window($name) {
+    return \Kate\Main\Loader::getWindowTemplatePath($name);
 }
 
 ?>
