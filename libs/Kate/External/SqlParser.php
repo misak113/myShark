@@ -40,7 +40,7 @@ class SqlParser {
                     if ($sub_expr === false) {
                         $sub_expr = $column['base_expr'];
                     }
-                    if (preg_match('~ *\w+\. *\* *~', $sub_expr)) {
+                    if (preg_match('~ *`?\w+`?\. *\* *~', $sub_expr)) {
                         $expr = $sub_expr.' ';
                     } else {
                         $expr = '('.$sub_expr.') ';
@@ -51,7 +51,10 @@ class SqlParser {
                     $expr = $column['base_expr'];
                 }
                 
-                $as = $column['alias'] == '`'.$column['base_expr'].'`';
+                $as = $column['alias'] == '`'.$column['base_expr'].'`' || $column['alias'] == $column['base_expr'];
+		if (preg_match('~ *`?\w+`?\. *`?(\w+)`? *~', $column['alias'], $pars)) {
+		    $column['alias'] = '`'.$pars[1].'`';
+		}
                 $select[] = $expr . (!$as ?' AS '.$column['alias'] :'');
             }
             $distinct = isset($parsed['OPTIONS']) && in_array('DISTINCT', $parsed['OPTIONS']) ?true :false;

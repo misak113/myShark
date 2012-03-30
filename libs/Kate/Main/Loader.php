@@ -36,7 +36,7 @@ class Loader extends \Nette\Object implements IEnclosed {
 
     private function __construct(\Nette\Config\Configurator $configurator) {
         $this->setConfigurator($configurator);
-	$this->container = $configurator->createContainer();
+	$this->container = \Nette\Environment::getContext();
         $this->application = $this->container->application;
     }
 
@@ -60,7 +60,9 @@ class Loader extends \Nette\Object implements IEnclosed {
      * Zajistí základní prvky pro běh aplikace
      */
     private function initApplication() {
-        $cookies = \Kate\Http\Cookies::get();
+        new \shorthands; // Pro naloadování daného common helperu pro zkracování zápisů
+	$cookies = \Kate\Http\Cookies::get();
+
 
         //zjistí zda je v debugovacím módu
         self::$DEBUG_MODE = isset($this->container->params['debugMode']) ? $this->container->params['debugMode'] : false;
@@ -113,7 +115,7 @@ class Loader extends \Nette\Object implements IEnclosed {
      * Nalouduje databázi do proměné
      */
     private function loadDatabase() {
-        $reflection = new \Nette\Database\Reflection\DatabaseReflection('id_%s', 'id_%s', '%s');
+        $reflection = new \Nette\Database\Reflection\ConventionalReflection('id_%s', 'id_%s', '%s');
 
         $db = $this->container->params['database'];
         $dsn = "{$db['driver']}:host={$db['host']};dbname={$db['database']}" .
@@ -123,7 +125,8 @@ class Loader extends \Nette\Object implements IEnclosed {
         } else {
             $connectionName = '\Nette\Database\Connection';
         }
-        $this->database = new $connectionName($dsn, $db['username'], $db['password'], null, $reflection);
+        $this->database = new $connectionName($dsn, $db['username'], $db['password']);
+	$this->database->setDatabaseReflection($reflection);
     }
 
     /**

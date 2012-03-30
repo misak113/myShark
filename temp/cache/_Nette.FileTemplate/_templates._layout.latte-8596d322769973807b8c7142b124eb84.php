@@ -1,12 +1,16 @@
-<?php //netteCache[01]000419a:2:{s:4:"time";s:21:"0.75784800 1329383056";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:97:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\@layout.latte";i:2;i:1329332179;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"f38d86f released on 2011-08-24";}}}?><?php
+<?php //netteCache[01]000419a:2:{s:4:"time";s:21:"0.83761000 1333113305";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:97:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\@layout.latte";i:2;i:1329332179;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"94abcaa released on 2012-02-29";}}}?><?php
 
 // source file: C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\@layout.latte
 
-?><?php list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, 'fvm1f43jz1')
+?><?php
+// prolog Nette\Latte\Macros\CoreMacros
+list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, '847fp8r2mi')
 ;
+// prolog Nette\Latte\Macros\UIMacros
+
 // snippets support
-if (!empty($control->snippetMode)) {
-	return Nette\Latte\Macros\UIMacros::renderSnippets($control, $_l, get_defined_vars());
+if (!empty($_control->snippetMode)) {
+	return Nette\Latte\Macros\UIMacros::renderSnippets($_control, $_l, get_defined_vars());
 }
 
 //
@@ -19,39 +23,35 @@ if (!empty($control->snippetMode)) {
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
         <meta name="description" content="Nette Framework web application skeleton" />
-<?php if (isset($robots)): ?>
-        <meta name="robots" content="<?php echo htmlSpecialChars($robots) ?>" />
+<?php if (isset($robots)): ?>        <meta name="robots" content="<?php echo htmlSpecialChars($robots) ?>" />
 <?php endif ?>
 
-        <title><?php echo Nette\Templating\DefaultHelpers::escapeHtml($title, ENT_NOQUOTES) ?></title>
+        <title><?php echo Nette\Templating\Helpers::escapeHtml($title, ENT_NOQUOTES) ?></title>
 
-<?php if (isset($styles)): $iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($styles) as $style): ?>
-        <link rel="stylesheet" media="<?php echo htmlSpecialChars($style[1]) ?>" href="<?php echo htmlSpecialChars($style[0]) ?>
-" type="<?php echo htmlSpecialChars($style[2]) ?>" />
-<?php $iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ;endif ?>
+<?php if (isset($styles)): $iterations = 0; foreach ($styles as $style): ?>        <link rel="stylesheet" media="<?php echo htmlSpecialChars($style[1]) ?>
+" href="<?php echo htmlSpecialChars($style[0]) ?>" type="<?php echo htmlSpecialChars($style[2]) ?>" />
+<?php $iterations++; endforeach ;endif ?>
         
         <link rel="shortcut icon" href="<?php echo htmlSpecialChars($basePath) ?>/favicon.ico" type="image/x-icon" />
         <link rel="icon" href="<?php echo htmlSpecialChars($basePath) ?>/favicon.ico" type="image/vnd.microsoft.icon" />
 
-<?php if (isset($scripts)): $iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($scripts) as $script): ?>
-        <script type="text/javascript" src="<?php echo htmlSpecialChars($script) ?>"></script>
-<?php $iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ;endif ;if (isset($jsVariables)): ?>
+<?php if (isset($scripts)): $iterations = 0; foreach ($scripts as $script): ?>        <script type="text/javascript" src="<?php echo htmlSpecialChars($script) ?>"></script>
+<?php $iterations++; endforeach ;endif ;if (isset($jsVariables)): ?>
         <script type="text/javascript">
-<?php $iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($jsVariables) as $var => $value): ?>
+<?php $iterations = 0; foreach ($jsVariables as $var => $value): ?>
 				<?php echo $var ?> = '<?php echo $value ?>';
-<?php $iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ?>
+<?php $iterations++; endforeach ?>
 		</script>
 <?php endif ?>
         
-<?php Nette\Latte\Macros\UIMacros::callBlock($_l, 'head', $template->getParams()) ?>
+<?php Nette\Latte\Macros\UIMacros::callBlock($_l, 'head', $template->getParameters()) ?>
     </head>
 
     <body>
-<?php if (isset($setting['loadingBox'])): ?>
-        <div id="loading-box"><div class="loading"></div></div>
+<?php if (isset($setting['loadingBox'])): ?>        <div id="loading-box"><div class="loading"></div></div>
 <?php endif ?>
         <div id="body">
-<?php Nette\Latte\Macros\UIMacros::callBlock($_l, 'content', $template->getParams()) ?>
+<?php Nette\Latte\Macros\UIMacros::callBlock($_l, 'content', $template->getParameters()) ?>
         </div>    
     </body>
 </html>

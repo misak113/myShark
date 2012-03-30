@@ -24,6 +24,8 @@
 	    this.restart = function () {
 		for (var i in modules) {
 		    try {
+			var type = typeof modules[i];
+			if (type != 'object') continue;
 			modules[i].restart();
 		    } catch (e) {
 			_d('Chyba při restartování modulu', e);

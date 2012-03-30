@@ -45,9 +45,10 @@ abstract class Presenter extends \Nette\Application\UI\Presenter {
     protected $appName;
 
     public function __construct() {
-	parent::__construct();
+	$context = \Nette\Environment::getContext();
+	parent::__construct($context);
 	new \Kate\External\__; // Načtení underscore knihovny
-	new \shorthands; // Pro naloadování daného common helperu pro zkracování zápisů
+	
 	$this->appName = 'kate';
     }
 
