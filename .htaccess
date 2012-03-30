@@ -1,0 +1,4 @@
+
+####### Redirect na složku www ######
+RewriteEngine on
+RewriteRule (.*) http://%{HTTP_HOST}/www/$1 [QSA,L]
