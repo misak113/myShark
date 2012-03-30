@@ -35,9 +35,9 @@ class Loader extends \Nette\Object implements IEnclosed {
     $BASE_URL;
 
     private function __construct(\Nette\Config\Configurator $configurator) {
-        $this->setConfigurator($configurator);
+	$this->setConfigurator($configurator);
 	$this->container = \Nette\Environment::getContext();
-        $this->application = $this->container->application;
+	$this->application = $this->container->application;
     }
 
     /**
@@ -46,90 +46,96 @@ class Loader extends \Nette\Object implements IEnclosed {
      * @return Loader jedinečný Loader
      */
     public static function get(\Nette\Config\Configurator $configurator = null) {
-        if (self::$loader == null) {
-            if (!($configurator instanceof \Nette\Config\Configurator)) {
-                throw new \Nette\InvalidArgumentException('Poprvé je třeba zadat Parametry!');
-            }
-            self::$loader = new Loader($configurator);
-            self::$loader->initApplication();
-        }
-        return self::$loader;
+	if (self::$loader == null) {
+	    if (!($configurator instanceof \Nette\Config\Configurator)) {
+		throw new \Nette\InvalidArgumentException('Poprvé je třeba zadat Parametry!');
+	    }
+	    self::$loader = new Loader($configurator);
+	    self::$loader->initApplication();
+	}
+	return self::$loader;
     }
 
     /**
      * Zajistí základní prvky pro běh aplikace
      */
     private function initApplication() {
-        new \shorthands; // Pro naloadování daného common helperu pro zkracování zápisů
+	new \shorthands; // Pro naloadování daného common helperu pro zkracování zápisů
 	$cookies = \Kate\Http\Cookies::get();
 
 
-        //zjistí zda je v debugovacím módu
-        self::$DEBUG_MODE = isset($this->container->params['debugMode']) ? $this->container->params['debugMode'] : false;
-        self::$CACHE_MODE = isset($this->container->params['cacheMode']) ? $this->container->params['cacheMode'] : false;
+	//zjistí zda je v debugovacím módu
+	self::$DEBUG_MODE = isset($this->container->params['debugMode']) ? $this->container->params['debugMode'] : false;
+	self::$CACHE_MODE = isset($this->container->params['cacheMode']) ? $this->container->params['cacheMode'] : false;
 
-        // Enable Nette\Debug for error visualisation & logging
-        if (self::$DEBUG_MODE) {
-            Debugger::$strictMode = TRUE;
-            Debugger::enable();
-        }
-        $this->application->catchExceptions = !self::$DEBUG_MODE;
-
-
-
-        //načte databázi
-        $this->loadDatabase();
+	// Enable Nette\Debug for error visualisation & logging
+	if (self::$DEBUG_MODE) {
+	    Debugger::$strictMode = TRUE;
+	    Debugger::enable();
+	}
+	$this->application->catchExceptions = !self::$DEBUG_MODE;
 
 
-        if (!class_exists('PageModel')) {
-            throw new Kate\ClassNotFoundException('Vytvořte třídu PageModel Která bude obstarávat základní data pro zobrazení.');
-        }
-        $this->initPathAndUrl();
-        \PageModel::get()->init();
-        
+
+	//načte databázi
+	$this->loadDatabase();
 
 
-        //naloduje routery
-        $router = $this->application->getRouter();
-        if (class_exists('RouterModel')) {
-            \RouterModel::setRouters($router);
-        } else {
-            throw new Kate\ClassNotFoundException('Vytvořte třídu RouterModel pro správné routování aplikace.');
-        }
+	if (!class_exists('PageModel')) {
+	    throw new Kate\ClassNotFoundException('Vytvořte třídu PageModel Která bude obstarávat základní data pro zobrazení.');
+	}
+	$this->initPathAndUrl();
+	\PageModel::get()->init();
+
+
+
+	//naloduje routery
+	$router = $this->application->getRouter();
+	if (class_exists('RouterModel')) {
+	    \RouterModel::setRouters($router);
+	} else {
+	    throw new Kate\ClassNotFoundException('Vytvořte třídu RouterModel pro správné routování aplikace.');
+	}
     }
 
     private function initPathAndUrl() {
-        self::$TEMP_PATH = \Nette\Environment::getVariable('tempDir');
-        self::$WWW_PATH = WWW_DIR;
-        $exp = explode('/', WWW_DIR);
-        $exp = explode('\\', end($exp));
-        $exp = end($exp);
-        self::$BASE_PATH = substr(WWW_DIR, 0, strlen(WWW_DIR) - strlen($exp) - 1);
-        self::$CACHE_STORAGE_PATH = self::$TEMP_PATH . S . self::CACHE_DIR;
-        self::$IMAGES_PATH = self::$WWW_PATH . S . self::IMAGES_DIR;
-        self::$USERFILES_PATH = self::$WWW_PATH . S . self::USERFILES_DIR;
-        self::$BASE_URL = rtrim(\Nette\Environment::getHttpRequest()->getUrl()->getBaseUrl(), '/');
+	self::$TEMP_PATH = \Nette\Environment::getVariable('tempDir');
+	self::$WWW_PATH = WWW_DIR;
+	$exp = explode('/', WWW_DIR);
+	$exp = explode('\\', end($exp));
+	$exp = end($exp);
+	self::$BASE_PATH = substr(WWW_DIR, 0, strlen(WWW_DIR) - strlen($exp) - 1);
+	self::$CACHE_STORAGE_PATH = self::$TEMP_PATH . S . self::CACHE_DIR;
+	self::$IMAGES_PATH = self::$WWW_PATH . S . self::IMAGES_DIR;
+	self::$USERFILES_PATH = self::$WWW_PATH . S . self::USERFILES_DIR;
+	self::$BASE_URL = rtrim(\Nette\Environment::getHttpRequest()->getUrl()->getBaseUrl(), '/');
     }
 
     /**
      * Nalouduje databázi do proměné
      */
     private function loadDatabase() {
-        $reflection = new \Nette\Database\Reflection\ConventionalReflection('id_%s', 'id_%s', '%s');
+	$reflection = new \Nette\Database\Reflection\ConventionalReflection('id_%s', 'id_%s', '%s');
 
-	$this->database = $this->container->getService('database');
-	$config = \Nette\Environment::getConfig();
-        //$db = $config['database'];
 	$db = $this->container->params['database'];
-        $dsn = "{$db['driver']}:host={$db['host']};dbname={$db['database']}" .
-                ((isset($db['port'])) ? ";port={$db['port']}" : "");
-        if (class_exists('\Kate\Database\Connection')) {
-            $connectionName = '\Kate\Database\Connection';
-        } else {
-            $connectionName = '\Nette\Database\Connection';
-        }
-        $this->database = new $connectionName($dsn, $db['username'], $db['password']);
+	$dsn = "{$db['driver']}:host={$db['host']};dbname={$db['database']}" .
+		((isset($db['port'])) ? ";port={$db['port']}" : "");
+	if (class_exists('\Kate\Database\Connection')) {
+	    $connectionName = '\Kate\Database\Connection';
+	} else {
+	    $connectionName = '\Nette\Database\Connection';
+	}
+	$this->database = new $connectionName($dsn, $db['username'], $db['password']);
 	$this->database->setDatabaseReflection($reflection);
+
+
+	/* function addService () {
+	  $service = new \Nette\Database\Diagnostics\ConnectionPanel;
+	  $service->explain = TRUE;
+	  Debugger::$bar->addPanel($service);
+	  return $service;
+	  }
+	  $this->database->onQuery[] = array('addService'); */
     }
 
     /**
@@ -137,59 +143,59 @@ class Loader extends \Nette\Object implements IEnclosed {
      * @return Connection
      */
     public function getDatabase() {
-        return $this->database;
+	return $this->database;
     }
 
     private function setConfigurator(\Nette\Config\Configurator $configurator) {
-        $this->configurator = $configurator;
+	$this->configurator = $configurator;
     }
-	
-	public function getContainer() {
-		return $this->container;
-	}
-	
-	public function getPresenter() {
-		return $this->application->getPresenter();
-	}
 
-	public function getUserModel() {
-	    return \PageModel::get()->getUserModel();
-	}
+    public function getContainer() {
+	return $this->container;
+    }
+
+    public function getPresenter() {
+	return $this->application->getPresenter();
+    }
+
+    public function getUserModel() {
+	return \PageModel::get()->getUserModel();
+    }
 
     public static function isDebugMode() {
-        return self::$DEBUG_MODE;
+	return self::$DEBUG_MODE;
     }
 
     public static function isCacheMode() {
-        return self::$CACHE_MODE;
+	return self::$CACHE_MODE;
     }
 
     public static function getBasePath() {
-        return self::$BASE_PATH;
+	return self::$BASE_PATH;
     }
 
     public static function getWindowTemplatePath($name) {
-	return self::WINDOWS_DIR.S.$name.'.latte';
+	return self::WINDOWS_DIR . S . $name . '.latte';
     }
 
     public static function getCacheStoragePath() {
-        return self::$CACHE_STORAGE_PATH;
+	return self::$CACHE_STORAGE_PATH;
     }
 
     public static function getImagesPath() {
-        return self::$IMAGES_PATH;
+	return self::$IMAGES_PATH;
     }
 
     public static function getUserfilesPath() {
-        return self::$USERFILES_PATH;
+	return self::$USERFILES_PATH;
     }
 
     public static function getBaseUrl() {
-        return self::$BASE_URL;
+	return self::$BASE_URL;
     }
 
     public static function getPageModel() {
-        return \PageModel::get();
+	return \PageModel::get();
     }
 
 }

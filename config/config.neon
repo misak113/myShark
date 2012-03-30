@@ -29,11 +29,7 @@ common:
 
 production < common:
 	nette:
-		database:
-			default:
-				dsn: '%database.driver%:host=%database.host%;dbname=%database.dbname%'
-				user: %database.user%
-				password: %database.password%
+
 	parameters:
 		database:
 			driver:	mysql
@@ -42,6 +38,7 @@ production < common:
 			username:	myshark
 			password:	3c6cb5518e92aa6d8cc246197f9046b1
 			profiler:	true
+			debugger:	false
 
 		debugMode:	false
 		cacheMode:	false
@@ -49,16 +46,6 @@ production < common:
 
 development < common:
 	nette:
-		database:
-			myshark:
-				driver:	mysql
-				host:	localhost
-				#database:	myshark
-				user:	root
-				password:	misak
-				#profiler:	true
-
-			debugger:	true
 
 	parameters:
 		database:
