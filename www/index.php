@@ -21,6 +21,9 @@ define('TEMP_DIR', WWW_DIR . '/../temp');
 // absolute filesystem path to the temporary files
 define('CONFIG_DIR', WWW_DIR . '/../config');
 
+// absolute filesystem path to log dir
+define('LOG_DIR', __DIR__ . '/../log');
+
 //Konstanty pro zkrácení zápisu
 define('S', DIRECTORY_SEPARATOR);
 

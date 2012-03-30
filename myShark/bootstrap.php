@@ -17,13 +17,18 @@ require LIBS_DIR . '/Nette/loader.php';
 
 
 // Load configuration from config.neon file
-$configurator = new Nette\Configurator;
-$configurator->loadConfig(CONFIG_DIR . '/config.neon');
-
-
-// Configure application
-$application = $configurator->container->application;
-
+$configurator = new Nette\Config\Configurator;
+// Enable Nette Debugger for error visualisation & logging
+//$configurator->setProductionMode($configurator::AUTO);
+$configurator->enableDebugger(LOG_DIR);
+// Enable RobotLoader - this will load all classes automatically
+$configurator->setTempDirectory(TEMP_DIR);
+$configurator->createRobotLoader()
+	->addDirectory(APP_DIR)
+	->addDirectory(LIBS_DIR)
+	->register();
+$configurator->addConfig(CONFIG_DIR . '/config.neon');
+$application = $configurator->createContainer()->application;
 
 // Setup router
 $application->onStartup[] = function() use ($configurator) {

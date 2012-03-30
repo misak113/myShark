@@ -29,13 +29,15 @@ class Loader extends \Nette\Object implements IEnclosed {
     private $application = null;
     private $database = null;
     private $configurator = null;
+    private $container = null;
     private static $DEBUG_MODE, $CACHE_MODE;
     private static $BASE_PATH, $CACHE_STORAGE_PATH, $TEMP_PATH, $WWW_PATH, $IMAGES_PATH, $USERFILES_PATH,
     $BASE_URL;
 
-    private function __construct(\Nette\Configurator $configurator) {
+    private function __construct(\Nette\Config\Configurator $configurator) {
         $this->setConfigurator($configurator);
-        $this->application = $configurator->container->application;
+	$this->container = $configurator->createContainer();
+        $this->application = $this->container->application;
     }
 
     /**
@@ -43,10 +45,10 @@ class Loader extends \Nette\Object implements IEnclosed {
      * @param Application $application Nette aplikace
      * @return Loader jedinečný Loader
      */
-    public static function get(\Nette\Configurator $configurator = null) {
+    public static function get(\Nette\Config\Configurator $configurator = null) {
         if (self::$loader == null) {
-            if (!($configurator instanceof \Nette\Configurator)) {
-                throw new \Nette\InvalidArgumentException('Argument musí být Configurator!');
+            if (!($configurator instanceof \Nette\Config\Configurator)) {
+                throw new \Nette\InvalidArgumentException('Poprvé je třeba zadat Parametry!');
             }
             self::$loader = new Loader($configurator);
             self::$loader->initApplication();
@@ -61,8 +63,8 @@ class Loader extends \Nette\Object implements IEnclosed {
         $cookies = \Kate\Http\Cookies::get();
 
         //zjistí zda je v debugovacím módu
-        self::$DEBUG_MODE = isset($this->configurator->container->params['debugMode']) ? $this->configurator->container->params['debugMode'] : false;
-        self::$CACHE_MODE = isset($this->configurator->container->params['cacheMode']) ? $this->configurator->container->params['cacheMode'] : false;
+        self::$DEBUG_MODE = isset($this->container->params['debugMode']) ? $this->container->params['debugMode'] : false;
+        self::$CACHE_MODE = isset($this->container->params['cacheMode']) ? $this->container->params['cacheMode'] : false;
 
         // Enable Nette\Debug for error visualisation & logging
         if (self::$DEBUG_MODE) {
@@ -113,7 +115,7 @@ class Loader extends \Nette\Object implements IEnclosed {
     private function loadDatabase() {
         $reflection = new \Nette\Database\Reflection\DatabaseReflection('id_%s', 'id_%s', '%s');
 
-        $db = $this->configurator->container->params['database'];
+        $db = $this->container->params['database'];
         $dsn = "{$db['driver']}:host={$db['host']};dbname={$db['database']}" .
                 ((isset($db['port'])) ? ";port={$db['port']}" : "");
         if (class_exists('\Kate\Database\Connection')) {
@@ -132,12 +134,12 @@ class Loader extends \Nette\Object implements IEnclosed {
         return $this->database;
     }
 
-    private function setConfigurator(\Nette\Configurator $configurator) {
+    private function setConfigurator(\Nette\Config\Configurator $configurator) {
         $this->configurator = $configurator;
     }
 	
 	public function getContainer() {
-		return $this->configurator->container;
+		return $this->container;
 	}
 	
 	public function getPresenter() {
