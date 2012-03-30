@@ -1,16 +1,16 @@
-<?php //netteCache[01]000429a:2:{s:4:"time";s:21:"0.71741800 1333113305";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:106:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\Homepage\default.latte";i:2;i:1333029417;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"94abcaa released on 2012-02-29";}}}?><?php
+<?php //netteCache[01]000429a:2:{s:4:"time";s:21:"0.75526100 1333119245";s:9:"callbacks";a:2:{i:0;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:9:"checkFile";}i:1;s:106:"C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\Homepage\default.latte";i:2;i:1333029417;}i:1;a:3:{i:0;a:2:{i:0;s:19:"Nette\Caching\Cache";i:1;s:10:"checkConst";}i:1;s:25:"Nette\Framework::REVISION";i:2;s:30:"94abcaa released on 2012-02-29";}}}?><?php
 
 // source file: C:\Users\misak113\programing\internet\apache2.2\avantcore\myShark\myShark\templates\Homepage\default.latte
 
 ?><?php
 // prolog Nette\Latte\Macros\CoreMacros
-list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, '43pjh4ukbb')
+list($_l, $_g) = Nette\Latte\Macros\CoreMacros::initRuntime($template, 'ekryqckusb')
 ;
 // prolog Nette\Latte\Macros\UIMacros
 //
 // block content
 //
-if (!function_exists($_l->blocks['content'][] = '_lbdde03d2649_content')) { function _lbdde03d2649_content($_l, $_args) { extract($_args)
+if (!function_exists($_l->blocks['content'][] = '_lbf0ce93f10c_content')) { function _lbf0ce93f10c_content($_l, $_args) { extract($_args)
 ?><div class="wrapper-page link--<?php echo htmlSpecialChars($page['page']['link']) ?>">
 <div id="<?php echo $_control->getSnippetId('header') ?>"><?php call_user_func(reset($_l->blocks['_header']), $_l, $template->getParameters()) ?>
 </div>    
@@ -26,7 +26,7 @@ if (!function_exists($_l->blocks['content'][] = '_lbdde03d2649_content')) { func
 //
 // block _header
 //
-if (!function_exists($_l->blocks['_header'][] = '_lba1b2a8a1c8__header')) { function _lba1b2a8a1c8__header($_l, $_args) { extract($_args); $_control->validateControl('header')
+if (!function_exists($_l->blocks['_header'][] = '_lbfc71a1c1a8__header')) { function _lbfc71a1c1a8__header($_l, $_args) { extract($_args); $_control->validateControl('header')
 ;if (count($page['languages']) > 1): ?>
     <div class="languages">
 <?php $iterations = 0; foreach ($page['languages'] as $lang): ?>
@@ -42,7 +42,7 @@ if (!function_exists($_l->blocks['_header'][] = '_lba1b2a8a1c8__header')) { func
 //
 // block _flashes
 //
-if (!function_exists($_l->blocks['_flashes'][] = '_lb07dc656610__flashes')) { function _lb07dc656610__flashes($_l, $_args) { extract($_args); $_control->validateControl('flashes')
+if (!function_exists($_l->blocks['_flashes'][] = '_lbb7be702ea6__flashes')) { function _lbb7be702ea6__flashes($_l, $_args) { extract($_args); $_control->validateControl('flashes')
 ?>    <div id="flashes">
 <?php $iterations = 0; foreach ($flashes as $flash): ?>	<div class="flash <?php echo htmlSpecialChars($flash->type) ?>
 "><?php echo Nette\Templating\Helpers::escapeHtml($template->translate($flash->message), ENT_NOQUOTES) ?></div>
@@ -54,9 +54,9 @@ if (!function_exists($_l->blocks['_flashes'][] = '_lb07dc656610__flashes')) { fu
 //
 // block _windows
 //
-if (!function_exists($_l->blocks['_windows'][] = '_lba59602a316__windows')) { function _lba59602a316__windows($_l, $_args) { extract($_args); $_control->validateControl('windows')
+if (!function_exists($_l->blocks['_windows'][] = '_lb2196386ec8__windows')) { function _lb2196386ec8__windows($_l, $_args) { extract($_args); $_control->validateControl('windows')
 ?>    <div id="windows">
-<?php if ($page['loginForm']): Nette\Latte\Macros\CoreMacros::includeTemplate(''._window('login'), get_defined_vars(), $_l->templates['43pjh4ukbb'])->render() ;Nette\Latte\Macros\UIMacros::callBlock($_l, 'loginWindow', array('loginForm' => $page['loginForm']) + $template->getParameters()) ;endif ?>
+<?php if ($page['loginForm']): Nette\Latte\Macros\CoreMacros::includeTemplate(''._window('login'), get_defined_vars(), $_l->templates['ekryqckusb'])->render() ;Nette\Latte\Macros\UIMacros::callBlock($_l, 'loginWindow', array('loginForm' => $page['loginForm']) + $template->getParameters()) ;endif ?>
     </div>
 <?php
 }}
@@ -64,7 +64,7 @@ if (!function_exists($_l->blocks['_windows'][] = '_lba59602a316__windows')) { fu
 //
 // block _page
 //
-if (!function_exists($_l->blocks['_page'][] = '_lb2f218e012a__page')) { function _lb2f218e012a__page($_l, $_args) { extract($_args); $_control->validateControl('page')
+if (!function_exists($_l->blocks['_page'][] = '_lb8e2ffbde60__page')) { function _lb8e2ffbde60__page($_l, $_args) { extract($_args); $_control->validateControl('page')
 ?>    <section id="page-<?php echo htmlSpecialChars($page['page']['id_page']) ?>" class="page">
         <div class="brace-page">
 <?php if ($page['cells']): $iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($page['cells']) as $row): $iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($row) as $cell): ?>
@@ -80,7 +80,7 @@ if (!function_exists($_l->blocks['_page'][] = '_lb2f218e012a__page')) { function
                                         <div class="wrapper-content link--<?php echo htmlSpecialChars($content['link']) ?>">
                                             <div id="content-<?php echo htmlSpecialChars($content['id_content']) ?>" class="content">
                                                 <div class="brace-content <?php echo htmlSpecialChars($content['moduleLabel']) ?>">
-<?php Nette\Latte\Macros\CoreMacros::includeTemplate(''.(\Kate\Main\Loader::MODULES_DIR).S.$content['moduleLabel'].S.'default.latte', get_defined_vars(), $_l->templates['43pjh4ukbb'])->render() ;$contentBlock =  'contentModule'.$content['moduleLabel'] ;Nette\Latte\Macros\UIMacros::callBlock($_l, $contentBlock, array('moduleContent' => $content['moduleContent'], 'content' => $content) + $template->getParameters()) ?>
+<?php Nette\Latte\Macros\CoreMacros::includeTemplate(''.(\Kate\Main\Loader::MODULES_DIR).S.$content['moduleLabel'].S.'default.latte', get_defined_vars(), $_l->templates['ekryqckusb'])->render() ;$contentBlock =  'contentModule'.$content['moduleLabel'] ;Nette\Latte\Macros\UIMacros::callBlock($_l, $contentBlock, array('moduleContent' => $content['moduleContent'], 'content' => $content) + $template->getParameters()) ?>
                                                 </div>
                                             </div>
                                         </div>
@@ -104,7 +104,7 @@ if (!function_exists($_l->blocks['_page'][] = '_lb2f218e012a__page')) { function
 //
 // block head
 //
-if (!function_exists($_l->blocks['head'][] = '_lb4b41000322_head')) { function _lb4b41000322_head($_l, $_args) { extract($_args)
+if (!function_exists($_l->blocks['head'][] = '_lbdd36be28e5_head')) { function _lbdd36be28e5_head($_l, $_args) { extract($_args)
 ?><style type="text/css">
     #body {
         width: <?php echo Nette\Templating\Helpers::escapeCss($page['layout']['width']) ?>px;
@@ -118,7 +118,7 @@ if (!function_exists($_l->blocks['head'][] = '_lb4b41000322_head')) { function _
 </style>
 
 
-<?php if ($page['cells']): $iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($page['cells']) as $row): $iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($row) as $cell): if ($cell['slot']['contents']): $iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($cell['slot']['contents']) as $content): Nette\Latte\Macros\CoreMacros::includeTemplate(''.(\Kate\Main\Loader::MODULES_DIR).S.$content['moduleLabel'].S.'default.latte', get_defined_vars(), $_l->templates['43pjh4ukbb'])->render() ;$headBlock = 'headModule'.$content['moduleLabel'] ;Nette\Latte\Macros\UIMacros::callBlock($_l, $headBlock, array('moduleContent' => $content['moduleContent']) + $template->getParameters()) ;$iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ;endif ;$iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ;$iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ;endif ;
+<?php if ($page['cells']): $iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($page['cells']) as $row): $iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($row) as $cell): if ($cell['slot']['contents']): $iterations = 0; foreach ($iterator = $_l->its[] = new Nette\Iterators\CachingIterator($cell['slot']['contents']) as $content): Nette\Latte\Macros\CoreMacros::includeTemplate(''.(\Kate\Main\Loader::MODULES_DIR).S.$content['moduleLabel'].S.'default.latte', get_defined_vars(), $_l->templates['ekryqckusb'])->render() ;$headBlock = 'headModule'.$content['moduleLabel'] ;Nette\Latte\Macros\UIMacros::callBlock($_l, $headBlock, array('moduleContent' => $content['moduleContent']) + $template->getParameters()) ;$iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ;endif ;$iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ;$iterations++; endforeach; array_pop($_l->its); $iterator = end($_l->its) ;endif ;
 }}
 
 //

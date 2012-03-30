@@ -17,12 +17,6 @@ common:
 		session:
 			autoStart: smart
 
-		database:
-			#default:
-			#	dsn: '%database.driver%:host=%database.host%;dbname=%database.dbname%'
-			#	user: %database.user%
-			#	password: %database.password%
-
 	services:
 		#authenticator:
 		#	class: UsersModel
@@ -34,6 +28,12 @@ common:
 
 
 production < common:
+	nette:
+		database:
+			default:
+				dsn: '%database.driver%:host=%database.host%;dbname=%database.dbname%'
+				user: %database.user%
+				password: %database.password%
 	parameters:
 		database:
 			driver:	mysql
@@ -43,10 +43,23 @@ production < common:
 			password:	3c6cb5518e92aa6d8cc246197f9046b1
 			profiler:	true
 
-		debugMode:	true
+		debugMode:	false
 		cacheMode:	false
 
+
 development < common:
+	nette:
+		database:
+			myshark:
+				driver:	mysql
+				host:	localhost
+				#database:	myshark
+				user:	root
+				password:	misak
+				#profiler:	true
+
+			debugger:	true
+
 	parameters:
 		database:
 			driver:	mysql
@@ -55,6 +68,7 @@ development < common:
 			username:	root
 			password:	misak
 			profiler:	true
+			debugger:	true
 
 		debugMode:	true
 		cacheMode:	false

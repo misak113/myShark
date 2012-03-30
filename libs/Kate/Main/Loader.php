@@ -117,7 +117,10 @@ class Loader extends \Nette\Object implements IEnclosed {
     private function loadDatabase() {
         $reflection = new \Nette\Database\Reflection\ConventionalReflection('id_%s', 'id_%s', '%s');
 
-        $db = $this->container->params['database'];
+	$this->database = $this->container->getService('database');
+	$config = \Nette\Environment::getConfig();
+        //$db = $config['database'];
+	$db = $this->container->params['database'];
         $dsn = "{$db['driver']}:host={$db['host']};dbname={$db['database']}" .
                 ((isset($db['port'])) ? ";port={$db['port']}" : "");
         if (class_exists('\Kate\Database\Connection')) {
