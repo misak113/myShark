@@ -17,12 +17,6 @@ common:
 		session:
 			autoStart: smart
 
-		database:
-			#default:
-			#	dsn: '%database.driver%:host=%database.host%;dbname=%database.dbname%'
-			#	user: %database.user%
-			#	password: %database.password%
-
 	services:
 		#authenticator:
 		#	class: UsersModel
@@ -42,9 +36,11 @@ production < common:
 			username:	myshark
 			password:	3c6cb5518e92aa6d8cc246197f9046b1
 			profiler:	true
+			debugger:	false
 
-		debugMode:	true
+		debugMode:	false
 		cacheMode:	false
+
 
 development < common:
 	parameters:
@@ -55,7 +51,7 @@ development < common:
 			username:	root
 			password:	misak
 			profiler:	true
-
+			
 		debugMode:	true
 		cacheMode:	false
 
