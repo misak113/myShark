@@ -28,8 +28,6 @@ common:
 
 
 production < common:
-	nette:
-
 	parameters:
 		database:
 			driver:	mysql
@@ -45,8 +43,6 @@ production < common:
 
 
 development < common:
-	nette:
-
 	parameters:
 		database:
 			driver:	mysql
@@ -55,8 +51,7 @@ development < common:
 			username:	root
 			password:	misak
 			profiler:	true
-			debugger:	true
-
+			
 		debugMode:	true
 		cacheMode:	false
 

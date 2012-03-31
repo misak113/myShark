@@ -128,6 +128,13 @@ class Loader extends \Nette\Object implements IEnclosed {
 	$this->database = new $connectionName($dsn, $db['username'], $db['password']);
 	$this->database->setDatabaseReflection($reflection);
 
+	$panel = new \Nette\Database\Diagnostics\ConnectionPanel();
+	Debugger::$blueScreen->addPanel(array($panel, 'renderException'), __CLASS__);
+	if (!Debugger::$productionMode) {
+	    $this->database->onQuery[] = callback($panel, 'logQuery');
+	    Debugger::$bar->addPanel($panel);
+	}
+
 
 	/* function addService () {
 	  $service = new \Nette\Database\Diagnostics\ConnectionPanel;
