@@ -251,6 +251,35 @@
 		}
 		return array;
 	    }
+
+	}
+
+	this.localStorage = new function () {
+	    this.getItem = function (itemName) {
+		var itemValue = localStorage.getItem(itemName);
+		try {
+		    itemValue = $.parseJSON(itemValue);
+		} catch (e) {}
+		return itemValue;
+	    }
+	    this.setItem = function (itemName, itemValue) {
+		try {
+		    itemValue = $.toJSON(itemValue);
+		} catch (e) {}
+		localStorage.setItem(itemName, itemValue);
+	    }
+	    this.removeItem = new function (itemName) {
+		return localStorage.removeItem(itemName);
+	    }
+	}
+	this.sessionStorage = function () {
+	    this.getItem = function (itemName) {
+		var itemValue = sessionStorage.getItem(itemName);
+		try {
+		    itemValue = $.parseJSON(itemValue);
+		} catch (e) {}
+		return itemValue;
+	    }
 	}
 	
     }
@@ -258,9 +287,9 @@
 	
     var myshark = new MyShark($);
     $.myshark = myshark;
+
+    
 	
-	
-    	
     // Před "načtením" stránky
     myshark.windows.hideWindows();
 	
@@ -281,8 +310,6 @@
 	
 	
 // Přídavné objektové funkce
-
-    
 	
 })(jQuery);
 
