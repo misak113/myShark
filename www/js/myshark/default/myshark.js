@@ -9,7 +9,7 @@
 (function ($) {
     
     
-    function MyShark ($) {
+    function MyShark () {
 	var myshark = this;
 	
 	this.redirectHashmark = true;
@@ -144,27 +144,39 @@
 	}
 	
 	this.loader = new function () {
+	    var loader = this;
+	    this.PROXY_CACHE_PAGES = 'proxy_cache_pages';
 		
-	    this.load = function (url, cb) {
-		myshark.loader.showLoading();
+	    this.load = function (url, cb, forceLoad) {
+		loader.showLoading();
+		var key = url;
+		var pages = myshark.sessionStorage.getItem(loader.PROXY_CACHE_PAGES);
+		pages = pages == null ?{} :pages;
+		if (typeof pages[key] != 'undefined' && forceLoad != true) {
+		    loader.hideLoading();
+		    cb(pages[key]);
+		    return;
+		}
 		$.ajax({
 		    url: myshark.baseUrl+'/'+url,
 		    dataType: 'html',
 		    type: 'GET',
 		    success: function (resp) {
-			myshark.loader.hideLoading();
+			pages[key] = resp;
+			myshark.sessionStorage.setItem(loader.PROXY_CACHE_PAGES, pages);
+			loader.hideLoading();
 			cb(resp);
 		    },
 		    error: function (resp) {
-			myshark.loader.hideLoading();
+			loader.hideLoading();
 			
 			if (resp.status == 401) {
 			    myshark.redirectHashmark = true;
 			    myshark.url.redirectByHash();
 			}
 			myshark.windows.errorFlash(_t('Při načítání stránky došlo k chybě. (%s - %s)', [
-			    resp.status ?resp.status :'0',
-			    resp.statusText ?resp.statusText :_t('Neznámá chyba')
+			    typeof resp.status != 'undefined' ?resp.status :'0',
+			    typeof resp.statusText != 'undefined' ?resp.statusText :_t('Neznámá chyba')
 			]));
 			_d('Chyba při načítání stránky', resp);
 		    }
@@ -172,24 +184,28 @@
 	    }
 	    
 	    this.post = function (params, cb, errorCb) {
-		myshark.loader.showLoading();
+		loader.showLoading();
 		$.ajax({
 		    url: myshark.baseUrl+'/'+myshark.url.getActualHashPath(),
 		    dataType: 'html',
 		    type: 'POST',
 		    data: params,
 		    success: function (resp) {
-			myshark.loader.hideLoading();
+			myshark.sessionStorage.removeItem(loader.PROXY_CACHE_PAGES);
+			loader.hideLoading();
 			cb(resp);
 		    },
 		    error: function (resp) {
-			myshark.loader.hideLoading();
+			loader.hideLoading();
 			
 			if (resp.status == 401) {
 			    myshark.redirectHashmark = true;
 			    myshark.url.redirectByHash();
 			}
-			myshark.windows.errorFlash(_t('Při načítání stránky došlo k chybě. (%s - %s)', [resp.status, resp.statusText]));
+			myshark.windows.errorFlash(_t('Při načítání stránky došlo k chybě. (%s - %s)', [
+			    typeof resp.status != 'undefined' ?resp.status :'0',
+			    typeof resp.statusText != 'undefined' ?resp.statusText :_t('Neznámá chyba')
+			]));
 			errorCb(resp);
 		    }
 		});
@@ -252,35 +268,53 @@
 		return array;
 	    }
 
+	    this.Storage = function (storage) {
+		if (typeof storage == 'undefined') {
+		    storage = myshark.util.tempStorage;
+		}
+		this.getItem = function (itemName) {
+		    var itemValue = storage.getItem(itemName);
+		    try {
+			itemValue = $.parseJSON(itemValue);
+		    } catch (e) {}
+		    return itemValue;
+		}
+		this.setItem = function (itemName, itemValue) {
+		    try {
+			itemValue = $.toJSON(itemValue);
+		    } catch (e) {}
+		    storage.setItem(itemName, itemValue);
+		}
+		this.removeItem = function (itemName) {
+		    return storage.removeItem(itemName);
+		}
+		this.clear = function () {
+		    storage.clear();
+		}
+	    }
+
+	    this.tempStorage = new function () {
+		this.storage = {};
+
+		this.setItem = function (name, value) {
+		    this.storage[name] = value;
+		}
+		this.getItem = function (name) {
+		    return typeof this.storage[name] != undefined ?this.storage[name] :null;
+		}
+		this.removeItem = function (name) {
+		    this.storage[name] = null;
+		}
+		this.clear = function () {
+		    this.storage = {};
+		}
+	    }
+
 	}
 
-	this.localStorage = new function () {
-	    this.getItem = function (itemName) {
-		var itemValue = localStorage.getItem(itemName);
-		try {
-		    itemValue = $.parseJSON(itemValue);
-		} catch (e) {}
-		return itemValue;
-	    }
-	    this.setItem = function (itemName, itemValue) {
-		try {
-		    itemValue = $.toJSON(itemValue);
-		} catch (e) {}
-		localStorage.setItem(itemName, itemValue);
-	    }
-	    this.removeItem = new function (itemName) {
-		return localStorage.removeItem(itemName);
-	    }
-	}
-	this.sessionStorage = function () {
-	    this.getItem = function (itemName) {
-		var itemValue = sessionStorage.getItem(itemName);
-		try {
-		    itemValue = $.parseJSON(itemValue);
-		} catch (e) {}
-		return itemValue;
-	    }
-	}
+	this.localStorage = new myshark.util.Storage(localStorage);
+	this.sessionStorage = new myshark.util.Storage(sessionStorage);
+	this.tempStorage = new myshark.util.Storage(myshark.util.tempStorage);
 	
     }
 
@@ -306,10 +340,6 @@
 	});
 		
     });
-	
-	
-	
-// Přídavné objektové funkce
 	
 })(jQuery);
 
