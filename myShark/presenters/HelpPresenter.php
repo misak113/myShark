@@ -1,7 +1,6 @@
 <?php
 
-use Kate\Main\Cache,
-        Kate\External\HeaderControl,
+use Kate\External\HeaderControl,
         Kate\Main\Model,
         Nette\Application\Responses\TextResponse;
 

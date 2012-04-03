@@ -93,7 +93,10 @@ class Loader extends \Nette\Object implements IEnclosed {
     }
 
     public function loadCache() {
-	$this->cacheCreator = new CacheCreator(self::getCacheStoragePath(), self::get()->getPageModel()->getCacheExpirations(), !self::isCacheMode());
+	$this->cacheCreator = new Kate\Caching\CacheCreator(
+		self::getCacheStoragePath(),
+		self::get()->getPageModel()->getCacheExpirations(),
+		!self::isCacheMode());
     }
 
     /**
