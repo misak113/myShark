@@ -5,12 +5,12 @@ use \Nette\Utils\Html;
 
 class ImagePrinter implements \Kate\Main\IEnclosed {
     
-    private static $imagePrinter = null;
+    protected static $imagePrinter = null;
     
-    private $iconMap = array();
-    private $iconPath = '';
+    protected $iconMap = array();
+    protected $iconPath = '';
     
-    private function __construct($setting) {
+    protected function __construct($setting) {
         if (isset($setting['iconMap'])) {
             $this->iconMap = $setting['iconMap'];
         }

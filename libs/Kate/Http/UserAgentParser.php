@@ -8,7 +8,7 @@ namespace Kate\Http;
  */
 class UserAgentParser {
     
-    private static $robotUserAgentContains = array(
+    protected static $robotUserAgentContains = array(
         'robot', 'googlebot'
     );
     

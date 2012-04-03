@@ -33,7 +33,22 @@ $application = $configurator->createContainer()->application;
 // Setup router
 $application->onStartup[] = function() use ($configurator) {
     // Naloadování loaderu
-    Loader::get($configurator);
+    $loader = Loader::get($configurator);
+    
+    
+    // Nastavení z config.neon
+    $loader->loadDatabase();
+    $loader->setPageModel(PageModel::get());
+    $loader->loadCache();
+    $loader->loadPageModel();
+
+    
+    //$loader->setKinqModules(array('Default'));
+    //$loader->loadKinqModules();
+
+    $loader->setRouterModel(RouterModel::get());
+    $loader->loadRouters();
+    
 };
 
 

@@ -201,7 +201,7 @@ class UserModel extends \Kate\Main\Model implements Nette\Security\IAuthenticato
     
     public function getPermissions($idUserGroup = false) {
         if (!isset($this->permissions[$idUserGroup])) {
-            $this->permissions[$idUserGroup] = $this->cache->loadPermissions($idUserGroup);
+            $this->permissions[$idUserGroup] = $this->cache()->loadPermissions($idUserGroup);
         }
         return $this->permissions[$idUserGroup];
     }

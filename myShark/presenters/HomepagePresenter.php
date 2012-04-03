@@ -24,6 +24,10 @@ class HomepagePresenter extends Kate\Main\Presenter {
     public function __construct() {
 	parent::__construct();
 	$this->setAppName(PageModel::MYSHARK_DIR);
+	$this->addBaseStyle('libs/jquery-ui/dark-hive/jquery-ui-1.8.16.custom');
+	$this->addBaseScript('libs/jquery-ui-1.8.16.custom.min');
+
+
     }
     /**
      * Hlavní render pro defaultní stránku
@@ -37,7 +41,7 @@ class HomepagePresenter extends Kate\Main\Presenter {
 		$moduleModelName::get()->postMethod($request->getPost('method'), $request->getPost());
 	    }
 	}
-	
+
 	$this->addJsVariable('jQuery.myshark.baseUrl', Loader::getBaseUrl());
 	$this->addScript('default/myshark');
 	$this->addScript('shorthands');

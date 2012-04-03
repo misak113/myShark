@@ -14,10 +14,10 @@ class Hook extends \Nette\Object implements IEnclosed {
 	const REDIRECT = 'redirect';
 	const EXAMPLE = 'example';
 	
-	private $hooks;
-	private static $hook = null;
+	protected $hooks;
+	protected static $hook = null;
 	
-	private function __construct() {
+	protected function __construct() {
 		$this->hooks = array();
 	}
 	
@@ -47,7 +47,7 @@ class Hook extends \Nette\Object implements IEnclosed {
 		$this->addHook(self::REDIRECT, $target);
 	}
 	
-	private function addHook($type, $value) {
+	protected function addHook($type, $value) {
 		if (!\array_key_exists($type, $this->hooks)) {
 			$this->hooks[$type] = array();
 		}

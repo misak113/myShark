@@ -25,16 +25,21 @@ class Loader extends \Nette\Object implements IEnclosed {
 
 
 
-    private static $loader = null;
-    private $application = null;
-    private $database = null;
-    private $configurator = null;
-    private $container = null;
-    private static $DEBUG_MODE, $CACHE_MODE;
-    private static $BASE_PATH, $CACHE_STORAGE_PATH, $TEMP_PATH, $WWW_PATH, $IMAGES_PATH, $USERFILES_PATH,
+    protected static $loader = null;
+    protected $application = null;
+    protected $database = null;
+    protected $configurator = null;
+    protected $container = null;
+    protected static $DEBUG_MODE, $CACHE_MODE;
+    protected static $BASE_PATH, $CACHE_STORAGE_PATH, $TEMP_PATH, $WWW_PATH, $IMAGES_PATH, $USERFILES_PATH,
     $BASE_URL;
 
-    private function __construct(\Nette\Config\Configurator $configurator) {
+    protected $kinqModules = false;
+    protected $routerModel = false;
+    protected $pageModel = false;
+    protected $cacheCreator;
+
+    protected function __construct(\Nette\Config\Configurator $configurator) {
 	$this->setConfigurator($configurator);
 	$this->container = \Nette\Environment::getContext();
 	$this->application = $this->container->application;
@@ -59,7 +64,7 @@ class Loader extends \Nette\Object implements IEnclosed {
     /**
      * Zajistí základní prvky pro běh aplikace
      */
-    private function initApplication() {
+    protected function initApplication() {
 	new \shorthands; // Pro naloadování daného common helperu pro zkracování zápisů
 	$cookies = \Kate\Http\Cookies::get();
 
@@ -75,30 +80,63 @@ class Loader extends \Nette\Object implements IEnclosed {
 	}
 	$this->application->catchExceptions = !self::$DEBUG_MODE;
 
-
-
-	//načte databázi
-	$this->loadDatabase();
-
-
-	if (!class_exists('PageModel')) {
-	    throw new Kate\ClassNotFoundException('Vytvořte třídu PageModel Která bude obstarávat základní data pro zobrazení.');
-	}
 	$this->initPathAndUrl();
-	\PageModel::get()->init();
 
+    }
 
+    public function loadRouters() {
+	$this->routerModel->setRouters($this->application->getRouter());
+    }
 
-	//naloduje routery
-	$router = $this->application->getRouter();
-	if (class_exists('RouterModel')) {
-	    \RouterModel::setRouters($router);
+    public function setRouterModel(RouterModel $routerModel) {
+	$this->routerModel = $routerModel;
+    }
+
+    public function loadCache() {
+	$this->cacheCreator = new CacheCreator(self::getCacheStoragePath(), self::get()->getPageModel()->getCacheExpirations(), !self::isCacheMode());
+    }
+
+    /**
+     * Nalouduje databázi do proměné
+     */
+    public function loadDatabase() {
+	$reflection = new \Nette\Database\Reflection\ConventionalReflection('id_%s', 'id_%s', '%s');
+
+	$db = $this->container->params['database'];
+	$dsn = "{$db['driver']}:host={$db['host']};dbname={$db['dbname']}" .
+		((isset($db['port'])) ? ";port={$db['port']}" : "");
+	if (class_exists('\Kate\Database\Connection')) {
+	    $connectionName = '\Kate\Database\Connection';
 	} else {
-	    throw new Kate\ClassNotFoundException('Vytvořte třídu RouterModel pro správné routování aplikace.');
+	    $connectionName = '\Nette\Database\Connection';
+	}
+	$this->database = new $connectionName($dsn, $db['user'], $db['password']);
+	$this->database->setDatabaseReflection($reflection);
+
+	$panel = new \Nette\Database\Diagnostics\ConnectionPanel();
+	Debugger::$blueScreen->addPanel(array($panel, 'renderException'), __CLASS__);
+	if (!Debugger::$productionMode) {
+	    $this->database->onQuery[] = callback($panel, 'logQuery');
+	    Debugger::$bar->addPanel($panel);
 	}
     }
 
-    private function initPathAndUrl() {
+    public function setKinqModules(array $modules) {
+	$this->kinqModules = $modules;
+    }
+
+    protected function loadKinqModules() {
+	if ($this->kinqModules === false) {
+	    return;
+	}
+	$hook = new \Kate\KinqModules\Hook\HookContainer($this->container, $this->kinqModules);
+	$hookService = new \Nette\DI\ServiceDefinition();
+	$hookService->setClass($hook);
+	$hookService->setFactory('notify');
+	$this->container->addService('hook', $hookService);
+    }
+
+    protected function initPathAndUrl() {
 	self::$TEMP_PATH = \Nette\Environment::getVariable('tempDir');
 	self::$WWW_PATH = WWW_DIR;
 	$exp = explode('/', WWW_DIR);
@@ -112,40 +150,6 @@ class Loader extends \Nette\Object implements IEnclosed {
     }
 
     /**
-     * Nalouduje databázi do proměné
-     */
-    private function loadDatabase() {
-	$reflection = new \Nette\Database\Reflection\ConventionalReflection('id_%s', 'id_%s', '%s');
-
-	$db = $this->container->params['database'];
-	$dsn = "{$db['driver']}:host={$db['host']};dbname={$db['database']}" .
-		((isset($db['port'])) ? ";port={$db['port']}" : "");
-	if (class_exists('\Kate\Database\Connection')) {
-	    $connectionName = '\Kate\Database\Connection';
-	} else {
-	    $connectionName = '\Nette\Database\Connection';
-	}
-	$this->database = new $connectionName($dsn, $db['username'], $db['password']);
-	$this->database->setDatabaseReflection($reflection);
-
-	$panel = new \Nette\Database\Diagnostics\ConnectionPanel();
-	Debugger::$blueScreen->addPanel(array($panel, 'renderException'), __CLASS__);
-	if (!Debugger::$productionMode) {
-	    $this->database->onQuery[] = callback($panel, 'logQuery');
-	    Debugger::$bar->addPanel($panel);
-	}
-
-
-	/* function addService () {
-	  $service = new \Nette\Database\Diagnostics\ConnectionPanel;
-	  $service->explain = TRUE;
-	  Debugger::$bar->addPanel($service);
-	  return $service;
-	  }
-	  $this->database->onQuery[] = array('addService'); */
-    }
-
-    /**
      * Vrátí instanci databáze
      * @return Connection
      */
@@ -153,7 +157,7 @@ class Loader extends \Nette\Object implements IEnclosed {
 	return $this->database;
     }
 
-    private function setConfigurator(\Nette\Config\Configurator $configurator) {
+    protected function setConfigurator(\Nette\Config\Configurator $configurator) {
 	$this->configurator = $configurator;
     }
 
@@ -166,7 +170,7 @@ class Loader extends \Nette\Object implements IEnclosed {
     }
 
     public function getUserModel() {
-	return \PageModel::get()->getUserModel();
+	return $this->pageModel->getUserModel();
     }
 
     public static function isDebugMode() {
@@ -201,8 +205,23 @@ class Loader extends \Nette\Object implements IEnclosed {
 	return self::$BASE_URL;
     }
 
-    public static function getPageModel() {
-	return \PageModel::get();
+    public function setPageModel(PageModel $pageModel) {
+	$this->pageModel = $pageModel;
+    }
+
+    public function loadPageModel() {
+	$this->getPageModel()->init();
+    }
+
+    public function getPageModel() {
+	if ($this->pageModel === false) {
+	    $this->pageModel = PageModel::get();
+	}
+	return $this->pageModel;
+    }
+
+    public function getCacheCreator() {
+	return $this->cacheCreator;
     }
 
 }

@@ -9,18 +9,49 @@
 namespace Kate\Main;
 use Kate;
 
+class CacheCreator extends \Nette\Object {
+    protected $forceCall, $path, $expirations;
+    
+    public function __construct($path, $expirations, $forceCall) {
+	$this->path = $path;
+	$this->expirations = $expirations;
+	$this->forceCall = $forceCall;
+    }
+
+
+    public function create(\Nette\Object $class) {
+        
+	return new Cache($class, $this->path, $this->getExpirations($class), $this->forceCall);
+    }
+
+    /**
+     * Vrátí dobu expiraci pro danou metodu třídy z configu
+     * @return string expirace
+     * @todo
+     */
+    protected function getExpirations($class) {
+        $expirations = $this->expirations;
+        $className = get_class($class);
+        if (!key_exists($className, $expirations)) {
+            return null;
+        }
+        $methods = $expirations[$className];
+        return $methods;
+    }
+}
+
 class Cache extends \Nette\Object {
     
     
-    private $class, $cache;
-    
+    private $class, $cache, $expirations, $forceCall;
     
 
-
-    public function __construct(\Nette\Object $class) {
+    public function __construct(\Nette\Object $class, $path, $expirations, $forceCall) {
+	$this->forceCall = $forceCall;
+	$this->expirations = $expirations;
         $this->class = $class;
         $className = '_'.str_replace('\\', '.', get_class($class));
-        $storagePath = Loader::getCacheStoragePath().DIRECTORY_SEPARATOR.$className;
+        $storagePath = $path.DIRECTORY_SEPARATOR.$className;
         if (!is_dir($storagePath)) {
             mkdir($storagePath, 0755, true);
         }
@@ -40,7 +71,7 @@ class Cache extends \Nette\Object {
 			$value = NULL;
 		}
         if ($value === NULL || $forceCall === true) {
-            $expiration = $this->getExpiration($name);
+            $expiration = isset($this->expirations[$name]) ?$this->expirations[$name] :null;
             // @todo udelat aby se do klice cache zapisovali i stavy instance tedy jeji atributy a nejlepe i jeji stavy atributu po provedeni fce
             // 
             // Zviditelnění privatní fce
@@ -66,24 +97,7 @@ class Cache extends \Nette\Object {
         return $value;
     }
     
-    /**
-     * Vrátí dobu expiraci pro danou metodu třídy z configu
-     * @param string $name jméno metody
-     * @return string expirace
-     * @todo
-     */
-    private function getExpiration($name) {
-        $expirations = \PageModel::getCacheExpirations();
-        $className = get_class($this->class);
-        if (!key_exists($className, $expirations)) {
-            return null;
-        }
-        $methods = $expirations[$className];
-        if (!key_exists($name, $methods)) {
-            return null;
-        }
-        return $methods[$name];
-    }
+    
     
     /**
      * Vrací true pokud je treba funkci zavolat i kdyz je zakeshovaná... 
@@ -91,8 +105,8 @@ class Cache extends \Nette\Object {
      * @return boolean 
      * @todo
      */
-    private function hasForceCall($name) {
-        return !Loader::isCacheMode();
+    protected function hasForceCall($name) {
+        return $this->forceCall;
     }
     
     

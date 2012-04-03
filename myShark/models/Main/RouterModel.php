@@ -10,13 +10,13 @@ use Nette\Application\Routers\SimpleRouter,
  * 
  * @autor Michael Žabka
  */
-class RouterModel extends \Kate\Main\Model implements \Kate\Main\IRouterModel {
+class RouterModel extends \Kate\Main\RouterModel {
 
     /**
      * Přidá do routeru správné routy
      * @param RouterList $router object routů od Nette
      */
-    public static function setRouters(RouteList &$router) {
+    public function setRouters(RouteList $router) {
 
 	//robots.txt a sitemap.txt
 	$router[] = new Route('robots.txt', 'Help:robots');
@@ -108,7 +108,7 @@ class RouterModel extends \Kate\Main\Model implements \Kate\Main\IRouterModel {
 	}
 	unset($params[0]);
 
-	$moduleLinks = Loader::getPageModel()->getModuleLinks();
+	$moduleLinks = Loader::get()->getPageModel()->getModuleLinks();
 	$moduleId = MenuModuleModel::ID; // id pro menu Module
 	$parameters = array(
 	    PageModel::ID => $page
@@ -123,7 +123,7 @@ class RouterModel extends \Kate\Main\Model implements \Kate\Main\IRouterModel {
 	    $parameters[$moduleId][] = $param;
 	}
 
-	Loader::getPageModel()->setPageParameters($parameters);
+	Loader::get()->getPageModel()->setPageParameters($parameters);
 	return $path;
     }
 

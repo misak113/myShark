@@ -27,7 +27,7 @@ abstract class Presenter extends \Nette\Application\UI\Presenter {
     protected $styles = array(
 	array('/css/screen.css', 'screen,projection,tv', 'text/css'),
 	array('/css/print.css', 'print', 'text/css'),
-	array('/css/libs/jquery-ui/dark-hive/jquery-ui-1.8.16.custom.css', 'screen,projection,tv', 'text/css'),
+	//array('/css/libs/jquery-ui/dark-hive/jquery-ui-1.8.16.custom.css', 'screen,projection,tv', 'text/css'),
     );
     // Vždy načítané javascripty
     protected $scripts = array(
@@ -37,13 +37,14 @@ abstract class Presenter extends \Nette\Application\UI\Presenter {
 	'/js/libs/underscore.min.js',
 	'/js/libs/underscore.string.min.js',
 	'/js/libs/jquery-1.7.1.min.js',
-	'/js/libs/jquery-ui-1.8.16.custom.min.js',
+	//'/js/libs/jquery-ui-1.8.16.custom.min.js',
 	'/js/libs/netteForms.js',
 	'/js/libs/jquery.json-2.3.min.js',
     );
     protected $jsVariables = array();
     protected $baseUrl;
     protected $appName;
+    protected $hook;
 
     public function __construct() {
 	$context = \Nette\Environment::getContext();
@@ -51,6 +52,7 @@ abstract class Presenter extends \Nette\Application\UI\Presenter {
 	new \Kate\External\__; // Načtení underscore knihovny
 	
 	$this->appName = 'kate';
+	$this->hook = $context->hasService('hook') ?$context->getService('hook')->class :null;
     }
 
     protected function setAppName($appName) {
@@ -67,7 +69,7 @@ abstract class Presenter extends \Nette\Application\UI\Presenter {
 	parent::tryCall($method, $params);
     }
 
-    private function initPresenter() {
+    protected function initPresenter() {
 	$this->baseUrl = Loader::getBaseUrl();
 	$this->initTitle();
 	$this->template->setTranslator(\Kate\Helper\Translator::get());
@@ -99,8 +101,8 @@ abstract class Presenter extends \Nette\Application\UI\Presenter {
 	$this->template->scripts = $scripts;
     }
 
-    private function initTitle() {
-	$this->template->title = Loader::getPageModel()->getTitle();
+    protected function initTitle() {
+	$this->template->title = Loader::get()->getPageModel()->getTitle();
     }
 
     /**
@@ -132,6 +134,25 @@ abstract class Presenter extends \Nette\Application\UI\Presenter {
     public function addStyle($path, $media = 'screen,projection,tv', $type = 'text/css') {
 	if (!preg_match('~^.+\.css$~', $path)) {
 	    $path = '/css/'.$this->appName.'/' . $path . '.css';
+	}
+	$style = array($path, $media, $type);
+	if (!in_array($style, $this->styles)) {
+	    $this->styles[] = $style;
+	}
+    }
+
+
+    public function addBaseScript($path) {
+	if (!preg_match('~^.+\.js$~', $path)) {
+	    $path = '/js/' . $path . '.js';
+	}
+	if (!in_array($path, $this->scripts)) {
+	    $this->scripts[] = $path;
+	}
+    }
+    public function addBaseStyle($path, $media = 'screen,projection,tv', $type = 'text/css') {
+	if (!preg_match('~^.+\.css$~', $path)) {
+	    $path = '/css/' . $path . '.css';
 	}
 	$style = array($path, $media, $type);
 	if (!in_array($style, $this->styles)) {

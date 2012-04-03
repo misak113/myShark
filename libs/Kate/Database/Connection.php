@@ -62,7 +62,7 @@ class Connection extends \Nette\Database\Connection {
                         'sub_tree' => 0,
                     );
                     $subExpr[] = array(
-                        'base_expr' => Loader::getPageModel()->getLanguage(),
+                        'base_expr' => Loader::get()->getPageModel()->getLanguage(),
                         'expr_type' => 'const',
                         'sub_tree' => 0,
                     );

@@ -6,9 +6,9 @@ class Cookies implements \Kate\Main\IEnclosed {
     
     const COOKIE_ENABLED = 'cookie_enabled';
     
-    private static $cookies = null;
+    protected static $cookies = null;
     
-    private function __construct() {
+    protected function __construct() {
         $response = \Nette\Environment::getHttpResponse();
         $response->setCookie(self::COOKIE_ENABLED, true, '+10 years', '/');
     }

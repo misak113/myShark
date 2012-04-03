@@ -14,12 +14,12 @@ abstract class Model extends \Nette\Object implements IEnclosed {
     
     
     
-    protected $db, $cache, $container;
+    protected $db, $container;
+    private $cache = null;
     
     protected function __construct() {
 		$this->container = Loader::get()->getContainer();
         $this->db = Loader::get()->getDatabase();
-        $this->cache = new Cache($this);
     }
     
     
@@ -39,6 +39,9 @@ abstract class Model extends \Nette\Object implements IEnclosed {
      * @return Model cachovaný model
      */
     public function cache() {
+	if ($this->cache === null) {
+	    $this->cache = Loader::get()->getCacheCreator()->create($this);
+	}
         return $this->cache;
     }
     

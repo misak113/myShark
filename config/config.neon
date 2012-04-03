@@ -32,8 +32,8 @@ production < common:
 		database:
 			driver:	mysql
 			host:	localhost
-			database:	myshark
-			username:	myshark
+			dbname:	myshark
+			user:	myshark
 			password:	3c6cb5518e92aa6d8cc246197f9046b1
 			profiler:	true
 			debugger:	false
@@ -47,8 +47,8 @@ development < common:
 		database:
 			driver:	mysql
 			host:	localhost
-			database:	myshark
-			username:	root
+			dbname:	myshark
+			user:	root
 			password:	misak
 			profiler:	true
 			

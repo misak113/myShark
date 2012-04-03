@@ -4,7 +4,7 @@ namespace Kate\Security;
 
 class User {
 	
-	private $user, $userData;
+	protected $user, $userData;
 	
 	public function __construct(\Nette\Http\User $user, $userData) {
 		$this->user = $user;

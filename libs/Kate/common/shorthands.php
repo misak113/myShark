@@ -21,6 +21,7 @@ function _t($message) {
  * @param mixed $message jakýkoli objekt k lognutí
  */
 function _d($message) {
+    Nette\Diagnostics\Debugger::barDump($message);
     Kate\Helper\LogService::realtimeDebug($message);
 }
 

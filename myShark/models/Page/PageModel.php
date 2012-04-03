@@ -6,7 +6,7 @@ use Kate\Main\Model,
  * Obstarává veškerá data co se základního rozvržení týká
  * @author Michael Žabka
  */
-class PageModel extends \Kate\Main\Model implements \Kate\Main\IPageModel {
+class PageModel extends \Kate\Main\PageModel {
     const ID = 0;
     
     const VERSION = '1.0.21';
@@ -112,7 +112,7 @@ class PageModel extends \Kate\Main\Model implements \Kate\Main\IPageModel {
     );
     
     public function init() {
-        $this->cache->alterDatabase();
+        $this->cache()->alterDatabase();
         
 	// Vytvoří obrázek pro vykreslování ikon
         Kate\Helper\ImagePrinter::create(array(
@@ -675,7 +675,7 @@ class PageModel extends \Kate\Main\Model implements \Kate\Main\IPageModel {
      * Vrátí časy expirace cache pro jednotlivé třídy a metody
      * @return array expirace
      */
-    public static function getCacheExpirations() {
+    public function getCacheExpirations() {
         return self::$cacheExpirations;
     }
     
@@ -700,7 +700,7 @@ class PageModel extends \Kate\Main\Model implements \Kate\Main\IPageModel {
     
     public function getLanguages() {
         if ($this->languages === null) {
-            $this->languages = $this->cache->loadLanguages();
+            $this->languages = $this->cache()->loadLanguages();
         }
         return $this->languages;
     }
