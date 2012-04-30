@@ -21,7 +21,7 @@ class Translator extends \Nette\Object implements \Nette\Localization\ITranslato
 	 */
 	public function translate($message, $count = NULL) {
 		
-		return '_'.$message;
+		return $message;
 	}
     
     /**

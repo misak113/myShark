@@ -54,4 +54,7 @@ function _window($name) {
     return \Kate\Main\Loader::getWindowTemplatePath($name);
 }
 
+function _control($type, $value, $options = false) {
+	return Kate\Helper\FormHelper::control($type, $value, $options);
+}
 ?>

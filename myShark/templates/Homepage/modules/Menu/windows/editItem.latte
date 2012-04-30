@@ -8,13 +8,76 @@
 	    <table class="menu-window-edit-table">
 		<tbody>
 		    <tr class="name-row">
-			<td>{_'Název:'}</td>
+			<td><label>{_'Název:'}</label></td>
 			<td><input type="text" name="name" value="" class="name" /></td>
 		    </tr>
 		    <tr class="link-row">
-			<td>{_'link:'}</td>
+			<td><label>{_'link:'}</label></td>
 			<td><input type="text" name="link" value="" class="link" /></td>
 		    </tr>
+			<tr>
+				<select name="id_item_parent">
+					<option value="">Hlavní</option>
+				</select>
+			</tr>
+			<tr>
+				<td><label>{_'Typ odkazu:'}</label></td>
+				<td>
+					{foreach MenuModuleModel::$referenceTypes as $type => $label}
+						<label>
+							<input type="radio" name="reference_type" value="{$type}" />
+						{_$label}</label>
+					{/foreach}
+				</td>
+			</tr>
+			<tr class="reference_url_line">
+				<td><label>{_'URL:'}</label></td>
+				<td><input type="text" name="reference_url" value="" class="reference_url" /></td>
+			</tr>
+			<tr class="reference_slot_line">
+				<td><label>{_'Slot:'}</label></td>
+				<td>
+
+					<input type="hidden" name="id_slot_reference" value="" />
+					<input type="hidden" name="id_cell_reference" value="" />
+				</td>
+			</tr>
+			<tr class="reference_page_line">
+				<td><label>{_'Stránka:'}</label></td>
+				<td>
+					<input type="hidden" name="id_page_reference" value="" />
+				</td>
+			</tr>
+			<tr>
+				<td>{_'Rozjíždění submenu:'}</td>
+				<td>
+					<select name="submenu_type">
+					{foreach MenuModuleModel::$subMenuTypes as $type => $label}
+						<option value="{$type}">{_$label}</option>
+					{/foreach}
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<label>
+						<input type="checkbox" value="1" name="active" />
+						{_'Aktivní'}
+					</label>
+					<label>
+						<input type="checkbox" value="1" name="visible" />
+						{_'Viditelný'}
+					</label>
+				</td>
+			</tr>
+			<tr>
+				<td><label>{_'Rozměry'}</label></td>
+				<td>
+					<input type="text" value="" name="width" class="dimension" />
+					X
+					<input type="text" value="" name="height" class="dimension" />
+				</td>
+			</tr>
 		    <tr colspan="2">
 			<td><input type="submit" name="save" value="{_'Uložit'}" class="save" /></td>
 		    </tr>

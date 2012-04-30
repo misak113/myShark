@@ -142,10 +142,37 @@
 		}
 
 		this.saveMenuItem = function (id_item, cb) {
+			var el = $('#Menu-window-edit-'+id_item);
+			var name = el.find('[name="name"]').val();
+			var link = el.find('[name="link"]').val();
+			var refType = el.find('[name="reference_type"]').val();
+			var refUrl = el.find('[name="reference_url"]').val();
+			var id_item_parent = el.find('[name="id_item_parent"]').val();
+			var id_slot = el.find('[name="id_slot_reference"]').val();
+			var id_cell = el.find('[name="id_cell_reference"]').val();
+			var id_page = el.find('[name="id_page_reference"]').val();
+			var submenuType = el.find('[name="submenu_type"]').val();
+			var active = el.find('[name="active"]').attr('checked') == 'checked' ?1 :0;
+			var visible = el.find('[name="visible"]').attr('checked') == 'checked' ?1 :0;
+			var width = el.find('[name="width"]').val();
+			var height = el.find('[name="height"]').val();
 			myshark.loader.post({
 				module: 'Menu',
 				method: 'saveItem',
-				id_item: id_item
+				id_item: id_item,
+				name: name,
+				link: link,
+				reference_type: refType,
+				reference_url: refUrl,
+				id_item_parent: id_item_parent,
+				id_slot_reference: id_slot,
+				id_cell_reference: id_cell,
+				id_page_reference: id_page,
+				submenu_type: submenuType,
+				active: active,
+				visible: visible,
+				width: width,
+				height: height
 			}, function (resp) {
 				// Povedlo se
 				myshark.windows.infoFlash(_t('Položka menu byla úspěšně uložena'));

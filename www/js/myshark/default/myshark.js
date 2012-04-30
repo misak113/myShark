@@ -15,6 +15,7 @@
 		this.redirectHashmark = true;
 		this.baseUrl = null;
 		this.animate = null;
+		this.debugMode = false;
 	
 	
 	
@@ -158,7 +159,7 @@
 				var key = url;
 				var pages = myshark.sessionStorage.getItem(loader.PROXY_CACHE_PAGES);
 				pages = pages == null ?{} :pages;
-				if (typeof pages[key] != 'undefined' && forceLoad != true) {
+				if (typeof pages[key] != 'undefined' && forceLoad != true && myshark.debugMode == false) {
 					loader.hideLoading();
 					cb(pages[key]);
 					return;
@@ -275,8 +276,10 @@
 			}
 
 			this.Storage = function (storage) {
+				var real = true;
 				if (typeof storage == 'undefined') {
 					storage = myshark.util.tempStorage;
+					real = false;
 				}
 				this.getItem = function (itemName) {
 					var itemValue = storage.getItem(itemName);
@@ -296,6 +299,9 @@
 				}
 				this.clear = function () {
 					storage.clear();
+				}
+				this.isRealStorage = function () {
+					return real;
 				}
 			}
 
@@ -321,6 +327,15 @@
 		this.localStorage = new myshark.util.Storage(localStorage);
 		this.sessionStorage = new myshark.util.Storage(sessionStorage);
 		this.tempStorage = new myshark.util.Storage(myshark.util.tempStorage);
+
+		this.debug = new function () {
+
+			this.detect = function () {
+				if (myshark.baseUrl.indexOf("localhost") > -1) {
+					myshark.debugMode = true;
+				}
+			}
+		}
 	
 	}
 
@@ -335,6 +350,7 @@
 	
 	// Po "načtení" stránky
 	$(document).ready(function () {
+		myshark.debug.detect();
 		myshark.url.redirectByHash();
     
 		// Po "načtení" celého okna

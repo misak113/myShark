@@ -6,30 +6,30 @@ use Kate;
 
 class PageModel extends Kate\Main\Model implements IPageModel {
 
+	public function init() {
 
-    public function init() {
-	
-    }
+	}
 
-    public function getUserModel() {
-	return null;
-    }
+	public function getUserModel() {
+		return null;
+	}
 
-    public function getTitle() {
-	return 'Main Application';
-    }
+	public function getTitle() {
+		return 'Main Application';
+	}
 
-    public function getLaunguage() {
-	return null;
-    }
+	public function getLanguage() {
+		return null;
+	}
 
-    public function getCacheExpirations() {
-	return null;
-    }
+	public function getCacheExpirations() {
+		return null;
+	}
 
-    public function getActualPath() {
-	return '/';
-    }
+	public function getActualPath() {
+		return '/';
+	}
+
 }
 
 ?>
