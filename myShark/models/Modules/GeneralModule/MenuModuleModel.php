@@ -125,7 +125,8 @@ class MenuModuleModel extends ModuleModel {
 	private function loadItems($idContent, $idItemParent = false, $linksParent = '') {
 		$args = array();
 		$sql = 'SELECT modulemenu_item.id_item, modulemenu_item.id_page_reference, modulemenu_item.id_slot_reference,
-                modulemenu_item.id_cell_reference, modulemenu_item.referenceType, modulemenu_item.referenceUrl, 
+                modulemenu_item.id_cell_reference, modulemenu_item.referenceType, modulemenu_item.referenceUrl,
+				modulemenu_item.id_item_parent,
 		modulemenu_item.subMenuType, modulemenu_item.active, modulemenu_item.visible,
                 item_phrase.link AS item_link, item_phrase.text AS item_text, 
                 page_phrase.link AS page_link, slot_phrase.link AS slot_link,
@@ -189,6 +190,7 @@ class MenuModuleModel extends ModuleModel {
 				'visible' => $row->offsetGet('visible'),
 				'link' => $row->offsetGet('item_link'),
 				'text' => $row->offsetGet('item_text'),
+				'id_item_parent' => $row->offsetGet('id_item_parent'),
 				'geometry' => array(
 					'width' => $row->offsetGet('width') . $row->offsetGet('width_unit'),
 					'height' => $row->offsetGet('height') . $row->offsetGet('height_unit'),
@@ -217,14 +219,16 @@ class MenuModuleModel extends ModuleModel {
 	}
 
 	public function postMethod($method, $post) {
+		$status = _t('Tenta funkce "'.$method.'" není možná.');
 		switch ($method) {
 			case 'sortItems':
-				$this->sortMenuItems($post['itemsIds']);
+				$status = $this->sortMenuItems($post['itemsIds']);
 				break;
 			case 'saveItem':
-				$this->saveMenuItem($post['id_item'], $post);
+				$status = $this->saveMenuItem($post['id_item'], $post);
 				break;
 		}
+		return $status;
 	}
 
 	private function sortMenuItems($itemsOrder) {
@@ -250,46 +254,46 @@ class MenuModuleModel extends ModuleModel {
 
 	protected function saveMenuItem($idItem, $post) {
 		if (!isAllowed('ModuleMenu_item', 'edit')) {
-			return false;
+			return 'Nemáte práva upravovat položku menu';
 		}
 		if (!_control('name', $post['name'])) {
-			return false;
+			return 'Jméno musí být vyplněno správně';
 		}
 		if (!_control('link', $post['link'])) {
-			return false;
+			return 'Link musí mít správný tvar';
 		}
 		if (!_control('arrayValue', $post['reference_type'], array_keys(self::$referenceTypes))) {
-			return false;
+			return 'Typ odkazu musí být správný';
 		}
 		if (!_control('url', $post['reference_url'])) {
-			return false;
+			return 'Adresa URL musí být platná adresa';
 		}
 		if (!_control('id', $post['id_item_parent'], 'modulemenu_item')) {
-			return false;
+			return 'Zadané menu neexistuje';
 		}
 		if (!_control('id', $post['id_page_reference'], 'page')) {
-			return false;
+			return 'Zadaná stránka neexistuje';
 		}
 		if (!_control('id', $post['id_slot_reference'], 'slot')) {
-			return false;
+			return 'Zadaný slot neexistuje';
 		}
 		if (!_control('id', $post['id_cell_reference'], 'cell')) {
-			return false;
+			return 'Zadaná buňka neexistuje';
 		}
 		if (!_control('arrayValue', $post['submenu_type'], array_keys(self::$subMenuTypes))) {
-			return false;
+			return 'Tap příchodu submenu musí být platný';
 		}
 		if (!_control('bool', $post['active'])) {
-			return false;
+			return 'Je třeba vyplnit aktivovaný';
 		}
 		if (!_control('bool', $post['visible'])) {
-			return false;
+			return 'Je třeba vyplnit viditelný';
 		}
 		if (!_control('dimension', $post['width'])) {
-			return false;
+			return 'Špatný tvar šířky';
 		}
 		if (!_control('dimension', $post['height'])) {
-			return false;
+			return 'Špatný tvar výšky';
 		}
 		$item = $this->db->queryArgs("SELECT * FROM modulemenu_item WHERE id_item = ?", array($idItem))->fetch();
 		$where = array(

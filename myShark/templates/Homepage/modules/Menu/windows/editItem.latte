@@ -1,9 +1,9 @@
 {* Editační okno položky *}
 
-{define editItemWindow}
+{define 'editItemWindow_'.$content['id_content']}
     {*snippet menu-window-edit*}
     <div id="snippet--menu-window-edit">
-	<div id="Menu-window-edit" class="window menu-window-edit" data-myshark-window-options="{json_encode(array('width' => 350, 'height' => 350))}">
+	<div id="Menu-window-edit" class="window menu-window-edit" data-myshark-window-options="{json_encode(array('width' => 370, 'height' => 550))}">
 	    <form action="#" method="post" class="Menu-edit-item-form">
 	    <table class="menu-window-edit-table">
 		<tbody>
@@ -16,9 +16,20 @@
 			<td><input type="text" name="link" value="" class="link" /></td>
 		    </tr>
 			<tr>
-				<select name="id_item_parent">
-					<option value="">Hlavní</option>
-				</select>
+				<td><label>{_'Podmenu:'}</label></td>
+				<td>
+					<select name="id_item_parent">
+						<option value="">-- {_'Hlavní'} --</option>
+						{block Menu_parent_options}
+							{if $items}
+								{foreach $items as $item}
+									<option value="{$item['id_item']}">{$item['text']}</option>
+									{include #Menu_parent_options, items => $item['items']}
+								{/foreach}
+							{/if}
+						{/block}
+					</select>
+				</td>
 			</tr>
 			<tr>
 				<td><label>{_'Typ odkazu:'}</label></td>

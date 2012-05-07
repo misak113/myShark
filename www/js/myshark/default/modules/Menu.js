@@ -120,15 +120,34 @@
 
 		this.showEditWindow = function (ev) {
 			var menuItem = $(this).parent('.item');
-			var id_item = $.parseJSON(menuItem.attr('data-myshark-params')).id_item;
+			var item = $.parseJSON(menuItem.attr('data-myshark-params'));
+			var id_item = item.id_item;
 			var editWindow = $('#Menu-window-edit').clone(true);
 			editWindow.attr('id', 'Menu-window-edit-'+id_item);
 
-			var name = $.parseJSON(menuItem.attr('data-myshark-params')).text;
+			var name = item.text;
 			editWindow.find('[name="name"]').val(name);
 
-			var link = $.parseJSON(menuItem.attr('data-myshark-params')).link;
+			var link = item.link;
 			editWindow.find('[name="link"]').val(link);
+
+			editWindow.find('[name="id_item_parent"] [value="'+item.id_item_parent+'"]').attr('selected', 'selected');
+
+			editWindow.find('[name="reference_type"][value="'+item.references.type+'"]').attr('checked', 'checked');
+
+			editWindow.find('[name="reference_url"]').val(item.references.url.uri);
+			editWindow.find('[name="id_slot_reference"]').val(item.references.slot.id_slot);
+			editWindow.find('[name="id_cell_reference"]').val(item.references.slot.id_cell);
+			editWindow.find('[name="id_page_reference"]').val(item.references.page.id_page);
+
+			editWindow.find('[name="submenu_type"] [value="'+item.subMenuType+'"]').attr('selected', 'selected');
+
+			editWindow.find('[name="active"]').attr('checked', item.active ?'checked' :false);
+			editWindow.find('[name="visible"]').attr('checked', item.visible ?'checked' :false);
+
+			editWindow.find('[name="width"]').val(item.geometry.width);
+			editWindow.find('[name="height"]').val(item.geometry.height);
+
 
 			editWindow.find('.Menu-edit-item-form').bind('submit', function (ev) {
 				ev.preventDefault();
