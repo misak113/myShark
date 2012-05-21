@@ -1,5 +1,8 @@
 <?php
 
+
+use Kate\Helper\UtilHelper;
+
 /**
  * Module Menu
  * Tento modul je brán jako hlavní a je bezprostřední aby byl funkční... závisí na něm jiné třídy...
@@ -219,7 +222,7 @@ class MenuModuleModel extends ModuleModel {
 	}
 
 	public function postMethod($method, $post) {
-		$status = _t('Tenta funkce "'.$method.'" není možná.');
+		$status = 'Tenta funkce "'.$method.'" není možná.';
 		switch ($method) {
 			case 'sortItems':
 				$status = $this->sortMenuItems($post['itemsIds']);
@@ -296,6 +299,7 @@ class MenuModuleModel extends ModuleModel {
 			return 'Špatný tvar výšky';
 		}
 		$item = $this->db->queryArgs("SELECT * FROM modulemenu_item WHERE id_item = ?", array($idItem))->fetch();
+
 		$where = array(
 			'id_phrase' => $item['id_phrase'],
 			'id_language' => \Kate\Main\Loader::get()->getPageModel()->getLanguage(),
@@ -305,6 +309,36 @@ class MenuModuleModel extends ModuleModel {
 			'link' => $post['link'],
 		);
 		$this->db->table('phrase')->where($where)->update($data);
+
+		$where = array(
+			'id_item' => $idItem,
+		);
+		$data = array(
+			'referenceType' => $post['reference_type'],
+			'id_item_parent' => $post['id_item_parent'] ?(int)$post['id_item_parent'] :null,
+			'id_page_reference' => $post['id_page_reference'] ?(int)$post['id_page_reference'] :null,
+			'id_slot_reference' => $post['id_slot_reference'] ?(int)$post['id_slot_reference'] :null,
+			'id_cell_reference' => $post['id_cell_reference'] ?(int)$post['id_cell_reference'] :null,
+			'referenceUrl' => $post['reference_url'],
+			'subMenuType' => $post['submenu_type'],
+			'active' => (bool)$post['active'],
+			'visible' => (bool)$post['visible'],
+		);
+		$this->db->table('modulemenu_item')->where($where)->update($data);
+
+		$where = array(
+			'id_geometry' => $item['id_geometry'],
+		);
+		$width = UtilHelper::parseMagnitude($post['width']);
+		$height = UtilHelper::parseMagnitude($post['height']);
+		$data = array(
+			'width' => isset($width['value']) && $width['value'] ?$width['value'] :null,
+			'height' => isset($height['value']) && $height['value'] ?$height['value'] :null,
+			'width_unit' => isset($width['unit']) && $width['unit'] ?$width['unit'] :null,
+			'height_unit' => isset($height['unit']) && $height['unit'] ?$height['unit'] :null,
+		);
+		$this->db->table('geometry')->where($where)->update($data);
+
 		return true;
 	}
 

@@ -100,11 +100,15 @@ class HomepagePresenter extends Kate\Main\Presenter {
 			$status = $moduleModelName::get()->postMethod($request->getPost('method'), $request->getPost());
 		}
 		if ($status !== true) {
-			$data = array(
-				'error' => $status,
-			);
-			$response = new JsonResponse($data);
-			$this->sendResponse($response);
+			if ($this->isAjax()) {
+				$data = array(
+					'error' => _t($status),
+				);
+				$response = new JsonResponse($data);
+				$this->sendResponse($response);
+			} else {
+				$this->flashMessage(_t($status), 'error');
+			}
 		}
 	}
 

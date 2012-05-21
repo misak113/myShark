@@ -156,6 +156,9 @@
 		
 			this.load = function (url, cb, forceLoad) {
 				loader.showLoading();
+				if (!cb) {
+					cb = function () {};
+				}
 				var key = url;
 				var pages = myshark.sessionStorage.getItem(loader.PROXY_CACHE_PAGES);
 				pages = pages == null ?{} :pages;
@@ -216,6 +219,10 @@
 						errorCb(resp);
 					}
 				});
+			}
+
+			this.refresh = function (cb) {
+				loader.load(myshark.url.getActualHashPath(), cb, true);
 			}
                 
 			this.showLoading = function () {

@@ -20,7 +20,7 @@ common:
 	services:
 		#authenticator:
 		#	class: UsersModel
-			
+
 		#robotLoader:
 		#	run: true
 
@@ -51,7 +51,7 @@ development < common:
 			user:	root
 			password:	misak
 			profiler:	true
-			
+
 		debugMode:	true
 		cacheMode:	false
 

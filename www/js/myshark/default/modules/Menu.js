@@ -152,6 +152,21 @@
 			editWindow.find('.Menu-edit-item-form').bind('submit', function (ev) {
 				ev.preventDefault();
 				menu.saveMenuItem(id_item, function (resp) {
+					/*item.text = editWindow.find('[name="name"]').val();
+					item.link = editWindow.find('[name="link"]').val();
+					item.id_item_parent = editWindow.find('[name="id_item_parent"] option:selected').val();
+					item.references.type = editWindow.find('[name="reference_type"]:checked').val();
+					item.references.url.uri = editWindow.find('[name="reference_url"]').val();
+					item.references.slot.id_slot = editWindow.find('[name="id_slot_reference"]').val();
+					item.references.slot.id_cell = editWindow.find('[name="id_cell_reference"]').val();
+					item.references.page.id_page = editWindow.find('[name="id_page_reference"]').val();
+					item.subMenuType = editWindow.find('[name="submenu_type"] option:selected').val();
+					item.active = editWindow.find('[name="active"]:checked').length > 0?1:0;
+					item.visible = editWindow.find('[name="visible"]:checked').length > 0?1:0;
+					item.geometry.width = editWindow.find('[name="width"]').val();
+					item.geometry.height = editWindow.find('[name="height"]').val();
+					menuItem.attr('data-myshark-params', $.toJSON(item));*/
+					myshark.loader.refresh();
 					myshark.windows.close(editWindow);
 				});
 			});

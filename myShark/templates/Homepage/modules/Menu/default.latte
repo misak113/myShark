@@ -36,7 +36,8 @@
     {/block}
     {block MenuWindows}
 	{includeblock ''._window('editItem')}
-	{include '#editItemWindow_'.$content['id_content'], items => $items}
+	{var $editWindow = 'editItemWindow_'.$content['id_content']}
+	{include #$editWindow, items => $items}
     {/block}
 </nav>
 {/define}
