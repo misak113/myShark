@@ -1,7 +1,7 @@
 {* Šablona pro html modul *}
 
 {define contentModuleHtml}
-	{if $moduleContent['canEdit']}
+	{if $moduleContent['canEdit']} 
 	{getHtmlIconHref('edit', _t('Editovat obsah'), 'edit_html', $content['id_content'], 'admin')}
 	{/if}
     {if $moduleContent['sections']}
