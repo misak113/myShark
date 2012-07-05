@@ -49,7 +49,7 @@ development < common:
 			host:	localhost
 			dbname:	myshark
 			user:	root
-			password:	misak
+			password:	cvpp7mdz
 			profiler:	true
 
 		debugMode:	true

@@ -41,6 +41,7 @@ class HtmlModuleModel extends ModuleModel {
     public function loadContent($idContent, $params) {
         $moduleContent = array();
         $moduleContent['sections'] = $this->loadSections($idContent, $params);
+		$moduleContent['canEdit'] = isAllowed('ModuleHtml_section', 'edit');
         return $moduleContent;
     }
     
