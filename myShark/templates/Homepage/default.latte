@@ -45,7 +45,9 @@
                             {if $cell['slot']['contents']}
                                 {foreach $cell['slot']['contents'] as $content}
                                         <div class="wrapper-content link--{$content['link']}">
-                                            <div id="content-{$content['id_content']}" class="content">
+                                            <div id="content-{$content['id_content']}" 
+												 {if isAllowed('content', 'edit')} data-myshark-params="{json_encode($content)}" {/if}
+												 class="content">
                                                 <div class="brace-content {$content['moduleLabel']}">
                                                     {includeblock ''.(\Kate\Main\Loader::MODULES_DIR).S.$content['moduleLabel'].S.'default.latte'}
                                                     {var $contentBlock =  'contentModule'.$content['moduleLabel']}

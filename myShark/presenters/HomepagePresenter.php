@@ -40,6 +40,9 @@ class HomepagePresenter extends Kate\Main\Presenter {
 		$this->addScript('default/myshark');
 		$this->addScript('shorthands');
 		$this->addStyle('default/myshark');
+		// Načte styly pro moduly
+		$this->addStyle(Loader::DEFAULT_DIR . '/' . Loader::MODULES_DIR . '/Module');
+		$this->addScript(Loader::DEFAULT_DIR . '/' . Loader::MODULES_DIR . '/Module');
 
 		$pageModel = PageModel::get();
 		$userModel = UserModel::get();

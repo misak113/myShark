@@ -6,7 +6,9 @@
 <nav class="Menu">
 	{if $moduleContent['canEdit']}
 		{getHtmlIconHref('edit', _t('Editovat menu'), 'edit_menu', $content['id_content'], 'admin')}
-		{getHtmlIconHref('text-small', _t('Změnit název'), 'edit-icon edit_content_text', $content['id_content'], 'admin')}
+		{if isAllowed('content', 'edit')}
+			{getHtmlIconHref('text-small', _t('Změnit název'), 'edit-icon edit_content_text', $content['id_content'], 'admin')}
+		{/if}
 	{/if}
 	{block MenuItems}
         {if $items}
