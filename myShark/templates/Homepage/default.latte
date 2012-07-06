@@ -103,6 +103,12 @@
                         {includeblock ''.(\Kate\Main\Loader::MODULES_DIR).S.$content['moduleLabel'].S.'default.latte'}
                         {var $headBlock = 'headModule'.$content['moduleLabel']}
                         {include #$headBlock, moduleContent => $content['moduleContent']}
+
+						{block ModuleWindows}
+						{includeblock ''._window('editContent')}
+						{var $editWindow = 'editContentWindow_'.$content['id_content']}
+						{include #$editWindow}
+						{/block}
                     {/foreach}
                 {/if}
             {/foreach}
