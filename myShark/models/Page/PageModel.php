@@ -2,6 +2,7 @@
 
 use Kate\Main\Model,
 	Kate\Main\Loader;
+use Kate\Config\Loader as ConfigLoader;
 
 /**
  * Obstarává veškerá data co se základního rozvržení týká
@@ -10,7 +11,7 @@ use Kate\Main\Model,
 class PageModel extends \Kate\Main\PageModel {
 
 	const ID = 0;
-	const VERSION = '1.0.21';
+	const VERSION = '1.1.21';
 	const DEFAULT_PAGE_NAME_LINK = 'myShark';
 	const DEFAULT_PAGE_NAME = 'Redakční systém myShark';
 	const LINK_ERROR_404 = 'error-404';
@@ -107,7 +108,18 @@ class PageModel extends \Kate\Main\PageModel {
 		),
 	);
 
+	/** @var ConfigLoader */
+	protected $configLoader;
+
+	public function __construct(ConfigLoader $configLoader) {
+		//parent::__construct();
+		$this->configLoader = $configLoader;
+	}
+
 	public function init() {
+		$childClass = get_class();
+		self::$model[$childClass] = $this;
+		self::$cacheExpirations = $this->configLoader->getConfig('cache');
 		$this->cache()->alterDatabase();
 
 		// Vytvoří obrázek pro vykreslování ikon

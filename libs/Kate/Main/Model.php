@@ -16,8 +16,14 @@ abstract class Model extends \Nette\Object implements IEnclosed {
     
     protected $db, $container;
     private $cache = null;
+
+	protected function __construct() {
+		$childClass = get_called_class();
+		self::$model[$childClass] = $this;
+		$this->initModel();
+	}
     
-    protected function __construct() {
+    public function initModel() {
 		$this->container = Loader::get()->getContainer();
         $this->db = Loader::get()->getDatabase();
     }

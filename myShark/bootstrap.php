@@ -28,17 +28,19 @@ $configurator->createRobotLoader()
 	->addDirectory(LIBS_DIR)
 	->register();
 $configurator->addConfig(CONFIG_DIR . '/config.neon');
+$configurator->addConfig(CONFIG_DIR . '/load.neon');
 $application = $configurator->createContainer()->application;
 
 // Setup router
 $application->onStartup[] = function() use ($configurator) {
     // Naloadování loaderu
-    $loader = Loader::get($configurator);
-    
+    $loader = $configurator->createContainer()->getService('loader');
+    $loader->setConfigurator($configurator);
+    $loader->loadDatabase();
+	$loader->initApplication();
     
     // Nastavení z config.neon
-    $loader->loadDatabase();
-    $loader->setPageModel(PageModel::get());
+    //$loader->setPageModel(PageModel::get());
     $loader->loadCache();
     $loader->loadPageModel();
 

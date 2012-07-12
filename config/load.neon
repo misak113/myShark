@@ -1,0 +1,14 @@
+common:
+	
+	parameters:
+		settingsDir: 'settings'
+
+	services:
+		neonAdapter: Nette\Config\Adapters\NeonAdapter
+		configLoader: Kate\Config\Loader
+		loader: Kate\Main\Loader
+		pageModel: PageModel
+
+production < common:
+
+development < common:

@@ -10,6 +10,9 @@ namespace Kate\Main;
 
 use Nette\Diagnostics\Debugger,
 	Kate;
+use Kate\Main\PageModel;
+use Nette\DI\Container;
+use Nette\Application\Routers\RouteList;
 
 class Loader extends \Nette\Object implements IEnclosed {
 
@@ -36,11 +39,15 @@ class Loader extends \Nette\Object implements IEnclosed {
 	protected $routerModel = false;
 	protected $pageModel = false;
 	protected $cacheCreator;
+	protected $router;
 
-	protected function __construct(\Nette\Config\Configurator $configurator) {
-		$this->setConfigurator($configurator);
-		$this->container = \Nette\Environment::getContext();
+	public function __construct(PageModel $pageModel, Container $context, RouteList $router) {
+		self::$loader = $this;
+		$this->pageModel = $pageModel;
+		//$this->setConfigurator($configurator);
+		$this->container = $context;
 		$this->application = $this->container->application;
+		$this->router = $router;
 	}
 
 	/**
@@ -62,9 +69,10 @@ class Loader extends \Nette\Object implements IEnclosed {
 	/**
 	 * Zajistí základní prvky pro běh aplikace
 	 */
-	protected function initApplication() {
+	public function initApplication() {
 		new \shorthands; // Pro naloadování daného common helperu pro zkracování zápisů
 		$cookies = \Kate\Http\Cookies::get();
+		$this->pageModel->initModel();
 
 
 		//zjistí zda je v debugovacím módu
@@ -82,7 +90,7 @@ class Loader extends \Nette\Object implements IEnclosed {
 	}
 
 	public function loadRouters() {
-		$this->routerModel->setRouters($this->application->getRouter());
+		$this->routerModel->setRouters($this->router);
 	}
 
 	public function setRouterModel(RouterModel $routerModel) {
@@ -157,7 +165,7 @@ class Loader extends \Nette\Object implements IEnclosed {
 		return $this->database;
 	}
 
-	protected function setConfigurator(\Nette\Config\Configurator $configurator) {
+	public function setConfigurator(\Nette\Config\Configurator $configurator) {
 		$this->configurator = $configurator;
 	}
 
