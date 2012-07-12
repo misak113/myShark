@@ -23,7 +23,9 @@
 		}
 		
 		var showEditContentTextWindow = function (ev) {
-			var contentEl = $(this).parent('.content');
+			ev.preventDefault();
+			var content_id = $(this).attr('data-kate-params');
+			var contentEl = $('#content-'+content_id);
 			var content = $.parseJSON(contentEl.attr('data-myshark-params'));
 			var id_content = content.id_content;
 			var editWindow = $('#Content-window-edit').clone(true);
