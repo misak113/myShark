@@ -13,6 +13,7 @@ use Nette\Diagnostics\Debugger,
 use Kate\Main\PageModel;
 use Nette\DI\Container;
 use Nette\Application\Routers\RouteList;
+use Nette\Application\IRouter;
 
 class Loader extends \Nette\Object implements IEnclosed {
 
@@ -39,9 +40,10 @@ class Loader extends \Nette\Object implements IEnclosed {
 	protected $routerModel = false;
 	protected $pageModel = false;
 	protected $cacheCreator;
+	/** @var IRouter */
 	protected $router;
 
-	public function __construct(PageModel $pageModel, Container $context, RouteList $router) {
+	public function __construct(PageModel $pageModel, Container $context, IRouter $router) {
 		self::$loader = $this;
 		$this->pageModel = $pageModel;
 		//$this->setConfigurator($configurator);

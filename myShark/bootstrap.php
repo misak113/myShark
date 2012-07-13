@@ -29,12 +29,13 @@ $configurator->createRobotLoader()
 	->register();
 $configurator->addConfig(CONFIG_DIR . '/config.neon');
 $configurator->addConfig(CONFIG_DIR . '/load.neon');
-$application = $configurator->createContainer()->application;
+$container = $configurator->createContainer();
+$application = $container->application;
 
 // Setup router
-$application->onStartup[] = function() use ($configurator) {
+$application->onStartup[] = function() use ($configurator, $container) {
     // Naloadování loaderu
-    $loader = $configurator->createContainer()->getService('loader');
+    $loader = $container->getService('loader');
     $loader->setConfigurator($configurator);
     $loader->loadDatabase();
 	$loader->initApplication();

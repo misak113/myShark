@@ -1,0 +1,13 @@
+PageModel:
+	alterDatabase: '+7 days'
+	loadWeb: '+20 minutes'
+	loadSetting: '+20 minutes'
+	loadLanguages: '+20 minutes'
+	loadContent: '+20 minutes'
+	loadModules: '+20 minutes'
+	loadPageId: '+20 minutes'
+	loadPageLayout: '+20 minutes'
+	loadSlot: '+20 minutes'
+UserModel:
+	loadUser: '+60 minutes'
+	alterPermissions: '+7 days'

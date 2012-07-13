@@ -18,114 +18,47 @@ class PageModel extends \Kate\Main\PageModel {
 	const MYSHARK_DIR = 'myshark';
 
 	private $setting = null, $web = array(), $modules = array(), $languages = null,
-		// Defaultní stránka null
-		$pageParameters = array(self::ID => null),
-		$language = null;
+			// Defaultní stránka null
+			$pageParameters = array(self::ID => null),
+			$language = null;
 	// Deafaultní jazyk
-		private static $defaultLanguage = array(
-			'id_language' => 1,
-			'shortcut' => 'cs',
-			'location' => 'cz',
-			'title' => 'Česky',
-			),
-		$defaultLayouts = array(
-			1 => array('text' => 'Standardní', 'cells' => array(
-					array('width' => 1000, 'height' => 300, 'row' => 1, 'col' => 1, 'static' => true, 'rowspan' => 1, 'colspan' => 2),
-					array('width' => 300, 'height' => null, 'row' => 2, 'col' => 1, 'static' => true, 'rowspan' => 1, 'colspan' => 1),
-					array('width' => 700, 'height' => null, 'row' => 2, 'col' => 2, 'static' => false, 'rowspan' => 1, 'colspan' => 1),
-					array('width' => 1000, 'height' => 40, 'row' => 3, 'col' => 1, 'static' => true, 'rowspan' => 1, 'colspan' => 2),
+			private static $defaultLanguage = array(
+				'id_language' => 1,
+				'shortcut' => 'cs',
+				'location' => 'cz',
+				'title' => 'Česky',
+					),
+			$defaultLayouts = array(
+				1 => array('text' => 'Standardní', 'cells' => array(
+						array('width' => 1000, 'height' => 300, 'row' => 1, 'col' => 1, 'static' => true, 'rowspan' => 1, 'colspan' => 2),
+						array('width' => 300, 'height' => null, 'row' => 2, 'col' => 1, 'static' => true, 'rowspan' => 1, 'colspan' => 1),
+						array('width' => 700, 'height' => null, 'row' => 2, 'col' => 2, 'static' => false, 'rowspan' => 1, 'colspan' => 1),
+						array('width' => 1000, 'height' => 40, 'row' => 3, 'col' => 1, 'static' => true, 'rowspan' => 1, 'colspan' => 2),
+					),
 				),
-			),
 	);
 	// Pole pro čas expirace při cachování jednotlivých funkcí ve třídách
-	private static $cacheExpirations = array(
-		//Classes
-		'PageModel' => array(
-			//methods
-			'alterDatabase' => '+7 days',
-			'loadWeb' => '+20 minutes',
-			'loadSetting' => '+20 minutes',
-			'loadLanguages' => '+20 minutes',
-			'loadContent' => '+20 minutes',
-			'loadModules' => '+20 minutes',
-			'loadPageId' => '+20 minutes',
-			'loadPageLayout' => '+20 minutes',
-			'loadSlot' => '+20 minutes',
-		),
-		'UserModel' => array(
-			'loadUser' => '+60 minutes',
-			'alterPermissions' => '+7 days',
-		),
-	);
-	private static $iconMap = array(
-		'general' => array(
-			'default' => array(
-				'width' => 1,
-				'height' => 1,
-				'left' => 0,
-				'top' => 0,
-			),
-		),
-		'language' => array(
-			'cs_cz' => array(
-				'width' => 23,
-				'height' => 13,
-				'left' => 0,
-				'top' => 0,
-			),
-			'en_us' => array(
-				'width' => 23,
-				'height' => 13,
-				'left' => 0,
-				'top' => 13,
-			),
-		),
-		'admin' => array(
-			'edit' => array(
-				'width' => 16,
-				'height' => 16,
-				'top' => 0,
-				'left' => 24,
-			),
-			'edit-small' => array(
-				'width' => 10,
-				'height' => 10,
-				'top' => 0,
-				'left' => 40,
-			),
-			'move-small' => array(
-				'width' => 10,
-				'height' => 10,
-				'top' => 10,
-				'left' => 40,
-			),
-			'text-small' => array(
-				'width' => 10,
-				'height' => 10,
-				'top' => 20,
-				'left' => 40,
-			),
-		),
-	);
+	protected $cacheExpirations;
+	private $iconMap;
 
 	/** @var ConfigLoader */
 	protected $configLoader;
 
 	public function __construct(ConfigLoader $configLoader) {
-		//parent::__construct();
 		$this->configLoader = $configLoader;
+		$this->cacheExpirations = $this->configLoader->getConfig('cache');
+		$this->iconMap = $this->configLoader->getConfig('iconMap');
 	}
 
 	public function init() {
 		$childClass = get_class();
 		self::$model[$childClass] = $this;
-		self::$cacheExpirations = $this->configLoader->getConfig('cache');
 		$this->cache()->alterDatabase();
 
 		// Vytvoří obrázek pro vykreslování ikon
 		Kate\Helper\ImagePrinter::create(array(
 			'iconPath' => Loader::getBaseUrl() . '/' . Loader::IMAGES_DIR . '/' . Loader::ICON_DIR . '/icons.png',
-			'iconMap' => self::$iconMap,
+			'iconMap' => $this->iconMap,
 		));
 	}
 
@@ -189,10 +122,10 @@ class PageModel extends \Kate\Main\PageModel {
 	public function loadWeb() {
 		$web = array();
 		$row = $this->db->table('page')
-			->select('phrase.text, phrase.link')
-			->order('`order` ASC')
-			->limit(1)
-			->fetch();
+				->select('phrase.text, phrase.link')
+				->order('`order` ASC')
+				->limit(1)
+				->fetch();
 		if ($row) {
 			$web['name'] = $row['text'];
 			$web['nameLink'] = $row['link'];
@@ -209,7 +142,7 @@ class PageModel extends \Kate\Main\PageModel {
 	 */
 	public function loadSetting() {
 		$q = $this->db->table('setting')
-			->select('setting.value, setting.name');
+				->select('setting.value, setting.name');
 		$setting = $q->fetchPairs('name', 'value');
 		return $setting;
 	}
@@ -220,7 +153,7 @@ class PageModel extends \Kate\Main\PageModel {
 	 */
 	public function loadLanguages() {
 		$q = $this->db->table('language')
-			->select('language.id_language, language.shortcut, language.location, language.title');
+				->select('language.id_language, language.shortcut, language.location, language.title');
 		$langs = array();
 		while ($row = $q->fetch()) {
 			$lang = array(
@@ -242,7 +175,7 @@ class PageModel extends \Kate\Main\PageModel {
 		$location = $this->language['location'];
 		$defaultLanguage = $this->getDefaultLanguage();
 		if ($shortcut == $defaultLanguage['shortcut'] &&
-			($location == $defaultLanguage['location'] || $location == null)) {
+				($location == $defaultLanguage['location'] || $location == null)) {
 			return true;
 		} else {
 			return false;
@@ -285,7 +218,7 @@ class PageModel extends \Kate\Main\PageModel {
 	public function loadModules() {
 		$modules = array();
 		$q = $this->db->table('module')
-			->select('module.*, phrase.text, phrase.link');
+				->select('module.*, phrase.text, phrase.link');
 		while ($row = $q->fetch()) {
 			$modules[$row['id_module']] = array(
 				'id_module_parent' => $row['id_module_parent'],
@@ -676,7 +609,7 @@ class PageModel extends \Kate\Main\PageModel {
 	 * @return array expirace
 	 */
 	public function getCacheExpirations() {
-		return self::$cacheExpirations;
+		return $this->cacheExpirations;
 	}
 
 	/**

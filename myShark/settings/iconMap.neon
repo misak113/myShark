@@ -1,0 +1,38 @@
+general:
+	default:
+		width: 1
+		height: 1
+		left: 0
+		top: 0
+language:
+	cs_cz:
+		width: 23
+		height: 13
+		left: 0
+		top: 0
+	en_us:
+		width: 23
+		height: 13
+		left: 0
+		top: 13
+admin:
+	edit:
+		width: 16
+		height: 16
+		top: 0
+		left: 24
+	edit_small:
+		width: 10
+		height: 10
+		top: 0
+		left: 40
+	move_small:
+		width: 10
+		height: 10
+		top: 10
+		left: 40
+	text_small:
+		width: 10
+		height: 10
+		top: 20
+		left: 40

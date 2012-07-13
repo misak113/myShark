@@ -7,7 +7,7 @@
 	{if $moduleContent['canEdit']}
 		{getHtmlIconHref('edit', _t('Editovat menu'), 'edit_menu', $content['id_content'], 'admin')}
 		{if isAllowed('content', 'edit')}
-			{getHtmlIconHref('text-small', _t('Změnit název'), 'edit-icon edit_content_text', $content['id_content'], 'admin')}
+			{getHtmlIconHref('text_small', _t('Změnit název'), 'edit-icon edit_content_text', $content['id_content'], 'admin')}
 		{/if}
 	{/if}
 	{block MenuItems}
@@ -22,8 +22,8 @@
 					}{if $item['geometry']['height'] != null}height: {$item['geometry']['height']};{/if
 					}">
 				    {if $moduleContent['canEdit']}
-					{getHtmlIconHref('edit-small', _t('Editovat položku'), 'edit-icon edit_menu_item', $item['id_item'], 'admin')}
-					{getHtmlIconHref('move-small', _t('Přesunout položku'), 'edit-icon move_menu_item', $item['id_item'], 'admin')}
+					{getHtmlIconHref('edit_small', _t('Editovat položku'), 'edit-icon edit_menu_item', $item['id_item'], 'admin')}
+					{getHtmlIconHref('move_small', _t('Přesunout položku'), 'edit-icon move_menu_item', $item['id_item'], 'admin')}
 				    {/if}
 			<a n:if="$item['reference']" href="{$item['reference']}" class="label">
 					{$item['text']}
