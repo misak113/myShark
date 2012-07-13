@@ -2,8 +2,6 @@
 
 class AdminModel extends \Kate\Main\Model implements \Nette\Security\IAuthenticator {
  
-	const ADMIN_LINK = 'admin';
-	
 	private $loadAdminLogin = false;
 	
 	public function setLoadAdminLogin() {

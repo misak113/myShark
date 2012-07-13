@@ -1,0 +1,35 @@
+1:
+	text: 'Standardní'
+	cells:
+		1:
+			width: 1000
+			height: 300
+			row: 1
+			col: 1
+			static: true
+			rowspan: 1
+			colspan: 2
+		2:
+			width: 300
+			height: null
+			row: 2
+			col: 1
+			static: true
+			rowspan: 1
+			colspan: 1
+		3:
+			width: 700
+			height: null
+			row: 2
+			col: 2
+			static: false
+			rowspan: 1
+			colspan: 1
+		4:
+			width: 1000
+			height: 40
+			row: 3
+			col: 1
+			static: true
+			rowspan: 1
+			colspan: 2

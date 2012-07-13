@@ -169,7 +169,7 @@ class HomepagePresenter extends Kate\Main\Presenter {
 	 */
 	public function error404() {
 		$pageModel = PageModel::get();
-		$idPage = $pageModel->cache()->loadPageId(PageModel::LINK_ERROR_404);
+		$idPage = $pageModel->cache()->loadPageId(PageModel::get()->metadata['link_error_404']);
 		$page = $pageModel->cache()->loadPageLayout($idPage);
 		$this->getHttpResponse()->setCode(Nette\Http\Response::S404_NOT_FOUND);
 

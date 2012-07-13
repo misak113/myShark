@@ -97,7 +97,7 @@ class RouterModel extends \Kate\Main\RouterModel {
 		$path = strtolower($path);
 		$params = explode('/', $path);
 
-		if (end($params) === AdminModel::ADMIN_LINK) {
+		if (end($params) === PageModel::get()->metadata['admin_link']) {
 			AdminModel::get()->setLoadAdminLogin();
 			unset($params[count($params) - 1]);
 		}

@@ -7,38 +7,39 @@ use Kate\Config\Loader as ConfigLoader;
 /**
  * Obstarává veškerá data co se základního rozvržení týká
  * @author Michael Žabka
+ * 
+ * @method PageModel get()
  */
 class PageModel extends \Kate\Main\PageModel {
 
 	const ID = 0;
-	const VERSION = '1.1.21';
-	const DEFAULT_PAGE_NAME_LINK = 'myShark';
-	const DEFAULT_PAGE_NAME = 'Redakční systém myShark';
-	const LINK_ERROR_404 = 'error-404';
 	const MYSHARK_DIR = 'myshark';
 
-	private $setting = null, $web = array(), $modules = array(), $languages = null,
-			// Defaultní stránka null
-			$pageParameters = array(self::ID => null),
-			$language = null;
-	// Deafaultní jazyk
-			private static $defaultLanguage = array(
-				'id_language' => 1,
-				'shortcut' => 'cs',
-				'location' => 'cz',
-				'title' => 'Česky',
-					),
-			$defaultLayouts = array(
-				1 => array('text' => 'Standardní', 'cells' => array(
-						array('width' => 1000, 'height' => 300, 'row' => 1, 'col' => 1, 'static' => true, 'rowspan' => 1, 'colspan' => 2),
-						array('width' => 300, 'height' => null, 'row' => 2, 'col' => 1, 'static' => true, 'rowspan' => 1, 'colspan' => 1),
-						array('width' => 700, 'height' => null, 'row' => 2, 'col' => 2, 'static' => false, 'rowspan' => 1, 'colspan' => 1),
-						array('width' => 1000, 'height' => 40, 'row' => 3, 'col' => 1, 'static' => true, 'rowspan' => 1, 'colspan' => 2),
-					),
-				),
+	
+	/** @var array */
+	public $metadata;
+	/** @var array */
+	private $setting = null;
+	/** @var array */
+	private $web = array();
+	/** @var array */
+	private $modules = array();
+	/** @var array */
+	private $languages = null;
+	/** @var array Defaultní stránka null */
+	private $pageParameters = array(
+		self::ID => null
 	);
+	/** @var array */
+	private $language = null;
+	/** @var array Deafaultní jazyk */
+	private $defaultLanguage;
+	/** @var array */
+	protected $defaultLayouts;
 	// Pole pro čas expirace při cachování jednotlivých funkcí ve třídách
+	/** @var array */
 	protected $cacheExpirations;
+	/** @var array */
 	private $iconMap;
 
 	/** @var ConfigLoader */
@@ -48,6 +49,10 @@ class PageModel extends \Kate\Main\PageModel {
 		$this->configLoader = $configLoader;
 		$this->cacheExpirations = $this->configLoader->getConfig('cache');
 		$this->iconMap = $this->configLoader->getConfig('iconMap');
+		$this->defaultLayouts = $this->configLoader->getConfig('layouts');
+		$this->defaultLanguage = $this->configLoader->getConfig('languages');
+		$this->metadata = $this->configLoader->getConfig('metadata');
+
 	}
 
 	public function init() {
@@ -68,23 +73,19 @@ class PageModel extends \Kate\Main\PageModel {
 	public function alterDatabase() {
 		// @todo Updatovat strukturu
 		// Language default
-		$data = array(
-			'id_language' => self::$defaultLanguage['id_language'],
-			'shortcut' => self::$defaultLanguage['shortcut'],
-			'location' => self::$defaultLanguage['location'],
-			'title' => self::$defaultLanguage['title'],
-		);
-		try {
-			$this->db->table('language')->insert($data);
-		} catch (PDOException $e) {
-			//Již existuje
+		foreach ($this->defaultLanguage as $data) {
+			try {
+				$this->db->table('language')->insert($data);
+			} catch (PDOException $e) {
+				//Již existuje
+			}
 		}
 
 		// Layout default
-		foreach (self::$defaultLayouts as $idLayout => $layout) {
+		foreach ($this->defaultLayouts as $idLayout => $layout) {
 			try {
 				$this->db->beginTransaction();
-				$idPhrase = ControlModel::get()->insertPhrase(self::$defaultLanguage, $layout['text']);
+				$idPhrase = ControlModel::get()->insertPhrase(reset($this->defaultLanguage), $layout['text']);
 				$data = array(
 					'id_phrase' => $idPhrase,
 					'id_layout' => $idLayout,
@@ -130,8 +131,8 @@ class PageModel extends \Kate\Main\PageModel {
 			$web['name'] = $row['text'];
 			$web['nameLink'] = $row['link'];
 		} else {
-			$web['name'] = self::DEFAULT_PAGE_NAME . ' ' . self::VERSION;
-			$web['nameLink'] = self::DEFAULT_PAGE_NAME_LINK;
+			$web['name'] = $this->metadata['default_page_name'] . ' ' . $this->metadata['version'];
+			$web['nameLink'] = $this->metadata['default_page_name_link'];
 		}
 		return $web;
 	}
@@ -510,7 +511,7 @@ class PageModel extends \Kate\Main\PageModel {
 		}
 		$path = implode('/', $part);
 		if (AdminModel::get()->getLoadAdminLogin()) {
-			$path .= '/' . AdminModel::ADMIN_LINK;
+			$path .= '/' . $this->metadata['admin_link'];
 		}
 		return $path;
 	}
@@ -558,7 +559,7 @@ class PageModel extends \Kate\Main\PageModel {
 	 */
 	public function getLanguage() {
 		if ($this->language === null) {
-			$this->language = self::$defaultLanguage;
+			$this->language = reset($this->defaultLanguage);
 		}
 		$activeIdLanguage = null;
 		foreach ($this->getLanguages() as $idLanguage => $language) {
@@ -628,7 +629,7 @@ class PageModel extends \Kate\Main\PageModel {
 	 * @return array jazyk
 	 */
 	public function getDefaultLanguage() {
-		return self::$defaultLanguage;
+		return reset($this->defaultLanguage);
 	}
 
 	public function getLanguages() {

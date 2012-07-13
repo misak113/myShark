@@ -1,0 +1,9 @@
+
+#metadata
+version: '1.1.21'
+
+default_page_name_link: 'myShark'
+default_page_name: 'Redakční systém myShark'
+
+link_error_404: 'error-404'
+admin_link: 'admin'
