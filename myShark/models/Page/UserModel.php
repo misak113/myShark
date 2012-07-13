@@ -2,6 +2,7 @@
 
 use Kate\Http\UserAgentParser,
     Kate\Http\Cookies;
+use Kate\Config\Loader;
 
 /**
  * Model který zajišťuje práci s uživateli
@@ -16,23 +17,28 @@ class UserModel extends \Kate\Main\Model implements Nette\Security\IAuthenticato
     const ROBOT_USER_GROUP_ID = 2;
     const ADMIN_USER_GROUP_ID = 3;
     
-    private static $defaultUserGroups = array(
+    private $defaultUserGroups = array(
         self::FRONTEND_USER_GROUP_ID => array('text' => 'Frontend uživatel', 'parent' => null),
         self::ROBOT_USER_GROUP_ID => array('text' => 'Robot', 'parent' => null),
         self::ADMIN_USER_GROUP_ID => array('text' => 'Administrátor', 'parent' => self::FRONTEND_USER_GROUP_ID),
     );
     
-    private static $permissionsGeneral = array(
+    private $permissionsGeneral = array(
         array('type' => 'web', 'operation' => 'display', 'text' => 'Zobrazení webových stránek'),
 		array('type' => 'web', 'operation' => 'animate', 'text' => 'Zobrazení animovaných webových stránek'),
     );
     
     private $userFetch, $userAgent, $ip, $request, $response, 
 			$user = null, $permissions = array();
-    
+
+	/** @var Loader */
+	protected $configLoader;
+
     protected function __construct() {
         parent::__construct();
         $robots = UserAgentParser::getRobots();
+		$this->configLoader = $this->container->getService('configLoader');
+		$this->permissionsGeneral = $this->configLoader->getConfig('permissions');
         $this->request = \Nette\Environment::getHttpRequest();
         $this->response = \Nette\Environment::getHttpResponse();
         $this->userAgent = $this->request->getHeader('user-agent', reset($robots));
@@ -286,7 +292,7 @@ class UserModel extends \Kate\Main\Model implements Nette\Security\IAuthenticato
     
     public function alterPermissions() {
         $modules = PageModel::get()->getModules();
-        $perms = self::$permissionsGeneral;
+        $perms = $this->permissionsGeneral;
         
         foreach ($modules as $module) {
             $moduleModel = $module['label'].'ModuleModel';
@@ -317,7 +323,7 @@ class UserModel extends \Kate\Main\Model implements Nette\Security\IAuthenticato
     }
     
     public function alterUserGroups() {
-        foreach (self::$defaultUserGroups as $idUserGroup => $userGroup) {
+        foreach ($this->defaultUserGroups as $idUserGroup => $userGroup) {
             try {
                 $this->db->beginTransaction();
                 $idPhrase = ControlModel::get()->insertPhrase(PageModel::get()->getDefaultLanguage(), $userGroup['text']);

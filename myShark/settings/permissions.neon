@@ -1,0 +1,8 @@
+1:
+	type: web
+	operation: display
+	text: Zobrazení webových stránek
+2:
+	type: web
+	operation: animate
+	text: Zobrazení animovaných webových stránek

@@ -9,12 +9,18 @@
 
 namespace Kate\Main;
 use Kate;
+use Nette\DI\Container;
+use Kate\Database\Connection;
+use Kate\Caching\Cache;
 
 abstract class Model extends \Nette\Object implements IEnclosed {
     
     
-    
-    protected $db, $container;
+    /** @var Connection */
+    protected $db;
+	/** @var Container */
+	protected $container;
+	/** @var Cache */
     private $cache = null;
 
 	protected function __construct() {
